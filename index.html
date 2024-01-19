@@ -19,39 +19,122 @@
       padding-bottom: 50px;
       padding-left: 80px;
     }
+
+    .recipe {
+      border-radius: 25px;
+      padding-top: 10px;
+      padding-right: 10px;
+      padding-bottom: 10px;
+      padding-left: 10px;
+      margin-bottom: 10px;
+    }
+
+    .item {
+      margin-bottom: 10px;
+    }
+
+    .pill {
+      border-radius: 25px;
+      padding-right: 10px;
+      padding-left: 10px;
+      margin-bottom: 50px;
+      border: 1px;
+    }
+
+    .monday {
+      background-color: #edafb8;
+      color: #77585c;
+    }
+
+    .tuesday {
+      background-color: #f7e1d7;
+      color: #7c716c;
+    }
+
+    .wednesday {
+      background-color: #dedbd2;
+      color: #6f6e69;
+    }
+
+    .thursday {
+      background-color: #b0c4b1;
+      color: #586259;
+    }
+
+    .friday {
+      background-color: #4a5759;
+      color: #a5abac;
+    }
+
+    .dot {
+      height: 15px;
+      width: 15px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 30px auto;
+      grid-template-rows: auto;
+    }
+
+    .footer {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      background-color: #d3d3d3;
+    }
+
+    td {
+      padding-bottom: 10px;
+      padding-top: 10px;
+      padding-right: 0px;
+      padding-left: 0px;
+    }
+
+    .line {
+      border-bottom: 1px solid;
+    }
   </style>
 </head>
 
 <body>
   <h1>Om pappas matsedel</h1>
   <p>Alla ha olika ambitioner när det kommer till mat, vår ambition är att laga så mycket mat som möjligt. Vi har testat
-    olika matkassar men har till slut kommit fram till att det ofta smaka mer eller mindre samma sak efter ett tag, och
-    det är ny recept varje vecka så man hinner aldrig lära sig recepten. För ett tag sedan kom jag på idén att göra en
-    egen matsedel, med tillhörande shopping lista. För vår familj så hjälper detta mycket att både variera vad vi äter
+    olika matkassar men har till slut kommit fram till att det ofta smakar mer eller mindre samma sak efter ett tag, och
+    det är nya recept varje vecka så man hinner aldrig lära sig dem. För ett tag sedan kom jag på idén att göra en
+    egen matsedel, med tillhörande inköpslista. Det hjälper vår familj att både variera vad vi äter
     och
-    gör det enkelt för oss att handla och laga mat.</p>
-  <p>På denna sidan hittar du vår matsedel och vår inköpslista. Matsedeln är anpassad för att passa vår familj och våra
+    gör det enkelt att handla och laga. Just ja, det var mina barn som kom på Pappas matsedel ❤️</p>
+  <p>På denna sidan hittar du vår matsedel och instruction med recept och inköpslista. Matsedeln är anpassad för att
+    passa vår familj och våra
     rutiner, har
-    ni andra behov och rutiner så får ni gärna fylla i önskeformuläret så kan jag skapa en specifik matsedel till er
-    också.
+    ni andra behov och rutiner så får ni gärna höra av er via <a href="mailto:patrik.salomonsson@gmail.com">mail</a> så
+    kan jag skapa en specifik matsedel till er.
   </p>
   <p>Rutinen i vår familj är som följer.</p>
-  <ol>
-    <li>Lördag morgon skriver vi ut matsedeln och inköpslistan</li>
-    <li>Matsedeln sätter vi i en ram som vi har i köket</li>
-    <li>Handla för vi genom att gå igenom vad vi har hemma och vad vi behöver köpa, men hjälp av inköpslistan</li>
-    <li>Vi handlar online och beställer maten till måndag morgonen på en tid som passar oss. Självklart kan du handla
+  <ul>
+    <li>Vi skriver ut matsedeln och inköpslistan</li>
+    <li>Matsedeln sätter vi i en ram i köket</li>
+    <li>Handla gör vi oftast på Lördagar genom att med hjälp av inköpslistan gå igenom vad vi har hemma och vad vi
+      behöver köpa. Vi handlar online , självklart kan du handla
       i din lokala fysisk butik också.</li>
-  </ol>
-  <p>Vi lägger ungefär 30 min på att handla till vår vardagsmat, vilket vi tycker är bra.</p>
-  <p>När det gäller recepten så vill vi ha relativt enkla med få ingredienser men som ändå smakar gott. Vi gör vissa
-    justeringar ibland, i de fallen försöker vi kommentera det i instruktionerna. I vår familj så får vem som lägga till
-    en ny maträtt, men det krävs majoritet för att rösta bort en rätt!</p>
+    <li>Leverans av maten får vi oftast på måndag morgon</li>
+  </ul>
+  <p>Vi lägger ungefär 30 min på att handla till vår vardagsmat, det tycker vi är lagom.</p>
+  <p>När det gäller recepten så vill vi ha relativt enkla med få ingredienser, men som ändå smakar gott. Vi gör vissa
+    justeringar ibland, i de fallen kommentera vi det i instruktionerna. I vår familj så får vem som lägga till
+    en ny maträtt, men det krävs majoritet för att rösta bort!</p>
   <p>Här hittar ni <a href="/orginal">veckans matsedel</a>.</p>
-  <p>Här hittar ni <a href="/orginal/preparations.html">veckans inköpslista</a>.</p>
+  <p>Här hittar ni <a href="/orginal/preparations.html">veckans recept och inköpslista</a>.</p>
   <p>Här hittar ni <a href="/orginal/print.pdf">veckans meny i PDF format</a>, den som vi brukar skriva ut.</p>
-  <p>Hör gärna av dig via <a href="mailto:patrik.salomonsson@gmail.com">mail</a> om du är intresserad av att använda
-    denna matsedel.</p>
+  <div class="footer">
+    <p><a href="/">Om pappas matsedel</a> | <a href="/orginal">Matsedel</a> | <a
+        href="/orginal/preparations.html">Instruktioner</a></p>
+  </div>
 </body>
 
 </html>
