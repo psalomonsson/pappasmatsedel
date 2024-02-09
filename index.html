@@ -1,141 +1,125 @@
 <html>
-
-<head>
-  <title>Pappas matsedel</title>
-  <meta name="description" content="Alla ha olika ambitioner när det kommer till mat, vår ambition är att laga så mycket mat som möjligt. Vi har testat
+  <head>
+    <title>Pappas matsedel</title>
+    <meta name="description" content="Alla ha olika ambitioner när det kommer till mat, vår ambition är att laga så mycket mat som möjligt. Vi har testat
     olika matkassar men har till slut kommit fram till att det ofta smakar mer eller mindre samma sak efter ett tag, och
     det är nya recept varje vecka så man hinner aldrig lära sig dem. För ett tag sedan kom jag på idén att göra en
     egen matsedel, med tillhörande inköpslista.">
-  <meta charset="UTF-8">
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0YS6QRKX7Y"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
+    <meta charset="UTF-8">
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-0YS6QRKX7Y"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
 
-    gtag('config', 'G-0YS6QRKX7Y');
-  </script>
-  <style>
-    body {
-      font-family: courier;
-      padding-top: 50px;
-      padding-right: 80px;
-      padding-bottom: 50px;
-      padding-left: 80px;
-    }
+            gtag('config', 'G-0YS6QRKX7Y');
+        </script>
+                <style>
+            body {
+                font-family: courier;
+                padding-top: 50px;
+                padding-right: 80px;
+                padding-bottom: 50px;
+                padding-left: 80px;
+            }
 
-    .recipe {
-      border-radius: 25px;
-      padding-top: 10px;
-      padding-right: 10px;
-      padding-bottom: 10px;
-      padding-left: 10px;
-      margin-bottom: 10px;
-    }
+            .recipe {
+                border-radius: 25px;
+                padding-top: 10px;
+                padding-right: 10px;
+                padding-bottom: 10px;
+                padding-left: 10px;
+                margin-bottom: 10px;
+            }
 
-    .item {
-      margin-bottom: 10px;
-    }
+            .item {
+                margin-bottom: 10px;
+            }
 
-    .pill {
-      border-radius: 25px;
-      padding-right: 10px;
-      padding-left: 10px;
-      margin-bottom: 10px;
-    }
+            .pill {
+                border-radius: 25px;
+                padding-right: 10px;
+                padding-left: 10px;
+                margin-bottom: 10px;
+            }
 
-    .monday {
-      background-color: #E5E4E2;
-    }
+            .monday {
+                background-color: #E5E4E2;
+            }
 
-    .tuesday {
-      background-color: #E5E4E2;
-    }
+            .tuesday {
+                background-color: #E5E4E2;
+            }
 
-    .wednesday {
-      background-color: #E5E4E2;
-    }
+            .wednesday {
+                background-color: #E5E4E2;
+            }
 
-    .thursday {
-      background-color: #E5E4E2;
-    }
+            .thursday {
+                background-color: #E5E4E2;
+            }
 
-    .friday {
-      background-color: #E5E4E2;
-    }
+            .friday {
+                background-color: #E5E4E2;
+            }
 
-    .dot {
-      height: 15px;
-      width: 15px;
-      border-radius: 50%;
-      display: inline-block;
-    }
+            .dot {
+                height: 15px;
+                width: 15px;
+                border-radius: 50%;
+                display: inline-block;
+            }
 
-    .container {
-      display: grid;
-      grid-template-columns: 30px auto;
-      grid-template-rows: auto;
-    }
+            .container {
+                display: grid;
+                grid-template-columns: 30px auto;
+                grid-template-rows: auto;
+            }
+            
+            .footer {
+                position: fixed;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                text-align: center;
+                background-color: #E5E4E2;            
+            }
 
-    .footer {
-      position: fixed;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      text-align: center;
-      background-color: #E5E4E2;
-    }
+            td {
+                padding-bottom: 10px;
+                padding-top: 10px;
+                padding-right: 10px;
+                padding-left: 0px;
+                vertical-align: top;
+            }
 
-    td {
-      padding-bottom: 10px;
-      padding-top: 10px;
-      padding-right: 10px;
-      padding-left: 0px;
-      vertical-align: top;
-    }
+            .line {
+                border-bottom: 1px solid;
+            } 
 
-    .line {
-      border-bottom: 1px solid;
-    }
-
-    .fill {
-      background-color: #FF0000;
-    }
-  </style>
-</head>
-
-<body>
-  <h1>Om pappas matsedel</h1>
-  <p>Alla ha olika ambitioner när det kommer till mat. Vi i vår familj har som ambition att laga så mycket mat som
-    möjligt. För att få inspiration i vardagen har vi testat olika matkassar, men har kommit fram till att det ofta
-    smakar mer eller mindre samma sak efter ett tag. För ett tag sedan kom jag på idén att göra en egen matsedel, med
-    tillhörande inköpslista. Det har hjälpt oss att variera vad vi äter och har gjort det enklare att både handla och
-    laga mat. Just ja, det var mina barn som kom på namnet Pappas matsedel ❤️</p>
-  <p>På denna sidan hittar du vår matsedel, instruktioner med recept och inköpslista. Matsedeln är anpassad efter våra
-    vardagsrutiner, exempel så har vi maträtter som går något snabbare att laga de dagar som barnen har aktiviteter och
-    vi har ont om tid. Har ni behov och rutiner som ni vill få anpassade så får ni gärna höra av er via <a
-      href="mailto:patrik.salomonsson@gmail.com">mail</a> så kan jag skapa en specifik matsedel till er.</p>
-  <p>Rutinen kring matbestyr i vår familj är som följer:</p>
-  <ul>
-    <li>Vi skriver ut matsedeln och inköpslistan</li>
-    <li>Matsedeln sätter vi in i en ram i köket</li>
-    <li>Vi handlar oftast på lördagar och prickar för vad som behöver handlas på inköpslistan och stryker över det vi
-      redan har hemma. Vi handlar online, men det är såklart valfritt.</li>
-    <li>Leverans av maten beställer vi oftast till innan frukost på måndagar.</li>
-  </ul>
-  <p>Vi lägger ungefär 30 min på att handla till vår vardagsmat, vilket vi tycker är lagom mycket tid.</p>
-  <p>När det gäller recepten så vill vi ha relativt enkla recept med få ingredienser, och som ändå smakar gott. Ibland
-    gör vi vissa justeringar och i de fallen kommenterar vi det i instruktionerna för veckan.</p>
-  <p>I vår familj så får vem som lägga till en ny maträtt till matsedeln, men det krävs en familjemajoritet för att
-    rösta bort en maträtt!</p>
-  <p>Här hittar ni <a href="/orginal">veckans matsedel</a>.</p>
-  <p>Här hittar ni <a href="/orginal/preparations.html">veckans recept och inköpslista</a>.</p>
-  <p>Här hittar ni <a href="/orginal/print.pdf">veckans meny i PDF format</a>, den som vi brukar skriva ut.</p>
-  <div class="footer">
-    <p><a href="/">Om pappas matsedel</a> | <a href="/orginal">Matsedel</a> | <a
-        href="/orginal/preparations.html">Instruktioner</a></p>
-  </div>
-</body>
-
+            .fill {
+                background-color: #FF0000;
+            }
+        </style>  </head>
+  <body>
+    <h1>Om pappas matsedel</h1>
+    <p>Alla ha olika ambitioner när det kommer till mat. Vi i vår familj har som ambition att laga så mycket mat som möjligt. För att få inspiration i vardagen har vi testat olika matkassar, men har kommit fram till att det ofta smakar mer eller mindre samma sak efter ett tag. För ett tag sedan kom jag på idén att göra en egen matsedel, med tillhörande inköpslista. Det har hjälpt oss att variera vad vi äter och har gjort det enklare att både handla och laga mat. Just ja, det var mina barn som kom på namnet Pappas matsedel ❤️</p>
+    <p>På denna sidan hittar du vår matsedel, instruktioner med recept och inköpslista. Matsedeln är anpassad efter våra vardagsrutiner, exempel så har vi maträtter som går något snabbare att laga de dagar som barnen har aktiviteter och vi har ont om tid. Har ni behov och rutiner som ni vill få anpassade så får ni gärna höra av er via <a href="mailto:patrik.salomonsson@gmail.com">mail</a> så kan jag skapa en specifik matsedel till er.</p>
+    <p>Rutinen kring matbestyr i vår familj är som följer:</p>
+    <ul>
+      <li>Vi skriver ut matsedeln och inköpslistan</li>
+      <li>Matsedeln sätter vi in i en ram i köket</li>
+      <li>Vi handlar oftast på lördagar och prickar för vad som behöver handlas på inköpslistan och stryker över det vi redan har hemma. Vi handlar online, men det är såklart valfritt.</li>
+      <li>Leverans av maten beställer vi oftast till innan frukost på måndagar.</li>
+    </ul>
+    <p>Vi lägger ungefär 30 min på att handla till vår vardagsmat, vilket vi tycker är lagom mycket tid.</p>
+    <p>När det gäller recepten så vill vi ha relativt enkla recept med få ingredienser, och som ändå smakar gott. Ibland gör vi vissa justeringar och i de fallen kommenterar vi det i instruktionerna för veckan.</p>
+    <p>I vår familj så får vem som lägga till en ny maträtt till matsedeln, men det krävs en familjemajoritet för att rösta bort en maträtt!</p>
+    <p>Här hittar ni <a href="/vardag">veckans matsedel</a>.</p>
+    <p>Här hittar ni <a href="/vardag/preparations.html">veckans recept och inköpslista</a>.</p>
+    <p>Här hittar ni <a href="/vardag/print.pdf">veckans meny i PDF format</a>, den som vi brukar skriva ut.</p>
+          <div class="footer">
+              <p><a href="/">Om pappas matsedel</a> | <a href="/vardag">Matsedel</a> | <a href="/vardag/handlingslista.html">Handlingslista</a></p>
+          </div>  </body>
 </html>
