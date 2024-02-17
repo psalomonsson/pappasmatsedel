@@ -22,6 +22,7 @@
             }
 
             .recipe {
+                background-color: #E5E4E2;
                 border-radius: 25px;
                 padding-top: 10px;
                 padding-right: 10px;
@@ -39,26 +40,6 @@
                 padding-right: 10px;
                 padding-left: 10px;
                 margin-bottom: 10px;
-            }
-
-            .monday {
-                background-color: #E5E4E2;
-            }
-
-            .tuesday {
-                background-color: #E5E4E2;
-            }
-
-            .wednesday {
-                background-color: #E5E4E2;
-            }
-
-            .thursday {
-                background-color: #E5E4E2;
-            }
-
-            .friday {
-                background-color: #E5E4E2;
             }
 
             .dot {
@@ -100,8 +81,12 @@
             }
         </style>
     <style>
-        .paragraphClass {
+        .strike-off {
             text-decoration: line-through;
+        }
+
+        .buy {
+            font-weight: bold;
         }
  
         #Button {
@@ -110,10 +95,24 @@
     </style>
     
     <script>
+
+        function toogle(id) {
+            if(document.getElementById(id).classList.contains("buy")) {
+                document.getElementById(id).classList.remove("buy");
+                document.getElementById(id).classList.add("strike-off");
+                return;
+            }
+            if(document.getElementById(id).classList.contains("strike-off")) {
+                document.getElementById(id).classList.remove("strike-off")
+                return;
+            }
+            document.getElementById(id).classList.add("buy");
+        }
+
         function myFunc(i) {
-            document.getElementById("aa-" + i).classList.toggle("paragraphClass");
-            document.getElementById("bb-" + i).classList.toggle("paragraphClass");
-            document.getElementById("cc-" + i).classList.toggle("paragraphClass");
+            toogle("aa-" + i);
+            toogle("bb-" + i);
+            toogle("cc-" + i);
         }
     </script>
 </head>
@@ -121,14 +120,14 @@
 <body>
     <h1>Handlingslista för vecka 8</h1>
     <h2>Recept</h2>
-    <div class="recipe Monday">
+    <div class="recipe">
     <p>
     <a href="https:&#x2F;&#x2F;www.ica.se&#x2F;recept&#x2F;bolognese-med-bacon-och-rotfrukter-730054&#x2F;"><b>Bolognese med bacon och rotfrukter</b></a>
     </p>
     <p>300 g rotfrukter.
     </p>
     </div>
-    <div class="recipe Monday">
+    <div class="recipe">
     <p>
     <a href="https:&#x2F;&#x2F;www.ica.se&#x2F;recept&#x2F;sparrissoppa-729325&#x2F;"><b>Sparrissoppa</b></a>
     </p>
@@ -136,14 +135,14 @@
         Ingen kommentar.
     </p>
     </div>
-    <div class="recipe Monday">
+    <div class="recipe">
     <p>
     <a href="https:&#x2F;&#x2F;www.ica.se&#x2F;recept&#x2F;zucchiniplattar-med-fetaost-och-dill-720960&#x2F;"><b>Zucchiniplättar med fetaost och dill</b></a>
     </p>
     <p>150 g fetaost.
     </p>
     </div>
-    <div class="recipe Monday">
+    <div class="recipe">
     <p>
     <a href="https:&#x2F;&#x2F;www.ica.se&#x2F;recept&#x2F;flygande-jacob-717569&#x2F;"><b>Flygande Jakob</b></a>
     </p>
@@ -151,7 +150,7 @@
         Ingen kommentar.
     </p>
     </div>
-    <div class="recipe Monday">
+    <div class="recipe">
     <p>
     <b>Ramen</b>
     </p>

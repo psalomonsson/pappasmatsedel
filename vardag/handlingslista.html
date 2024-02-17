@@ -22,6 +22,7 @@
             }
 
             .recipe {
+                background-color: #E5E4E2;
                 border-radius: 25px;
                 padding-top: 10px;
                 padding-right: 10px;
@@ -39,26 +40,6 @@
                 padding-right: 10px;
                 padding-left: 10px;
                 margin-bottom: 10px;
-            }
-
-            .monday {
-                background-color: #E5E4E2;
-            }
-
-            .tuesday {
-                background-color: #E5E4E2;
-            }
-
-            .wednesday {
-                background-color: #E5E4E2;
-            }
-
-            .thursday {
-                background-color: #E5E4E2;
-            }
-
-            .friday {
-                background-color: #E5E4E2;
             }
 
             .dot {
@@ -100,8 +81,12 @@
             }
         </style>
     <style>
-        .paragraphClass {
+        .strike-off {
             text-decoration: line-through;
+        }
+
+        .buy {
+            font-weight: bold;
         }
  
         #Button {
@@ -110,10 +95,24 @@
     </style>
     
     <script>
+
+        function toogle(id) {
+            if(document.getElementById(id).classList.contains("buy")) {
+                document.getElementById(id).classList.remove("buy");
+                document.getElementById(id).classList.add("strike-off");
+                return;
+            }
+            if(document.getElementById(id).classList.contains("strike-off")) {
+                document.getElementById(id).classList.remove("strike-off")
+                return;
+            }
+            document.getElementById(id).classList.add("buy");
+        }
+
         function myFunc(i) {
-            document.getElementById("aa-" + i).classList.toggle("paragraphClass");
-            document.getElementById("bb-" + i).classList.toggle("paragraphClass");
-            document.getElementById("cc-" + i).classList.toggle("paragraphClass");
+            toogle("aa-" + i);
+            toogle("bb-" + i);
+            toogle("cc-" + i);
         }
     </script>
 </head>
@@ -121,21 +120,21 @@
 <body>
     <h1>Handlingslista för vecka 7</h1>
     <h2>Recept</h2>
-    <div class="recipe Monday">
+    <div class="recipe">
     <p>
     <a href="https:&#x2F;&#x2F;www.ica.se&#x2F;recept&#x2F;pesto-med-basilika-717599&#x2F;"><b>Pasta pesto med mozzarella ost och kallskuret</b></a>
     </p>
     <p>Gör egen pesto enligt recept. 40g pinjenötter. 2 krukor basilika.
     </p>
     </div>
-    <div class="recipe Monday">
+    <div class="recipe">
     <p>
     <a href="https:&#x2F;&#x2F;undertian.com&#x2F;recept&#x2F;slat-linssoppa-med-kokosmjolk&#x2F;"><b>Slät linssoppa med kokosmjölk</b></a>
     </p>
     <p>1 kg morötter.
     </p>
     </div>
-    <div class="recipe Monday">
+    <div class="recipe">
     <p>
     <a href="https:&#x2F;&#x2F;www.ica.se&#x2F;recept&#x2F;pannkakor-grundsmet-2083&#x2F;?referrer&#x3D;https:&#x2F;&#x2F;www.google.com&#x2F;#pfset&#x3D;1"><b>Pannkakor med grädde och sylt</b></a>
     </p>
@@ -143,14 +142,14 @@
         Ingen kommentar.
     </p>
     </div>
-    <div class="recipe Monday">
+    <div class="recipe">
     <p>
     <b>Ugnsbakad lax med ris</b>
     </p>
     <p>Kokar enligt förpackningen. Sätt ugnen på 225°C. Tillaga mitt i ugnen ca 20 minuter. Laxen är färdig vid en innertemperatur på 52-56°C. Använder pulver hollandaisesås till vardags.
     </p>
     </div>
-    <div class="recipe Monday">
+    <div class="recipe">
     <p>
     <b>Ugnsbakad falukorv med potatis</b>
     </p>
