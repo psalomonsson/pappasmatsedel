@@ -72,147 +72,333 @@
     <main>
         <!-- Weekly Menu Section -->
         <section class="py-6">
-            <div class="container mx-auto px-4 py-12">
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                    <!-- Monday -->
-                    <div class="animate-float" style="animation-delay: 0s;">
-                        <div
-                            class="rounded-lg border bg-white text-card-foreground shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-                            <div class="h-48 overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                                    alt="Creamy Pasta Primavera"
-                                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+            <div class="container mx-auto px-4 py-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-[#2B303A] mb-4">This Week (April 1-5)</h2>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                    <!-- Shopping List Button -->
+                    <button
+                        class="inline-flex items-center justify-center px-4 py-2 gap-2 whitespace-nowrap rounded-md text-sm font-medium bg-[#2B303A] text-white hover:bg-[#2B303A]/90 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="w-4 h-4">
+                            <path d="M8 3H6a2 2 0 0 0-2 2v16"></path>
+                            <path d="M18 15V5a2 2 0 0 0-2-2h-2"></path>
+                            <path d="M10 16h8"></path>
+                            <path d="M10 12h6"></path>
+                            <path d="M10 8h4"></path>
+                            <path d="m21 15-3 3-3-3"></path>
+                            <path d="M6 21h12a2 2 0 0 0 2-2v-2"></path>
+                        </svg>
+                        View Shopping List
+                    </button>
+
+                    <!-- PDF Download Button -->
+                    <button
+                        class="inline-flex items-center justify-center px-4 py-2 gap-2 whitespace-nowrap rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="w-4 h-4">
+                            <path d="M12 2v8"></path>
+                            <path d="m16 6-4 4-4-4"></path>
+                            <rect width="20" height="8" x="2" y="14" rx="2"></rect>
+                            <path d="M6 18h.01"></path>
+                            <path d="M10 18h.01"></path>
+                        </svg>
+                        Download PDF Menu
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-12">
+                    <!-- Monday Card -->
+                    <div
+                        class="rounded-lg border bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                                alt="Creamy Pasta Primavera"
+                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                        </div>
+                        <div class="flex flex-col space-y-1.5 p-6 bg-[#FFF8E8]">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[#FF6B35] font-semibold">Monday</span>
                             </div>
-                            <div class="flex flex-col space-y-1.5 p-6 bg-[#FFF8E8]">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[#FF6B35] font-semibold">Monday</span>
-                                </div>
-                                <h3 class="text-xl font-semibold leading-none tracking-tight text-[#2B303A]">Creamy
-                                    Pasta Primavera</h3>
-                                <p class="text-sm text-gray-500 line-clamp-2">Fresh spring vegetables with al dente
-                                    pasta in a light cream sauce. Vegetarian friendly and perfect to start the week.</p>
-                            </div>
-                            <div class="p-6 pt-0 bg-[#FFF8E8] flex-grow">
-                                <div class="pt-2">
-                                    <div
-                                        class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#7DCE82] text-white">
-                                        On the Menu
-                                    </div>
+                            <h3 class="text-xl font-semibold leading-none tracking-tight text-[#2B303A]">Creamy Pasta
+                                Primavera</h3>
+                            <p class="text-sm text-gray-500 line-clamp-2">Fresh spring vegetables with al dente pasta in
+                                a light cream sauce. Vegetarian friendly and perfect to start the week.</p>
+                        </div>
+                        <div class="p-6 pt-0 bg-[#FFF8E8] flex-grow">
+                            <div class="pt-2">
+                                <div
+                                    class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#7DCE82] text-white">
+                                    On the Menu
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tuesday -->
-                    <div class="animate-float" style="animation-delay: 0.1s;">
-                        <div
-                            class="rounded-lg border bg-white text-card-foreground shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-                            <div class="h-48 overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1504544750208-dc0358e63f7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                                    alt="Taco Tuesday Special"
-                                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                    <!-- Tuesday Card -->
+                    <div
+                        class="rounded-lg border bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1504544750208-dc0358e63f7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                                alt="Taco Tuesday Special"
+                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                        </div>
+                        <div class="flex flex-col space-y-1.5 p-6 bg-[#FFF8E8]">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[#FF6B35] font-semibold">Tuesday</span>
                             </div>
-                            <div class="flex flex-col space-y-1.5 p-6 bg-[#FFF8E8]">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[#FF6B35] font-semibold">Tuesday</span>
-                                </div>
-                                <h3 class="text-xl font-semibold leading-none tracking-tight text-[#2B303A]">Taco
-                                    Tuesday Special</h3>
-                                <p class="text-sm text-gray-500 line-clamp-2">Soft corn tortillas filled with seasoned
-                                    ground beef, fresh pico de gallo, and topped with cilantro and lime.</p>
-                            </div>
-                            <div class="p-6 pt-0 bg-[#FFF8E8] flex-grow">
-                                <div class="pt-2">
-                                    <div
-                                        class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#7DCE82] text-white">
-                                        On the Menu
-                                    </div>
+                            <h3 class="text-xl font-semibold leading-none tracking-tight text-[#2B303A]">Taco Tuesday
+                                Special</h3>
+                            <p class="text-sm text-gray-500 line-clamp-2">Soft corn tortillas filled with seasoned
+                                ground beef, fresh pico de gallo, and topped with cilantro and lime.</p>
+                        </div>
+                        <div class="p-6 pt-0 bg-[#FFF8E8] flex-grow">
+                            <div class="pt-2">
+                                <div
+                                    class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#7DCE82] text-white">
+                                    On the Menu
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Wednesday -->
-                    <div class="animate-float" style="animation-delay: 0.2s;">
-                        <div
-                            class="rounded-lg border bg-white text-card-foreground shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-                            <div class="h-48 overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                                    alt="Hearty Vegetable Stir Fry"
-                                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                    <!-- Wednesday Card -->
+                    <div
+                        class="rounded-lg border bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                                alt="Hearty Vegetable Stir Fry"
+                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                        </div>
+                        <div class="flex flex-col space-y-1.5 p-6 bg-[#FFF8E8]">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[#FF6B35] font-semibold">Wednesday</span>
                             </div>
-                            <div class="flex flex-col space-y-1.5 p-6 bg-[#FFF8E8]">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[#FF6B35] font-semibold">Wednesday</span>
-                                </div>
-                                <h3 class="text-xl font-semibold leading-none tracking-tight text-[#2B303A]">Hearty
-                                    Vegetable Stir Fry</h3>
-                                <p class="text-sm text-gray-500 line-clamp-2">Crunchy mixed vegetables with tofu in a
-                                    savory sauce, served over steamed jasmine rice. A midweek energy boost!</p>
-                            </div>
-                            <div class="p-6 pt-0 bg-[#FFF8E8] flex-grow">
-                                <div class="pt-2">
-                                    <div
-                                        class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#7DCE82] text-white">
-                                        On the Menu
-                                    </div>
+                            <h3 class="text-xl font-semibold leading-none tracking-tight text-[#2B303A]">Hearty
+                                Vegetable Stir Fry</h3>
+                            <p class="text-sm text-gray-500 line-clamp-2">Crunchy mixed vegetables with tofu in a savory
+                                sauce, served over steamed jasmine rice. A midweek energy boost!</p>
+                        </div>
+                        <div class="p-6 pt-0 bg-[#FFF8E8] flex-grow">
+                            <div class="pt-2">
+                                <div
+                                    class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#7DCE82] text-white">
+                                    On the Menu
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Thursday -->
-                    <div class="animate-float" style="animation-delay: 0.3s;">
-                        <div
-                            class="rounded-lg border bg-white text-card-foreground shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-                            <div class="h-48 overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                                    alt="Classic Chicken Parmesan"
-                                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                    <!-- Thursday Card -->
+                    <div
+                        class="rounded-lg border bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                                alt="Classic Chicken Parmesan"
+                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                        </div>
+                        <div class="flex flex-col space-y-1.5 p-6 bg-[#FFF8E8]">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[#FF6B35] font-semibold">Thursday</span>
                             </div>
-                            <div class="flex flex-col space-y-1.5 p-6 bg-[#FFF8E8]">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[#FF6B35] font-semibold">Thursday</span>
-                                </div>
-                                <h3 class="text-xl font-semibold leading-none tracking-tight text-[#2B303A]">Classic
-                                    Chicken Parmesan</h3>
-                                <p class="text-sm text-gray-500 line-clamp-2">Crispy breaded chicken cutlets topped with
-                                    marinara sauce and melted mozzarella, served with spaghetti.</p>
-                            </div>
-                            <div class="p-6 pt-0 bg-[#FFF8E8] flex-grow">
-                                <div class="pt-2">
-                                    <div
-                                        class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#7DCE82] text-white">
-                                        On the Menu
-                                    </div>
+                            <h3 class="text-xl font-semibold leading-none tracking-tight text-[#2B303A]">Classic Chicken
+                                Parmesan</h3>
+                            <p class="text-sm text-gray-500 line-clamp-2">Crispy breaded chicken cutlets topped with
+                                marinara sauce and melted mozzarella, served with spaghetti.</p>
+                        </div>
+                        <div class="p-6 pt-0 bg-[#FFF8E8] flex-grow">
+                            <div class="pt-2">
+                                <div
+                                    class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#7DCE82] text-white">
+                                    On the Menu
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Friday -->
-                    <div class="animate-float" style="animation-delay: 0.4s;">
-                        <div
-                            class="rounded-lg border bg-white text-card-foreground shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-                            <div class="h-48 overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-                                    alt="Grilled Salmon & Quinoa"
-                                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                    <!-- Friday Card -->
+                    <div
+                        class="rounded-lg border bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+                        <div class="h-48 overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                                alt="Grilled Salmon & Quinoa"
+                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                        </div>
+                        <div class="flex flex-col space-y-1.5 p-6 bg-[#FFF8E8]">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[#FF6B35] font-semibold">Friday</span>
                             </div>
-                            <div class="flex flex-col space-y-1.5 p-6 bg-[#FFF8E8]">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[#FF6B35] font-semibold">Friday</span>
+                            <h3 class="text-xl font-semibold leading-none tracking-tight text-[#2B303A]">Grilled Salmon
+                                & Quinoa</h3>
+                            <p class="text-sm text-gray-500 line-clamp-2">Omega-rich salmon filet with lemon herb
+                                butter, served with fluffy quinoa and roasted seasonal vegetables.</p>
+                        </div>
+                        <div class="p-6 pt-0 bg-[#FFF8E8] flex-grow">
+                            <div class="pt-2">
+                                <div
+                                    class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#7DCE82] text-white">
+                                    On the Menu
                                 </div>
-                                <h3 class="text-xl font-semibold leading-none tracking-tight text-[#2B303A]">Grilled
-                                    Salmon & Quinoa</h3>
-                                <p class="text-sm text-gray-500 line-clamp-2">Omega-rich salmon filet with lemon herb
-                                    butter, served with fluffy quinoa and roasted seasonal vegetables.</p>
                             </div>
-                            <div class="p-6 pt-0 bg-[#FFF8E8] flex-grow">
-                                <div class="pt-2">
-                                    <div
-                                        class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#7DCE82] text-white">
-                                        On the Menu
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Collapsible Next Week Section -->
+                <div class="border-t border-gray-200 pt-6">
+                    <div class="flex justify-center mb-6">
+                        <button id="next-week-toggle"
+                            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors h-10 px-4 py-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="h-4 w-4">
+                                <path d="m6 9 6 6 6-6"></path>
+                            </svg>
+                            Show Next Week's Menu
+                        </button>
+                    </div>
+
+                    <div id="next-week-content" class="hidden">
+                        <div class="text-center mb-8">
+                            <h2 class="text-2xl font-bold text-[#2B303A] mb-4">Next Week (April 8-12)</h2>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                            <!-- Next week Monday Card -->
+                            <div
+                                class="rounded-lg border bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+                                <div class="h-48 overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1547592180-85f173990554?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                                        alt="Grilled Steak Salad"
+                                        class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                                </div>
+                                <div class="flex flex-col space-y-1.5 p-6 bg-[#FFF8E8]">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[#FF6B35] font-semibold">Monday</span>
+                                    </div>
+                                    <h3 class="text-xl font-semibold leading-none tracking-tight text-[#2B303A]">Grilled
+                                        Steak Salad</h3>
+                                    <p class="text-sm text-gray-500 line-clamp-2">Tender sliced steak over mixed greens
+                                        with blue cheese crumbles, cherry tomatoes, and balsamic reduction.</p>
+                                </div>
+                                <div class="p-6 pt-0 bg-[#FFF8E8] flex-grow">
+                                    <div class="pt-2">
+                                        <div
+                                            class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#7DCE82] text-white">
+                                            On the Menu
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Next week Tuesday Card -->
+                            <div
+                                class="rounded-lg border bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+                                <div class="h-48 overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1626082936435-4607dd8eb3a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                                        alt="Mediterranean Chicken Bowl"
+                                        class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                                </div>
+                                <div class="flex flex-col space-y-1.5 p-6 bg-[#FFF8E8]">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[#FF6B35] font-semibold">Tuesday</span>
+                                    </div>
+                                    <h3 class="text-xl font-semibold leading-none tracking-tight text-[#2B303A]">
+                                        Mediterranean Chicken Bowl</h3>
+                                    <p class="text-sm text-gray-500 line-clamp-2">Grilled chicken with cucumber,
+                                        tomatoes, olives, and feta over couscous with tzatziki sauce.</p>
+                                </div>
+                                <div class="p-6 pt-0 bg-[#FFF8E8] flex-grow">
+                                    <div class="pt-2">
+                                        <div
+                                            class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#7DCE82] text-white">
+                                            On the Menu
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Next week Wednesday Card -->
+                            <div
+                                class="rounded-lg border bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+                                <div class="h-48 overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1607330289024-1535c6b4e1c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                                        alt="Vegetable Curry"
+                                        class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                                </div>
+                                <div class="flex flex-col space-y-1.5 p-6 bg-[#FFF8E8]">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[#FF6B35] font-semibold">Wednesday</span>
+                                    </div>
+                                    <h3 class="text-xl font-semibold leading-none tracking-tight text-[#2B303A]">
+                                        Vegetable Curry</h3>
+                                    <p class="text-sm text-gray-500 line-clamp-2">Aromatic vegetable curry with sweet
+                                        potatoes, cauliflower, and peas in a creamy coconut sauce.</p>
+                                </div>
+                                <div class="p-6 pt-0 bg-[#FFF8E8] flex-grow">
+                                    <div class="pt-2">
+                                        <div
+                                            class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#7DCE82] text-white">
+                                            On the Menu
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Next week Thursday Card -->
+                            <div
+                                class="rounded-lg border bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+                                <div class="h-48 overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1546069901-d5bfd2cbfb1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                                        alt="Quinoa Power Bowl"
+                                        class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                                </div>
+                                <div class="flex flex-col space-y-1.5 p-6 bg-[#FFF8E8]">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[#FF6B35] font-semibold">Thursday</span>
+                                    </div>
+                                    <h3 class="text-xl font-semibold leading-none tracking-tight text-[#2B303A]">Quinoa
+                                        Power Bowl</h3>
+                                    <p class="text-sm text-gray-500 line-clamp-2">Nutritious quinoa topped with roasted
+                                        vegetables, avocado, seeds, and a tangy lemon tahini dressing.</p>
+                                </div>
+                                <div class="p-6 pt-0 bg-[#FFF8E8] flex-grow">
+                                    <div class="pt-2">
+                                        <div
+                                            class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#7DCE82] text-white">
+                                            On the Menu
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Next week Friday Card -->
+                            <div
+                                class="rounded-lg border bg-white shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+                                <div class="h-48 overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                                        alt="Pesto Shrimp Pasta"
+                                        class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                                </div>
+                                <div class="flex flex-col space-y-1.5 p-6 bg-[#FFF8E8]">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[#FF6B35] font-semibold">Friday</span>
+                                    </div>
+                                    <h3 class="text-xl font-semibold leading-none tracking-tight text-[#2B303A]">Pesto
+                                        Shrimp Pasta</h3>
+                                    <p class="text-sm text-gray-500 line-clamp-2">Sautéed shrimp with linguine pasta in
+                                        a fresh basil pesto sauce, topped with shaved parmesan.</p>
+                                </div>
+                                <div class="p-6 pt-0 bg-[#FFF8E8] flex-grow">
+                                    <div class="pt-2">
+                                        <div
+                                            class="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[#7DCE82] text-white">
+                                            On the Menu
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -246,6 +432,32 @@
             <p>© 2025 Weekly Grub Guide. All meals prepared with love.</p>
         </div>
     </footer>
+
+    <!-- Simple JavaScript for the collapsible section -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleButton = document.getElementById('next-week-toggle');
+            const nextWeekContent = document.getElementById('next-week-content');
+
+            toggleButton.addEventListener('click', function () {
+                const isHidden = nextWeekContent.classList.contains('hidden');
+
+                if (isHidden) {
+                    nextWeekContent.classList.remove('hidden');
+                    toggleButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="m18 15-6-6-6 6"></path></svg>
+            Hide Next Week's Menu
+          `;
+                } else {
+                    nextWeekContent.classList.add('hidden');
+                    toggleButton.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="m6 9 6 6 6-6"></path></svg>
+            Show Next Week's Menu
+          `;
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
