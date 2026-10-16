@@ -1,0 +1,952 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Kemiplugget</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kemiplugget">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: en smal labbjournal. Områdena är rutor i ett eget "periodiskt system", begreppen är gula lappar som i boken. */
+:root{
+  --bg:#edf1f4; --surface:#ffffff; --surface-2:#f6f8fa; --ink:#13202c; --muted:#56636f; --line:#d3dbe2;
+  --accent:#2346d6; --accent-ink:#ffffff; --accent-soft:#dfe5fb;
+  --tag:#f5d63d; --tag-ink:#2a2400;
+  --ok:#17845a; --ok-soft:#dcf2e7; --bad:#c8432c; --bad-soft:#fbe3dd;
+  --t1:#dfe6fb; --t2:#d9f0e2; --t3:#fbefb8;
+  --shadow:0 1px 2px rgba(19,32,44,.06),0 6px 20px rgba(19,32,44,.07);
+  --f-display:"Familjen Grotesk","Avenir Next","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Atkinson Hyperlegible",-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --r:16px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e151c; --surface:#17212b; --surface-2:#1c2833; --ink:#e5ecf2; --muted:#94a3b1; --line:#2b3844;
+  --accent:#7f97ff; --accent-ink:#0a1020; --accent-soft:#1f2a4c;
+  --tag:#e9cb33; --tag-ink:#231e00;
+  --ok:#47c18b; --ok-soft:#163327; --bad:#ff7b64; --bad-soft:#3a1d18;
+  --t1:#1e2947; --t2:#173326; --t3:#3a3314;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0e151c; --surface:#17212b; --surface-2:#1c2833; --ink:#e5ecf2; --muted:#94a3b1; --line:#2b3844;
+  --accent:#7f97ff; --accent-ink:#0a1020; --accent-soft:#1f2a4c;
+  --tag:#e9cb33; --tag-ink:#231e00;
+  --ok:#47c18b; --ok-soft:#163327; --bad:#ff7b64; --bad-soft:#3a1d18;
+  --t1:#1e2947; --t2:#173326; --t3:#3a3314;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);
+  color-scheme:dark;
+}
+/* Påskägg: guldläge (alkemisternas dröm) */
+:root[data-gold="1"]{ --accent:#b07d0c; --accent-ink:#fffaf0; --accent-soft:#f6ead0; --t1:#f6ead0; --t2:#f1e4c4; }
+@media (prefers-color-scheme: dark){:root[data-gold="1"]:not([data-theme="light"]){ --accent:#e3b341; --accent-ink:#1f1600; --accent-soft:#3a2e12; --t1:#33290f; --t2:#2e2610; }}
+:root[data-theme="dark"][data-gold="1"]{ --accent:#e3b341; --accent-ink:#1f1600; --accent-soft:#3a2e12; --t1:#33290f; --t2:#2e2610; }
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+sub{font-size:.7em}
+.mono{font-family:var(--f-mono)}
+
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* Header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;padding-block:10px}
+.logo{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;cursor:pointer;min-height:44px}
+.logo svg{width:34px;height:34px;flex:none}
+.logo b{font-family:var(--f-display);font-size:1.2rem;letter-spacing:-.01em}
+.logo .orb{transform-origin:50% 50%;animation:spin 9s linear infinite}
+.logo .orb2{animation-duration:13s;animation-direction:reverse}
+.logo.split .orb{animation-duration:.35s}
+.logo.split .nuc{animation:wobble .4s ease-in-out 5}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes wobble{50%{transform:scale(1.4)}}
+.top .total{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.meter{width:72px;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .4s}
+
+main{padding-block:20px 40px}
+.eyebrow{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lead{color:var(--muted);margin:6px 0 0;max-width:60ch}
+.stack{display:flex;flex-direction:column;gap:16px}
+
+/* Hemsidan */
+.hero h1{font-size:clamp(1.8rem,6vw,2.5rem);letter-spacing:-.02em}
+.continue{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--accent);color:var(--accent-ink);border:0;border-radius:var(--r);padding:14px 16px;cursor:pointer;box-shadow:var(--shadow);min-height:64px}
+.continue small{display:block;opacity:.85;font-size:.82rem}
+.continue b{font-family:var(--f-display);font-size:1.1rem}
+.continue .arrow{margin-left:auto;font-size:1.4rem}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:8px}
+.sec-h h2{font-size:1.2rem}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.tile{position:relative;display:flex;flex-direction:column;gap:2px;text-align:left;border:1px solid var(--line);border-radius:12px;padding:10px 12px 14px;cursor:pointer;min-height:150px;overflow:hidden;background:var(--t1);transition:transform .15s}
+.tile:active{transform:scale(.97)}
+.tile.k2{background:var(--t2)}
+.tile.k3{background:var(--t3)}
+.tile .row{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.tile .sym{font-family:var(--f-display);font-weight:700;font-size:2.6rem;line-height:1;margin-top:6px;letter-spacing:-.02em}
+.tile .nm{font-weight:700;font-size:.92rem;line-height:1.25;margin-top:auto}
+.tile .pg{font-size:.75rem;color:var(--muted)}
+.tile .bar{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(127,127,127,.18)}
+.tile .bar i{display:block;height:100%;background:var(--accent)}
+.tile.done .bar i{background:var(--ok)}
+.tile .badge{position:absolute;top:30px;right:10px;background:var(--ok);color:var(--surface);font-size:.7rem;font-weight:700;border-radius:99px;padding:2px 8px}
+
+.collection{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px}
+.slot{aspect-ratio:1/1;max-width:100%;border-radius:8px;border:1.5px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--f-mono);color:var(--muted);font-size:.8rem;background:transparent;padding:0;cursor:default}
+.slot.on{border:1.5px solid var(--ink);background:var(--surface);color:var(--ink);cursor:pointer}
+.slot.on b{font-family:var(--f-display);font-size:clamp(.9rem,3.6vw,1.3rem);line-height:1}
+.slot.on span{font-size:.62rem;color:var(--accent);font-weight:700}
+.slot.bonus{border-color:var(--tag)}
+.hint{font-size:.85rem;color:var(--muted)}
+
+.lab{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.lab form{display:flex;gap:8px;margin-top:10px}
+.lab input{flex:1;min-width:0;font:inherit;font-size:16px;font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.06em;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:46px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:700;font-size:.95rem;touch-action:manipulation}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.btn.bad{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.btn.ghost{background:transparent}
+.btn.small{min-height:38px;padding:0 12px;font-size:.85rem;font-weight:600}
+.btn:disabled{opacity:.45}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:8px 0;font-size:.85rem}
+
+/* Områdessida */
+.back{background:none;border:0;color:var(--accent);font-weight:700;cursor:pointer;padding:8px 0;min-height:44px}
+.area-head{display:flex;gap:14px;align-items:flex-start}
+.mini{flex:none;width:68px;height:68px;border-radius:10px;border:1px solid var(--line);background:var(--t1);display:flex;flex-direction:column;justify-content:space-between;padding:6px 8px}
+.mini.k2{background:var(--t2)} .mini.k3{background:var(--t3)}
+.mini small{font-family:var(--f-mono);font-size:.68rem;color:var(--muted)}
+.mini b{font-family:var(--f-display);font-size:1.7rem;line-height:1}
+.area-head h1{font-size:clamp(1.4rem,5vw,1.9rem);letter-spacing:-.01em}
+.area-head > div{min-width:0}
+.progline{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pbox{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.pbox .lbl{font-size:.8rem;color:var(--muted)}
+.pbox .num{font-family:var(--f-mono);font-weight:700;font-variant-numeric:tabular-nums}
+.pbox .meter{width:100%;margin-top:6px}
+.pbox.full .meter i{background:var(--ok)}
+
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px}
+.tabs button{border:0;background:transparent;border-radius:10px;min-height:44px;font-weight:700;cursor:pointer;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+
+/* Begreppskort */
+.deckmeta{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.88rem;color:var(--muted);font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.flash{display:block;width:100%;height:clamp(270px,48vh,380px);perspective:1200px;-webkit-perspective:1200px;cursor:pointer;outline-offset:4px;border-radius:20px}
+.flash .inner{position:relative;width:100%;height:100%;transition:transform .5s cubic-bezier(.3,.7,.3,1);transform-style:preserve-3d;-webkit-transform-style:preserve-3d}
+.flash.flipped .inner{transform:rotateY(180deg);-webkit-transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:20px;border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow);display:flex;flex-direction:column;padding:22px;overflow:hidden}
+.face.backside{transform:rotateY(180deg);-webkit-transform:rotateY(180deg);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.face .content{margin:auto 0;width:100%;text-align:center}
+.face .note{font-size:.78rem;color:var(--muted);text-align:center;margin-top:12px}
+.face .kind{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sticky{display:inline-block;background:var(--tag);color:var(--tag-ink);font-family:var(--f-display);font-weight:600;font-size:clamp(1.5rem,6.5vw,2.1rem);line-height:1.15;padding:10px 18px;transform:rotate(-2deg);box-shadow:0 2px 0 rgba(0,0,0,.12);max-width:100%;overflow-wrap:anywhere}
+.deftext{font-size:1.08rem;text-align:left;line-height:1.55}
+.deftext b.term{display:block;font-family:var(--f-display);font-size:1.3rem;margin-bottom:6px}
+.revtext{font-size:1.1rem;line-height:1.5;text-align:left}
+.hz{width:min(150px,40vw);height:auto;display:block;margin:0 auto}
+.judge{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.judge .btn{min-height:56px;font-size:1.05rem}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.empty{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px;text-align:center}
+.empty h3{font-size:1.3rem;margin-bottom:6px}
+
+/* Frågor */
+.qfilter{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:.9rem;color:var(--muted)}
+.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;min-height:44px}
+.switch input{width:20px;height:20px;accent-color:var(--accent)}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px}
+.q[data-st="ok"]{border-color:var(--ok)}
+.q-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.q-kind{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.chip{font-size:.75rem;font-weight:700;border-radius:99px;padding:3px 10px}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.again{background:var(--bad-soft);color:var(--bad)}
+.q-text{margin:0;font-weight:700;font-size:1.05rem}
+.answer{background:var(--surface-2);border-radius:12px;padding:12px 14px;border:1px solid var(--line)}
+.answer p{margin:0 0 6px} .answer p:last-child{margin:0}
+.answer ul,.answer ol{margin:4px 0;padding-left:1.2em}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opts.two{flex-direction:row}
+.opts.two .opt{flex:1;justify-content:center}
+.opt{display:flex;align-items:center;gap:10px;min-height:48px;padding:10px 14px;text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;font-weight:600}
+.opt.right{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.opt:disabled{cursor:default}
+.feedback{font-weight:700}
+.feedback.ok{color:var(--ok)} .feedback.bad{color:var(--bad)}
+.row-btns{display:flex;gap:8px;flex-wrap:wrap}
+.row-btns .btn{flex:1}
+.q .hzq{width:110px;height:auto}
+
+/* Fotnot & labb */
+.foot{color:var(--muted);font-size:.8rem;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+
+/* Toast, modal, konfetti */
+#toasts{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));pointer-events:none}
+.toast{background:var(--ink);color:var(--bg);border-radius:14px;padding:12px 16px;max-width:520px;font-size:.95rem;box-shadow:var(--shadow);animation:pop .3s ease-out}
+.toast b{font-family:var(--f-display)}
+@keyframes pop{from{transform:translateY(12px);opacity:0}}
+#modal{position:fixed;inset:0;z-index:70;background:rgba(10,16,24,.55);display:flex;align-items:center;justify-content:center;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.dialog{background:var(--surface);color:var(--ink);border-radius:20px;padding:22px;max-width:440px;width:100%;max-height:100%;overflow-y:auto;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px;text-align:center}
+.dialog h2{font-size:1.4rem}
+.bigtile{width:120px;height:120px;margin:0 auto;border-radius:14px;border:2px solid var(--ink);background:var(--tag);color:var(--tag-ink);display:flex;flex-direction:column;justify-content:space-between;padding:8px 10px;text-align:left}
+.bigtile small{font-family:var(--f-mono);font-size:.75rem}
+.bigtile b{font-family:var(--f-display);font-size:3rem;line-height:1}
+.letter{display:inline-block;font-family:var(--f-mono);font-weight:700;font-size:1.4rem;background:var(--accent);color:var(--accent-ink);border-radius:8px;padding:2px 12px}
+.diploma{border:3px double var(--accent);border-radius:14px;padding:18px;background:var(--surface-2)}
+.diploma .nm{font-family:var(--f-display);font-size:1.6rem;font-weight:700;margin:6px 0;overflow-wrap:anywhere}
+.dialog input[type=text]{font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink);width:100%}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:65}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important}
+}
+@media (max-width:420px){
+  .collection{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <button class="logo" id="logo" aria-label="Kemiplugget, till startsidan">
+      <svg viewBox="0 0 40 40" aria-hidden="true">
+        <g class="orb"><ellipse cx="20" cy="20" rx="17" ry="7" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="37" cy="20" r="2.4" fill="var(--accent)"/></g>
+        <g class="orb orb2"><ellipse cx="20" cy="20" rx="7" ry="17" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="20" cy="3" r="2.4" fill="var(--accent)"/></g>
+        <circle class="nuc" cx="20" cy="20" r="4.5" fill="var(--tag)" stroke="currentColor" stroke-width="1.2"/>
+      </svg>
+      <b>Kemiplugget</b>
+    </button>
+    <div class="total" aria-label="Total framgång"><span id="totalPct">0 %</span><div class="meter"><i id="totalBar" style="width:0"></i></div></div>
+  </div>
+</header>
+
+<main class="wrap" id="app"></main>
+
+<div id="toasts" aria-live="polite"></div>
+<div id="modal" hidden></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- Farosymboler (förenklade) ---------- */
+function haz(kind){
+  var p={
+    skadlig:'<rect x="46" y="27" width="8" height="32" rx="4" fill="#111"/><circle cx="50" cy="69" r="5" fill="#111"/>',
+    brandfarlig:'<path d="M50 24c8 12 15 18 11 31 6-4 6-10 4-15 9 9 8 25-3 31H38c-11-6-10-21-1-28 0 6 2 10 6 12-4-12 2-21 7-31z" fill="#111"/><rect x="33" y="74" width="34" height="4" fill="#111"/>',
+    giftig:'<line x1="31" y1="58" x2="69" y2="76" stroke="#111" stroke-width="6" stroke-linecap="round"/><line x1="69" y1="58" x2="31" y2="76" stroke="#111" stroke-width="6" stroke-linecap="round"/><circle cx="50" cy="43" r="14" fill="#111"/><rect x="43" y="52" width="14" height="9" rx="2" fill="#111"/><circle cx="44.5" cy="42" r="4" fill="#fff"/><circle cx="55.5" cy="42" r="4" fill="#fff"/>',
+    halsofarlig:'<circle cx="50" cy="31" r="8" fill="#111"/><path d="M31 74c0-19 8-30 19-30s19 11 19 30z" fill="#111"/><path d="M50 50l2.6 6.4 6.9.4-5.3 4.4 1.8 6.7L50 64.2l-6 3.7 1.8-6.7-5.3-4.4 6.9-.4z" fill="#fff"/>',
+    miljofarlig:'<line x1="27" y1="70" x2="73" y2="70" stroke="#111" stroke-width="3"/><path d="M38 70V40M38 50l-8-8M38 46l7-9M38 58l6-5M30 42l-2-6M45 37l2-6" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="59" cy="64" rx="10" ry="4.5" fill="#111"/><path d="M68 64l7-5v10z" fill="#111"/><circle cx="54" cy="63" r="1.3" fill="#fff"/>',
+    fratande:'<rect x="31" y="22" width="8" height="20" rx="2" transform="rotate(35 35 32)" fill="#111"/><rect x="58" y="22" width="8" height="20" rx="2" transform="rotate(-35 62 32)" fill="#111"/><circle cx="36" cy="50" r="2.4" fill="#111"/><circle cx="36" cy="57" r="2" fill="#111"/><circle cx="63" cy="50" r="2.4" fill="#111"/><circle cx="63" cy="57" r="2" fill="#111"/><path d="M26 66h8l2 3 2-3h6v8H26z" fill="#111"/><path d="M54 74v-7l8-3 4 2 6-1v9z" fill="#111"/>',
+    explosiv:'<circle cx="46" cy="58" r="9" fill="#111"/><g stroke="#111" stroke-width="3" stroke-linecap="round"><line x1="56" y1="48" x2="70" y2="34"/><line x1="58" y1="56" x2="76" y2="52"/><line x1="56" y1="64" x2="72" y2="70"/><line x1="46" y1="45" x2="46" y2="28"/><line x1="36" y1="50" x2="24" y2="40"/><line x1="35" y1="62" x2="22" y2="66"/></g><rect x="66" y="40" width="5" height="5" fill="#111" transform="rotate(20 68 42)"/><rect x="28" y="30" width="4" height="4" fill="#111"/>',
+    oxiderande:'<circle cx="50" cy="61" r="11" fill="none" stroke="#111" stroke-width="5"/><path d="M50 22c6 9 11 14 8 23 4-3 4-7 3-11 6 7 5 15 0 20H40c-6-5-6-13 0-19 0 4 1 7 4 8-3-8 2-14 6-21z" fill="#111"/><rect x="33" y="76" width="34" height="4" fill="#111"/>'
+  }[kind]||'';
+  return '<svg class="hz" viewBox="0 0 100 100" role="img" aria-label="Farosymbol"><polygon points="50,4 96,50 50,96 4,50" fill="#fff" stroke="#d6141c" stroke-width="7" stroke-linejoin="round"/>'+p+'</svg>';
+}
+
+/* ---------- Innehåll ---------- */
+var AREAS=[
+{id:"forr",nr:1,sym:"Kf",kap:1,title:"Kemi förr och nu",pages:"s. 10–17",
+ intro:"Vad kemi är, hur människor har tänkt om ämnen genom historien och hur forskare arbetar i dag. Här ingår också granskningen av slagrutan.",
+ el:{s:"Au",n:"Guld",z:79,f:"Alkemisterna försökte göra guld av andra metaller men lyckades aldrig. Guld är ett grundämne och kan inte tillverkas med vanliga kemiska reaktioner."},letter:"B",
+ cards:[
+  {t:"Kemi",d:"Läran om olika ämnens egenskaper, uppbyggnad och deras reaktioner med varandra. Kemi är en naturvetenskap."},
+  {t:"Kemiska ämnen",d:"Finns överallt: vatten, luft, växter, mat och kläder är olika kombinationer och blandningar av kemiska ämnen. Även smaker och lukter orsakas av kemiska ämnen."},
+  {t:"Grön kemi",d:"När kemister försöker hitta tillverkningsprocesser som är energisnåla och inte ger utsläpp som skadar miljön."},
+  {t:"Khems",d:"Ett egyptiskt ord för något magiskt. Ämnena som användes vid balsamering kallades khems. Man tror att ordet <i>kemi</i> kommer därifrån.<br><small>Psst! Hemliga labbet gillar egyptiska ord.</small>"},
+  {t:"Balsamering",d:"För ca 3 000 år sedan i Egypten behandlades döda kroppar med olika ämnen och lindades i tygremsor av lin som doppats i vätskor från växter, för att kroppen inte skulle förstöras."},
+  {t:"De fyra elementen",d:"De grekiska filosoferna Empedokles och Aristoteles (för ca 2 000 år sedan) trodde att naturen var uppbyggd av <b>luft, jord, eld och vatten</b>. De tänkte och drog slutsatser men gjorde inga experiment. Idén levde kvar till slutet av 1700-talet."},
+  {t:"Alkemi",d:"Föregångaren till dagens moderna vetenskap. Alkemisterna försökte göra guld av andra metaller och ett livselixir. De lyckades inte, men upptäckte nya ämnen (t.ex. syror), nya grundämnen och utvecklade arbetsmetoder som kemister använder än i dag.<br><small>Psst! Guldets kemiska tecken öppnar något i hemliga labbet.</small>"},
+  {t:"Livselixir",d:"Ett ämne som alkemisterna försökte framställa. Det skulle bota alla sjukdomar och göra att man levde längre. I dag vet vi att det inte finns något sådant ämne."},
+  {t:"Observation",d:"Något forskaren har sett och vill kunna förklara. Ofta börjar en undersökning med en observation."},
+  {t:"Hypotes",d:"En idé till en förklaring. En hypotes måste kunna testas med en undersökning."},
+  {t:"Undersökning",d:"Ett planerat test (experiment) för att ta reda på om hypotesen stämmer. Man ska vara noggrann och föra anteckningar över hur man gör och vad man observerar."},
+  {t:"Resultat",d:"Det man får fram i undersökningen, t.ex. att ullens vikt minskade efter tvätten."},
+  {t:"Slutsats",d:"Det man kommer fram till när man har tolkat resultatet och funderat över andra möjliga förklaringar. Till exempel att hypotesen faktiskt var korrekt."},
+  {t:"Naturvetenskapligt arbetssätt",d:"Att testa idéer systematiskt: observation → hypotes → undersökning → resultat → slutsats. Undersökningarna dokumenteras och delas med andra forskare som kan granska dem. Arbetssättet började användas på 1600–1700-talen."},
+  {t:"Alexander Fleming",d:"Skotsk bakteriolog som 1928 upptäckte penicillinet, egentligen av en slump. Biokemister utvecklade det sedan till ett läkemedel. Han fick Nobelpriset."},
+  {t:"Slagruta",d:"En Y-formad grenklyka (helst av sälg) som slagrutegängare säger att de hittar vatten med. Idéerna om jordstrålning och currylinjer går inte att testa och bevisa, så det är <b>inte</b> naturvetenskap."}
+ ],
+ qs:[
+  {k:"kan",q:"Ge exempel på olika områden som kemister kan arbeta med.",a:"<ul><li>Utveckla nya, bättre och miljövänligare material.</li><li>Hitta energisnåla tillverkningsprocesser utan skadliga utsläpp (grön kemi).</li><li>Läkemedelsindustrin.</li><li>Kriminologi: analysera bevis från brottsplatser.</li></ul><p>Kemister jobbar ofta i team med biologer, läkare och tekniker.</p>"},
+  {k:"kan",q:"Vilken nytta har vi i dag av alkemisternas kunskaper?",a:"<p>De framställde nya ämnen, t.ex. syror, och upptäckte flera nya grundämnen. Framför allt utvecklade de arbetsmetoder i sina laboratorier som kemister fortfarande använder.</p>"},
+  {k:"kan",q:"Vad är ett naturvetenskapligt arbetssätt?",a:"<p>Att testa idéer systematiskt. Man gör en observation, ställer upp en hypotes, planerar och genomför en undersökning, tolkar resultatet och drar en slutsats. Allt dokumenteras så att andra kan granska det.</p>"},
+  {k:"kan",q:"Varför ska en forskare dokumentera sina undersökningar?",a:"<p>Så att andra forskare kan granska undersökningen, upprepa den och rätta den om det blivit fel. Då kan man också göra fler undersökningar som ger mer kunskap. Anteckningarna visar exakt hur man gjorde och vad man observerade.</p>"},
+  {k:"kan",q:"Varifrån tror man att ordet kemi kommer?",a:"<p>Från det egyptiska ordet <b>khems</b> som betydde något magiskt. Ämnena som användes vid balsamering kallades khems.</p>"},
+  {k:"kan",q:"Hur skilde sig de grekiska filosofernas sätt att förklara naturen från dagens forskares?",a:"<p>Grekerna tittade på naturen, funderade och drog slutsatser, men gjorde <b>inga experiment</b>. De tyckte att det räckte med tankar och idéer. Dagens forskare testar sina idéer med undersökningar.</p>"},
+  {k:"fund",q:"Beskriv skillnaden mellan hur alkemisterna arbetade och hur en kemist arbetar i dag.",a:"<p>Alkemisterna provade sig fram för att göra guld och livselixir utan att systematiskt testa hypoteser. En kemist i dag arbetar systematiskt: hypotes, noggrant planerade experiment, dokumentation och kritiskt tänkande kring resultatet. Kemister har också ett gemensamt kemispråk med namn, symboler och formler.</p>"},
+  {k:"fund",q:"Varför klarade inte alkemisterna att framställa guld från andra grundämnen?",a:"<p>Guld är ett grundämne. Det består av en enda sorts atomer, och man kan inte göra om ett grundämne till ett annat med vanliga kemiska metoder. Först på 1980-talet lyckades en kemist med moderna metoder omvandla lite vismut till guld, men det var alldeles för dyrt för att löna sig.</p>"},
+  {k:"fund",q:"Ullexperimentet: ull blir inte blöt när man stänker vatten på den. Vilken var hypotesen och hur testades den?",a:"<p><b>Hypotes:</b> ullen innehåller fett som stöter bort vatten.</p><p><b>Test 1:</b> ullen vägdes, sköljdes i ett lösningsmedel som tar bort fett, torkade och vägdes igen. Vikten hade minskat.</p><p><b>Test 2:</b> lösningsmedlet fick avdunsta. Kvar blev en klibbig beläggning som visade sig vara fett. Hypotesen var korrekt.</p>"},
+  {k:"fund",q:"Slagruta: är det naturvetenskap? Argumentera för eller emot.",a:"<p>Nej. Påståendena om jordstrålning och currykryss går inte att testa och bevisa. Man måste <i>tro</i> på det för att det ska fungera, och slagrutan kan ge utslag för många olika saker. Små rörelser i slagrutan kan förklaras av omedvetna muskelrörelser i händerna. Naturvetenskap kräver idéer som kan prövas med undersökningar.</p>"},
+  {k:"fund",q:"Slagrutor kan plötsligt röra sig lite. Vad kan det bero på?",a:"<p>Små, omedvetna rörelser i kroppen och händerna. Slagrutegängaren märker inte själv att hen rör sig, och det förs över till slagrutan.</p>"},
+  {k:"tf",q:"Kemi handlar om olika ämnens egenskaper.",tf:true,why:"Kemi är läran om ämnens egenskaper, uppbyggnad och reaktioner."},
+  {k:"tf",q:"Alkemisterna kunde framställa guld.",tf:false,why:"De försökte hårt men lyckades aldrig."},
+  {k:"tf",q:"En hypotes måste kunna testas.",tf:true,why:"Annars kan man inte ta reda på om den stämmer."},
+  {k:"tf",q:"Lukt och smak beror på kemiska ämnen.",tf:true,why:"Till exempel ger kemiska ämnen i tomater deras lukt och smak."},
+  {k:"tf",q:"Empedokles och Aristoteles gjorde många experiment för att bevisa de fyra elementen.",tf:false,why:"De gjorde inga experiment. De tänkte och drog slutsatser."}
+ ]},
+
+{id:"skolan",nr:2,sym:"Sä",kap:1,title:"Kemi i skolan",pages:"s. 18–23",
+ intro:"Laborationsrapporten, säkerhetsregler, farosymboler och hur eld uppstår och släcks.",
+ el:{s:"O",n:"Syre",z:8,f:"Syre är en av brandtriangelns tre delar. Ta bort syret, alltså kväv elden, så slocknar den."},letter:"E",
+ cards:[
+  {t:"Laboration",d:"En undersökning i kemisalen där du följer en instruktion och ett naturvetenskapligt arbetssätt: du planerar, utför och iakttar. Skillnaden mot en forskare är att det i skolan oftast finns ett svar."},
+  {t:"Laborationsrapport",d:"Så dokumenterar du en laboration: <b>1.</b> Rubrik <b>2.</b> Uppgift <b>3.</b> Materiel <b>4.</b> Utförande <b>5.</b> Resultat <b>6.</b> Felsökningar <b>7.</b> Slutsats och diskussion."},
+  {t:"Felkälla",d:"Något som kan ha påverkat resultatet, t.ex. smutsiga redskap eller svårigheter att läsa av mätvärden."},
+  {t:"Säkerhetsregler",d:"Följ lärarens instruktioner. Använd skyddsutrustning. Håll ordning. Lär dig farosymbolerna."},
+  {t:"Skyddsutrustning",d:"Skyddsglasögon och skyddsförkläde eller labbrock. Sätt upp långt hår. Det är förbjudet att äta och dricka i labbsalen, och man tvättar alltid händerna efteråt."},
+  {t:"Farosymbol",d:"Symbol på etiketten som informerar och varnar om att innehållet är farligt och visar hur du ska hantera ämnet."},
+  {t:"Skadlig",svg:"skadlig",d:"Ämnet kan vara skadligt, t.ex. irritera hud och ögon eller vara skadligt om man får i sig det."},
+  {t:"Hälsofarlig",svg:"halsofarlig",d:"Ämnet kan ge allvarliga hälsoskador på lång sikt, t.ex. skada organ."},
+  {t:"Miljöfarlig",svg:"miljofarlig",d:"Ämnet är farligt för miljön, t.ex. för fiskar och andra vattenlevande djur. Får inte hällas ut i naturen."},
+  {t:"Brandfarlig",svg:"brandfarlig",d:"Ämnet kan lätt börja brinna. Håll det borta från lågor och gnistor."},
+  {t:"Frätande",svg:"fratande",d:"Ämnet kan fräta sönder hud, ögon och material."},
+  {t:"Giftig",svg:"giftig",d:"Ämnet är giftigt och kan vara dödligt även i små mängder."},
+  {t:"Explosiv",svg:"explosiv",d:"Ämnet kan explodera."},
+  {t:"Oxiderande",svg:"oxiderande",d:"Ämnet kan få andra ämnen att brinna kraftigare, eller orsaka brand."},
+  {t:"Brandtriangeln",d:"För att det ska bli eld måste det finnas <b>bränsle, syre och värme</b>. Saknas någon av delarna blir det ingen eld."},
+  {t:"Bränsle",d:"Det som brinner. Fast (trä, stearin), flytande (bensin) eller gasformigt (gasol). Fasta och flytande bränslen brinner egentligen inte, utan de brännbara gaser som bildas när de värms."},
+  {t:"Kyla",d:"Att släcka genom att sänka temperaturen, t.ex. med vatten. Då bildas inga brännbara gaser."},
+  {t:"Kväva",d:"Att släcka genom att hindra syret från att nå bränslet, t.ex. med lock, brandfilt, pulver- eller kolsyresläckare eller skum."},
+  {t:"Röja",d:"Att släcka genom att ta bort bränslet, t.ex. brandgator vid skogsbrand där man hugger ner och röjer bort träd."},
+  {t:"Minnesregel vid brand",d:"<b>1.</b> Rädda <b>2.</b> Varna <b>3.</b> Larma 112 <b>4.</b> Släcka. Stäng dörrar och fönster så att röken inte sprids och syretillförseln minskar.<br><small>Psst! 112 är också en kod i hemliga labbet.</small>"}
+ ],
+ qs:[
+  {k:"kan",q:"Vilka rubriker är bra att ha med i en laborationsrapport?",a:"<ol><li>Rubrik – vad heter laborationen?</li><li>Uppgift – syfte, frågeställning, hypoteser</li><li>Materiel – utrustning och kemikalier</li><li>Utförande – hur du gör, gärna med bilder</li><li>Resultat – vad hände? Tabeller och diagram</li><li>Felsökningar – vad kan ha påverkat resultatet?</li><li>Slutsats och diskussion</li></ol>"},
+  {k:"kan",q:"Vilka säkerhetsföreskrifter bör du följa när du laborerar i kemi?",a:"<ul><li>Följ lärarens instruktioner och gör aldrig egna experiment utan att prata med läraren.</li><li>Använd skyddsutrustning (skyddsglasögon, förkläde/labbrock, sätt upp långt hår).</li><li>Håll ordning, läs etiketter, plocka undan och diska.</li><li>Lär dig farosymbolerna.</li><li>Ät och drick inte i labbsalen och tvätta händerna efteråt.</li></ul>"},
+  {k:"kan",q:"Vilken säkerhetsutrustning bör finnas i en laborationssal?",a:"<p>Skyddsglasögon och skyddsförkläden eller labbrockar. Det ska också finnas utrustning för att släcka bränder, t.ex. brandfilt och brandsläckare, och speciella avfallskärl för kemikalier. Du ska veta var allt finns och hur det används.</p>"},
+  {k:"symbol",svg:"brandfarlig",q:"Vad betyder farosymbolen?",opts:["Brandfarlig","Oxiderande","Explosiv","Frätande"],c:0,why:"En låga ovanför ett streck betyder brandfarlig. Oxiderande har en låga över en ring."},
+  {k:"symbol",svg:"skadlig",q:"Vad betyder farosymbolen?",opts:["Giftig","Skadlig","Hälsofarlig","Miljöfarlig"],c:1,why:"Utropstecknet betyder skadlig."},
+  {k:"symbol",svg:"halsofarlig",q:"Vad betyder farosymbolen?",opts:["Skadlig","Explosiv","Hälsofarlig","Giftig"],c:2,why:"Människan med en stjärna på bröstet betyder hälsofarlig."},
+  {k:"symbol",svg:"giftig",q:"Vad betyder farosymbolen?",opts:["Frätande","Hälsofarlig","Miljöfarlig","Giftig"],c:3,why:"Dödskallen betyder giftig."},
+  {k:"symbol",svg:"oxiderande",q:"Vad betyder farosymbolen?",opts:["Brandfarlig","Oxiderande","Explosiv","Skadlig"],c:1,why:"En låga över en ring betyder oxiderande."},
+  {k:"symbol",svg:"fratande",q:"Vad betyder farosymbolen?",opts:["Frätande","Miljöfarlig","Giftig","Explosiv"],c:0,why:"Droppar som fräter på en yta och en hand betyder frätande."},
+  {k:"kan",q:"Vad behövs för att eld ska uppstå?",a:"<p>Bränsle, syre och värme (brandtriangeln). Saknas någon av delarna blir det ingen eld.</p>"},
+  {k:"kan",q:"Hur kan man släcka en eld?",a:"<p>Genom att ta bort någon av brandtriangelns delar:</p><ul><li><b>Kyla</b>: sänk temperaturen, t.ex. med vatten.</li><li><b>Kväva</b>: ta bort syret med lock, brandfilt, brandsläckare med pulver eller kolsyra, eller skum.</li><li><b>Röja</b>: ta bort bränslet, t.ex. brandgator i skogen.</li></ul>"},
+  {k:"kan",q:"Varför ska man aldrig hälla vatten på brinnande olja?",a:"<p>Brinnande olja är mycket varmare än 100 °C, så vattnet kokar direkt och ger små ångexplosioner. Heta, brinnande fettdroppar kan stänka iväg, sprida elden och ge svåra brännskador. Kväv elden med ett tätt lock eller en filt i stället.</p>"},
+  {k:"fund",q:"Beskriv hur man ska släcka elden om det börjar brinna när man friterar i olja.",a:"<p>Kväv elden: lägg ett tätt lock eller en brandfilt över kastrullen så att syret inte kommer åt. Stäng av värmen. Häll aldrig vatten på. Tänk på minnesregeln: rädda, varna, larma 112, släcka.</p>"},
+  {k:"kan",q:"Varför brinner egentligen inte fasta och flytande bränslen?",a:"<p>Det finns för lite syre i kontakt med själva bränslet. När bränslet värms bildas brännbara gaser, och det är gaserna som blandas med luftens syre och brinner. Det syns när man blåser ut ett stearinljus och sätter en tändsticka strax ovanför: gaserna tar eld igen.</p>"},
+  {k:"kan",q:"Vad är skillnaden mellan en laboration i skolan och en forskares undersökning?",a:"<p>I skolan finns det oftast ett svar på undersökningen. En forskare söker efter ny kunskap som ingen vet ännu.</p>"},
+  {k:"klur",q:"Vem har rätt? Varför slocknar ett tänt ljus när man blåser på det?",opts:["A: Luften man andas ut innehåller koldioxid som kväver elden.","B: För att luften man blåser ut är kallare än lågan, man kyler.","C: Man blåser bort syret kring lågan.","D: Man blåser bort de brännbara gaserna."],c:3,why:"Det är gaserna från veken som brinner. När man blåser förs de brännbara gaserna bort från lågan (och lågan kyls lite). Man tillför ju luft med syre, så C stämmer inte, och utandningsluft innehåller fortfarande mycket syre."},
+  {k:"tf",q:"Efter en laboration måste du tvätta händerna.",tf:true,why:"Det gör man alltid för att inte få i sig kemikalier."},
+  {k:"tf",q:"I skolans kemisal finns inga farliga ämnen.",tf:false,why:"Ibland använder man frätande, brandfarliga eller giftiga ämnen."},
+  {k:"tf",q:"Du kan hälla ut alla skolans kemikalier i vasken efter en laboration.",tf:false,why:"Vissa överblivna kemikalier måste samlas upp i speciella avfallskärl."},
+  {k:"tf",q:"Du kan alltid släcka en eld genom att blåsa på den.",tf:false,why:"Ett ljus kan blåsas ut, men en större eld kan få mer syre och ta fart."},
+  {k:"tf",q:"Bensin brinner utan syre.",tf:false,why:"All eld behöver syre."},
+  {k:"tf",q:"En brandsläckare kan innehålla syre.",tf:false,why:"Brandsläckare innehåller pulver eller kolsyra som kväver elden. Syre skulle göra elden värre."},
+  {k:"tf",q:"Vatten släcker en eld genom att sänka temperaturen.",tf:true,why:"Vattnet kyler bränslet så att inga brännbara gaser bildas."},
+  {k:"tf",q:"Vatten släcker en eld genom att ta bort syret.",tf:true,why:"Det bildas mycket vattenånga som tränger undan syret. Vatten både kyler och kväver."}
+ ]},
+
+{id:"atomer",nr:3,sym:"At",kap:1,title:"Atomer, molekyler, grundämnen och kemiska föreningar",pages:"s. 24–32",
+ intro:"Hur materia är uppbyggd, kemiska tecken och formler, periodiska systemet och avsnittet Giftfri miljö om kopparföreningar.",
+ el:{s:"H",n:"Väte",z:1,f:"Universums vanligaste grundämne. En väteatom har bara en proton och en elektron."},letter:"R",
+ cards:[
+  {t:"Materia",d:"Allt som har massa och kan vägas: du själv, mobiltelefoner, kläder, stenar och även luft. Materia består av atomer."},
+  {t:"Atom",d:"Mycket små partiklar som all materia består av. Det finns lite mer än hundra olika slags atomer. Ca 5 miljoner atomer får plats i rad på 1 mm."},
+  {t:"Atomos",d:"Grekiska för <i>odelbar</i>. I den första atommodellen såg man atomen som en odelbar partikel. Ordet atom kommer härifrån."},
+  {t:"Elementarpartiklar",d:"De partiklar som atomen är uppbyggd av: protoner, neutroner och elektroner."},
+  {t:"Atomkärna",d:"Mitten av atomen. Den består av protoner och neutroner."},
+  {t:"Proton",d:"Positivt laddad partikel i atomkärnan. Väger ca 2 000 gånger så mycket som en elektron. Antalet protoner avgör vilket grundämne det är."},
+  {t:"Neutron",d:"Oladdad (neutral) partikel i atomkärnan. Väger ungefär lika mycket som en proton."},
+  {t:"Elektron",d:"Negativt laddad partikel som rör sig runt kärnan. Väger så lite att man inte räknar med den när man talar om atomens vikt."},
+  {t:"Atommodell",d:"En bild av hur atomen ser ut. Dalton 1803: liten partikel. Rutherford 1909: kärna omgiven av elektroner. Bohr 1913: elektroner kring kärnan som ett planetsystem. Schrödinger 1926: kärnan omges av ett elektronmoln."},
+  {t:"Oladdad atom",d:"En atom har lika många elektroner som protoner. Laddningarna tar ut varandra, så den totala laddningen är noll."},
+  {t:"Kemisk bindning",d:"Det som håller ihop atomerna. Man säger att atomerna är bundna till varandra."},
+  {t:"Molekyl",d:"Två eller fler atomer som är bundna till varandra. Kan innehålla likadana eller olika slags atomer. En DNA-molekyl är uppbyggd av miljarder atomer."},
+  {t:"Grundämne",d:"Ett ämne som bara består av ett enda slags atomer, t.ex. syre, väte, kväve, kol, koppar och bly. Det finns lite fler än hundra grundämnen."},
+  {t:"Syrgas (O<sub>2</sub>)",d:"Syre förekommer i naturen som molekyler av två syreatomer. De är i gasform, därför säger man syrgas. Väte, kväve och klor finns också som molekyler."},
+  {t:"Kemisk förening",d:"Ett ämne som består av två eller flera <b>olika</b> slags atomer, t.ex. vatten (H<sub>2</sub>O) och koldioxid (CO<sub>2</sub>). En kemisk förening har andra egenskaper än grundämnena den är uppbyggd av."},
+  {t:"Kemiskt tecken",d:"En eller två bokstäver som förkortar grundämnets grekiska eller latinska namn. Första bokstaven är stor, den andra liten: Cu = koppar, men CU = en kolatom och en uranatom."},
+  {t:"Jacob Berzelius",d:"Svensk kemist som på 1800-talet införde de kemiska tecknen som används över hela världen. Upptäckte bl.a. selen 1817."},
+  {t:"Kemisk formel",d:"Visar vilka grundämnen som ingår och hur många atomer av varje slag. H<sub>2</sub>O: två väteatomer och en syreatom. 2H<sub>2</sub>O betyder två vattenmolekyler."},
+  {t:"Periodiska systemet",d:"Dmitrij Mendelejevs ordning av alla grundämnen (1800-talet). Egenskaper återkommer regelbundet, periodiskt. Grundämnena står i ordning efter atomnummer."},
+  {t:"Atomnummer",d:"Antalet protoner i atomkärnan. Ju fler protoner, desto tyngre atom och högre atomnummer. Atomnumret avgör var i periodiska systemet grundämnet står."},
+  {t:"Period och grupp",d:"<b>Period</b> = en vågrät rad i periodiska systemet. <b>Grupp</b> = en lodrät kolumn. Grundämnen i samma grupp har liknande egenskaper."},
+  {t:"Metaller, icke-metaller, halvmetaller",d:"En indelning av periodiska systemet som bygger på grundämnenas olika egenskaper."},
+  {t:"Kopparföreningar",d:"Koppar i berggrunden är ofarligt, men kopparföreningar som sprids (t.ex. kopparsulfat i vasken eller båtbottenfärg) skadar vattenlevande djur. I små mängder är koppar livsnödvändigt för oss."},
+  {t:"Miljömärkt",d:"Produkter som inte innehåller skadliga ämnen. Som konsument kan du välja ekologiska och miljömärkta produkter."}
+ ],
+ qs:[
+  {k:"kan",q:"Vad heter de små partiklar som alla atomer är uppbyggda av och vilka laddningar har de?",a:"<p>Elementarpartiklar: <b>protoner</b> (positiva), <b>neutroner</b> (oladdade) och <b>elektroner</b> (negativa).</p>"},
+  {k:"kan",q:"Vad skiljer en molekyl från en atom?",a:"<p>En atom är en enda partikel. En molekyl är två eller fler atomer som är bundna till varandra med kemiska bindningar.</p>"},
+  {k:"kan",q:"Vad är det för skillnad på ett grundämne och en kemisk förening?",a:"<p>Ett grundämne består av bara ett slags atomer (t.ex. syre). En kemisk förening består av minst två olika slags atomer som är bundna till varandra (t.ex. vatten, H<sub>2</sub>O).</p>"},
+  {k:"kan",q:"Vad är det för skillnad på kemiska formler och kemiska tecken?",a:"<p>Ett kemiskt tecken är symbolen för ett grundämne (t.ex. O, C, Cu). En kemisk formel beskriver ett ämne med kemiska tecken och siffror som visar hur många atomer av varje slag som ingår (t.ex. CO<sub>2</sub>).</p>"},
+  {k:"kan",q:"Varför är den totala laddningen hos en atom noll?",a:"<p>Den har lika många elektroner (negativa) som protoner (positiva). Laddningarna tar ut varandra.</p>"},
+  {k:"kan",q:"Varför räknar man inte med elektronerna när man talar om atomens vikt?",a:"<p>Elektronerna väger så otroligt lite. En proton eller neutron väger ca 2 000 gånger så mycket som en elektron.</p>"},
+  {k:"kan",q:"Hur har bilden av atomen (atommodellen) förändrats över tid?",a:"<ul><li>Dalton 1803: atomen som en liten partikel.</li><li>Rutherford 1909: en kärna omgiven av elektroner.</li><li>Bohr 1913: elektronerna kretsar kring kärnan som ett planetsystem.</li><li>Schrödinger 1926: kärnan omges av ett elektronmoln.</li></ul>"},
+  {k:"kan",q:"Vad betyder 2H<sub>2</sub>O?",a:"<p>Två vattenmolekyler. Varje molekyl har två väteatomer och en syreatom.</p>"},
+  {k:"kan",q:"Vad avgör var i periodiska systemet ett grundämne står?",a:"<p>Antalet protoner i atomkärnan, alltså atomnumret.</p>"},
+  {k:"kan",q:"Varför kallas Mendelejevs arbete för det periodiska systemet?",a:"<p>Han upptäckte att vissa egenskaper hos grundämnena återkommer regelbundet, periodiskt, när man ordnar dem efter vikt/atomnummer.</p>"},
+  {k:"fyll",q:"Fyll i: Ett kemiskt tecken är en symbol för ett …",a:"<p><b>grundämne</b></p>"},
+  {k:"fyll",q:"Fyll i: Den kemiska formeln CO<sub>2</sub> visar att molekylen innehåller … kolatom och … syreatomer.",a:"<p><b>en</b> kolatom och <b>två</b> syreatomer</p>"},
+  {k:"fyll",q:"Fyll i: Periodiska systemet skapades av …",a:"<p><b>Dmitrij Mendelejev</b></p>"},
+  {k:"fund",q:"Vilka av begreppen grundämne, kemisk förening, atom eller molekyl passar på: O<sub>2</sub>, NO, C och SO<sub>2</sub>?",a:"<ul><li>O<sub>2</sub>: grundämne och molekyl</li><li>NO: kemisk förening (och molekyl)</li><li>C: grundämne (en atom)</li><li>SO<sub>2</sub>: kemisk förening (och molekyl)</li></ul>"},
+  {k:"fund",q:"Förklara varför vatten, som består av syre- och väteatomer, har andra egenskaper än syre och väte.",a:"<p>När atomerna binds ihop bildas en ny kemisk förening, och en kemisk förening har andra egenskaper än grundämnena den består av. Väte är explosivt och brandfarligt, syre gör att det brinner bättre, men vatten släcker eld.</p>"},
+  {k:"kan",q:"Hur kan ett naturligt ämne som koppar vara giftigt?",a:"<p>Koppar i berggrunden är gömd och sprids inte. Men när kopparföreningar sprids, t.ex. kopparsulfat i vasken eller koppar från båtbottenfärg, kommer de i kontakt med levande organismer. Många djur i vatten är mycket känsliga för koppar.</p>"},
+  {k:"kan",q:"Varför finns det olika regler för båtbottenfärg på östkusten och västkusten?",a:"<p>Östersjön är särskilt känsligt och redan förorenat. I det saltare vattnet på västkusten bildas mer påväxt, så där behövs färger med mer koppar. I Östersjön behövs inte den giftigare färgen, och den skulle göra större skada.</p>"},
+  {k:"fund",q:"Är ett giftigt ämne alltid giftigt och är det giftigt för allt och alla?",a:"<p>Nej. Det beror på mängden och vem som utsätts. Koppar är giftigt för många vattendjur, men i små mängder livsnödvändigt för människor: koppar behövs för ämnesomsättningen, immunförsvaret och för att blodet ska kunna transportera syre.</p>"},
+  {k:"fund",q:"Ge exempel på sätt att minska utsläpp av giftiga ämnen vid laborationer.",a:"<p>Använd små mängder kemikalier, häll aldrig kemikalier i vasken utan samla dem i avfallskärl, välj mindre farliga ämnen när det går och följ instruktionerna.</p>"},
+  {k:"kan",q:"Varför försöker forskare ersätta oljebaserade ämnen?",a:"<p>Olja är inte förnybar och tar slut. Växtbaserade ämnen är miljövänligare. Dessutom är många tillsatser i produkter hälsofarliga.</p>"},
+  {k:"tf",q:"CU betyder koppar.",tf:false,why:"Koppar skrivs Cu. CU betyder en kolatom och en uranatom."},
+  {k:"tf",q:"En atom har alltid lika många protoner som elektroner.",tf:true,why:"Därför är atomen oladdad."},
+  {k:"tf",q:"En molekyl kan innehålla likadana atomer.",tf:true,why:"Till exempel O<sub>2</sub>, en syremolekyl."}
+ ]},
+
+{id:"forandras",nr:4,sym:"Re",kap:1,title:"Ämnen kan förändras",pages:"s. 33–34",
+ intro:"Kemiska reaktioner, reaktionsformler och fysikaliska förändringar.",
+ el:{s:"C",n:"Kol",z:6,f:"När kol reagerar med syre bildas koldioxid: C + O₂ → CO₂."},letter:"Z",
+ cards:[
+  {t:"Kemisk reaktion",d:"När ämnen förändras och det bildas nya ämnen med andra egenskaper. Exempel: ved som brinner, en brustablett i vatten, citron i te."},
+  {t:"Reagera",d:"När ämnen förenas och bildar nya ämnen. Kolatomerna i veden reagerar med syremolekylerna i luften."},
+  {t:"Förbränning",d:"En kemisk reaktion mellan ett ämne och syre, t.ex. när trä brinner. Det bildas aska, rök, koldioxid, vattenånga och andra gaser."},
+  {t:"Cellulosa",d:"Det som ved till största delen består av. Ett ämne med långa kedjor av kol-, väte- och syreatomer."},
+  {t:"Reaktionsformel",d:"Beskriver en kemisk reaktion: vilka ämnen som deltar, vad som sker och vad som bildas. Till vänster om pilen står ämnena som reagerar, till höger det som bildas: <span class='mono'>C + O<sub>2</sub> → CO<sub>2</sub></span>."},
+  {t:"Fysikalisk förändring",d:"När ett ämne går över till en annan fas utan att det bildas något nytt ämne. Is som smälter är fortfarande vatten."},
+  {t:"Fas",d:"Ett ämnes form: fast, flytande eller gas."},
+  {t:"Ingenting försvinner",d:"Vid kemiska reaktioner försvinner inga atomer. De kombineras om till nya ämnen. Allt finns kvar."}
+ ],
+ qs:[
+  {k:"kan",q:"Vad är en kemisk reaktion?",a:"<p>När ämnen förändras och det bildas nya ämnen med andra egenskaper, t.ex. förbränning av trä.</p>"},
+  {k:"kan",q:"Vad är skillnaden mellan en fysikalisk förändring och en kemisk reaktion?",a:"<p>Vid en <b>fysikalisk förändring</b> byter ämnet bara fas (t.ex. is smälter till vatten) och är fortfarande samma ämne. Vid en <b>kemisk reaktion</b> bildas nya ämnen med nya egenskaper.</p>"},
+  {k:"kan",q:"Vad är en reaktionsformel?",a:"<p>Ett sätt att beskriva en kemisk reaktion med kemiska tecken och formler, t.ex. C + O<sub>2</sub> → CO<sub>2</sub>. Till vänster står det som reagerar, till höger det som bildas.</p>"},
+  {k:"kan",q:"Vad menas med att ”Ingenting försvinner, allt finns kvar”?",a:"<p>Vid kemiska reaktioner försvinner inga atomer. De kombineras om och bildar nya ämnen.</p>"},
+  {k:"kan",q:"Ge exempel på kemiska reaktioner i vardagen och i kroppen.",a:"<ul><li>Ved som brinner.</li><li>En brustablett i vatten (koldioxid bubblar).</li><li>Citron i te gör teet ljusare.</li><li>Matsmältning: maten omvandlas till koldioxid, vatten och energi.</li><li>Fotosyntesen i växter.</li></ul>"},
+  {k:"fund",q:"Vad innebär det att ett ämne reagerar med ett annat ämne?",a:"<p>Atomerna i ämnena binds ihop på nya sätt, så att det bildas nya ämnen med andra egenskaper.</p>"},
+  {k:"kan",q:"Vad bildas när veden brinner i en brasa?",a:"<p>Aska och rök som består av koldioxid, vattenånga och en del andra gaser.</p>"},
+  {k:"kan",q:"Vilken gas bubblar upp när man lägger en brustablett i vatten?",a:"<p>Koldioxid. Det sker en kemisk reaktion mellan vattnet och ämnena i tabletten.</p>"},
+  {k:"tf",q:"När tenn smälter bildas ett nytt ämne.",tf:false,why:"Det är en fysikalisk förändring. Tennet byter bara fas."},
+  {k:"tf",q:"När man eldar ett vedträ så försvinner alla ämnen utom kolet som blir aska.",tf:false,why:"Inga ämnen försvinner. Det bildas koldioxid, vattenånga och andra gaser som sprids i luften."},
+  {k:"tf",q:"En kemisk reaktion ger alltid ett nytt ämne med nya egenskaper.",tf:true,why:"Det är just det som är en kemisk reaktion."},
+  {k:"tf",q:"Den kemiska formeln CO<sub>2</sub> visar att två syreatomer är bundna till en kolatom.",tf:true,why:"C = en kolatom, O<sub>2</sub> = två syreatomer."}
+ ]},
+
+{id:"egenskaper",nr:5,sym:"Eg",kap:1,title:"Ämnens egenskaper",pages:"s. 35–39",
+ intro:"Faser och partikelmodellen, smältpunkt och kokpunkt, densitet och magnetism.",
+ el:{s:"Fe",n:"Järn",z:26,f:"Järn är magnetiskt och har högre densitet än aluminium: en liter järn väger 7,9 kg."},letter:"E",
+ cards:[
+  {t:"Egenskaper",d:"Det som kan avslöja vilket ämne det är: fast/flytande/gas, färg, smak och doft, smältpunkt och kokpunkt, densitet, hårdhet, leder ström, leder värme, magnetisk, frätande. I labbsalen får du ALDRIG smaka."},
+  {t:"Koldioxid och kolmonoxid",d:"Båda består av kol och syre men har olika egenskaper. Koldioxid (CO<sub>2</sub>) har två syreatomer per kolatom och finns i luften vi andas. Kolmonoxid (CO) har en syreatom och är en giftig gas."},
+  {t:"Glukos och fruktos",d:"Har samma formel, C<sub>6</sub>H<sub>12</sub>O<sub>6</sub>, men olika egenskaper eftersom atomerna binder på olika sätt. Glukos (druvsocker) tas upp i hela kroppen, fruktos bara av levern."},
+  {t:"Fasförändring",d:"När ett ämne går från en fas till en annan, t.ex. smälter, kokar eller kondenserar."},
+  {t:"Aggregationstillstånd",d:"Gemensamt namn för faserna fast, flytande och gas. Kallas också aggregationsformer."},
+  {t:"Fast form",d:"Partiklarna ligger tätt intill varandra och är ganska orörliga."},
+  {t:"Flytande form",d:"Partiklarna är rörliga och kan glida runt varandra."},
+  {t:"Gasform",d:"Partiklarna är så långt ifrån varandra att de inte längre har kontakt och rör sig fritt."},
+  {t:"Temperatur",d:"När man mäter temperatur mäter man egentligen hur mycket partiklarna rör sig. Värme ger rörelse."},
+  {t:"Absoluta nollpunkten",d:"−273,15 °C. Då är partiklarna i princip helt stilla. Det är den lägsta temperatur som finns, det kan inte bli kallare."},
+  {t:"Smältpunkt",d:"Temperaturen när ett fast ämne smälter. Vattnets smältpunkt är 0 °C."},
+  {t:"Fryspunkt",d:"Temperaturen när ett flytande ämne fryser eller stelnar. Samma temperatur som smältpunkten: för vatten 0 °C."},
+  {t:"Kokpunkt",d:"Temperaturen när ett ämne kokar och övergår till gas. Vattnets kokpunkt är 100 °C. Vatten kan inte bli varmare än så i flytande form."},
+  {t:"Kondensationspunkt",d:"Temperaturen när en gas kondenserar till vätska. Samma som kokpunkten: för vatten 100 °C."},
+  {t:"Densitet",d:"Vikt (massa) per volym. En liter vatten väger 1 kg, aluminium 2,7 kg, järn 7,9 kg, bly 11,3 kg och guld 19,3 kg. Beror på hur tunga atomerna är och hur tätt de ligger."},
+  {t:"Isens densitet",d:"Vatten är ovanligt: is har lägre densitet än flytande vatten. Därför flyter isen och lägger sig på sjöns yta, så att fiskarna kan överleva vintern."},
+  {t:"Magnetism",d:"Bara tre metaller är magnetiska: järn, nickel och kobolt."}
+ ],
+ qs:[
+  {k:"kan",q:"Ge exempel på några egenskaper som man kan undersöka.",a:"<p>Fas (fast, flytande, gas), färg, doft, smältpunkt och kokpunkt, densitet, hårdhet, om det leder ström eller värme, om det är magnetiskt, om det löser sig i vatten och om det är frätande.</p>"},
+  {k:"kan",q:"Vilka tre faser kan nästan alla ämnen finnas i?",a:"<p>Fast form, flytande form och gasform.</p>"},
+  {k:"fund",q:"Ge exempel på egenskaper som är lika för vatten och matolja, och egenskaper som är olika.",a:"<p><b>Lika:</b> båda är flytande vid rumstemperatur och man kan se igenom dem.</p><p><b>Olika:</b> olja har lägre densitet och flyter på vatten, de blandas inte med varandra, olja kan brinna men vatten släcker eld, olja är gulaktig och har en annan kokpunkt.</p>"},
+  {k:"kan",q:"Varför flyter kork i vatten?",a:"<p>Kork har lägre densitet än vatten.</p>"},
+  {k:"kan",q:"Vad beror det på att ett ämne har högre densitet än ett annat?",a:"<p>Två saker: hur mycket atomerna väger (fler protoner i kärnan ger tyngre atom) och hur tätt atomerna ligger. Järn har tyngre atomer som ligger tätare än aluminium.</p>"},
+  {k:"kan",q:"Varför fryser inte en sjö nedifrån botten och upp?",a:"<p>Is har lägre densitet än flytande vatten, så isen flyter och lägger sig på ytan. Under isen kan fiskar och andra organismer överleva vintern.</p>"},
+  {k:"bort",q:"Vilken ska bort: aluminium, järn, nickel, kobolt?",opts:["Aluminium","Järn","Nickel","Kobolt"],c:0,why:"Järn, nickel och kobolt är magnetiska. Aluminium är inte det."},
+  {k:"bort",q:"Vilken ska bort: fast form, magnetisk, flytande form, gasform?",opts:["Fast form","Magnetisk","Flytande form","Gasform"],c:1,why:"De andra tre är faser (aggregationstillstånd). Magnetisk är en annan sorts egenskap."},
+  {k:"fund",q:"Varför har flytande vatten andra egenskaper än is, trots att det är uppbyggt av likadana vattenmolekyler?",a:"<p>Det beror på hur mycket molekylerna rör sig och hur nära de är varandra. I is ligger de nästan still och tätt ihop. I flytande vatten rör de sig och kan glida runt varandra.</p>"},
+  {k:"fund",q:"Om man tar fram en mjölkförpackning ur kylen och låter den stå framme blir den fuktig på utsidan. Förklara vad som har hänt.",a:"<p>Luften innehåller vattenånga. När den varma luften möter den kalla förpackningen kyls vattenångan ned och kondenserar till små vattendroppar på utsidan.</p>"},
+  {k:"klur",q:"Om man blandar 1 dl vatten och 1 dl rödsprit blir volymen mindre än 2 dl. Gör en hypotes som kan förklara detta.",a:"<p>Ett förslag: molekylerna har olika storlek, så de mindre molekylerna kan tränga in i mellanrummen mellan de större. Tänk på att hälla sand i en skål med ärtor: sanden tar nästan ingen extra plats.</p>"},
+  {k:"fund",q:"Smältpunkt och kokpunkt (°C): vatten 0/100, kvicksilver −38/357, klor −101/−34, kväve −210/−196, syre −218/−183. Vilka ämnen är gaser vid −100 °C?",a:"<p><b>Kväve och syre.</b> −100 °C är varmare än deras kokpunkter. Klor är flytande vid −100 °C eftersom det är mellan smältpunkten −101 °C och kokpunkten −34 °C.</p>"},
+  {k:"fund",q:"Samma tabell: vilka ämnen är fasta vid −200 °C?",a:"<p><b>Vatten, kvicksilver och klor.</b> Kväve (smältpunkt −210 °C) och syre (−218 °C) är fortfarande flytande vid −200 °C.</p>"},
+  {k:"fund",q:"Samma tabell: vilken fas har kvicksilver vid 0 °C, och vid vilken temperatur kondenserar klor?",a:"<p>Kvicksilver är <b>flytande</b> vid 0 °C (mellan −38 och 357). Klor kondenserar vid <b>−34 °C</b> (kondensationspunkt = kokpunkt).</p>"},
+  {k:"kan",q:"Socker och salt ser nästan likadana ut. Varför smakar de olika?",a:"<p>De består av olika atomer. Socker består av kol-, syre- och väteatomer, salt av natrium- och kloratomer.</p>"},
+  {k:"kan",q:"Vad händer med partiklarna när man värmer ett ämne?",a:"<p>De rör sig mer och snabbare. Fast ämne smälter när partiklarna kan glida runt varandra. Värmer man mer kokar ämnet och partiklarna far iväg åt alla håll som gas.</p>"},
+  {k:"tf",q:"Vattnets smältpunkt och fryspunkt är samma temperatur.",tf:true,why:"Båda är 0 °C. Namnet beror på från vilket håll man kommer."},
+  {k:"tf",q:"Alla metaller är magnetiska.",tf:false,why:"Bara järn, nickel och kobolt."},
+  {k:"tf",q:"En liter guld väger mer än en liter bly.",tf:true,why:"Guld 19,3 kg, bly 11,3 kg per liter."}
+ ]},
+
+{id:"blandningar",nr:6,sym:"Bl",kap:1,title:"Rena ämnen och blandningar",pages:"s. 40–45",
+ intro:"Lösningar, legeringar, emulsioner och uppslamningar. Varför läsk blir avslagen i solen.",
+ el:{s:"Cu",n:"Koppar",z:29,f:"Tiokronan och femkronan består av 89 % koppar, 5 % aluminium, 5 % zink och 1 % tenn. Det är en legering."},letter:"L",
+ cards:[
+  {t:"Rent ämne",d:"Ett ämne som inte är blandat med något annat. Grundämnen är alltid rena ämnen, men även kemiska föreningar kan vara det, t.ex. socker, koksalt och destillerat vatten."},
+  {t:"Blandning",d:"Minst två olika rena ämnen som är blandade men inte kemiskt bundna till varandra. Ämnena i en blandning går alltid att skilja åt. Exempel: luft, saft, schampo, mjölk, blod."},
+  {t:"Luft",d:"En blandning av bl.a. kväve, syre och koldioxid. Dessutom finns damm, sot och vattenånga i luften. Kan kallas en gasformig lösning."},
+  {t:"Kranvatten",d:"En blandning. Det finns små mängder salter och klorföreningar i vattnet."},
+  {t:"Lösning",d:"En blandning där delarna inte syns, eftersom ämnena är uppdelade i så små bitar. Exempel: saft."},
+  {t:"Lösningsmedel",d:"Vätskan som löser ett annat ämne. Vatten är det vanligaste. Olja, lack och fett löser sig inte i vatten, då behövs andra lösningsmedel, t.ex. etylacetat, T-röd, T-grön eller lacknafta."},
+  {t:"Legering",d:"En fast lösning av metaller. Exempel: brons (tenn + koppar), mässing (koppar + zink), rostfritt stål (krom, nickel, järn), lödtenn (bly + tenn), nysilver (koppar, zink, nickel)."},
+  {t:"Karat",d:"Mäter guldhalten. 24 karat är rent guld. 18 karat betyder 18/24, alltså 75 % guld."},
+  {t:"Mättad lösning",d:"En lösning som inte kan lösa mer av ett ämne. Det som inte löses lägger sig på botten."},
+  {t:"Övermättad lösning",d:"Om man värmer en mättad lösning kan man lösa lite mer. Så fort den kallnar faller ämnet ut igen. Används i handvärmare."},
+  {t:"Lösa snabbare",d:"Finfördelning (krossa) och omrörning får ämnet att lösa sig snabbare. Fasta ämnen löser sig bättre i varma vätskor."},
+  {t:"Rengöringsmedel",d:"Innehåller ämnen med en fettvänlig och en vattenvänlig del. Den fettvänliga delen lägger sig runt smutsen och den vattenvänliga är utåt, så smutsen kan sköljas bort."},
+  {t:"Kolsyra",d:"Koldioxid löst i vatten. Ger läsk en syrlig och frisk smak."},
+  {t:"Gasers löslighet",d:"Gaser löser sig bättre i kallt vatten. Därför bubblar läsk mer när den blir varm och serveras med is."},
+  {t:"Emulsion",d:"En blandning av finfördelade vätskor som egentligen inte löser sig i varandra, t.ex. fett och vatten i hudkräm eller smör."},
+  {t:"Emulgeringsmedel",d:"Ett ämne som lägger sig runt varje fettdroppe och håller dem svävande i vattnet, så att emulsionen inte delar sig."},
+  {t:"Uppslamning",d:"En kortvarig blandning av ett fast ämne som inte löser sig i en vätska, t.ex. sand och lera i en vattenpöl. Efter en stund sjunker partiklarna till botten."}
+ ],
+ qs:[
+  {k:"kan",q:"Vad är det för skillnad på ett rent ämne och en blandning?",a:"<p>Ett rent ämne är inte blandat med något annat, t.ex. ett grundämne eller socker. En blandning består av minst två rena ämnen som inte är kemiskt bundna till varandra och därför kan skiljas åt.</p>"},
+  {k:"kan",q:"Vad menas med en mättad lösning?",a:"<p>En lösning som inte kan lösa mer av ett ämne. Det överblivna lägger sig på botten.</p>"},
+  {k:"kan",q:"Hur kan du få en sockerbit att lösa sig snabbt i vatten?",a:"<p>Krossa den (finfördela), rör om och använd varmt vatten.</p>"},
+  {k:"kan",q:"Ge exempel på några legeringar och vad de består av.",a:"<ul><li>Rostfritt stål: krom, nickel och järn</li><li>Mässing: koppar och zink</li><li>Brons: tenn och koppar</li><li>Nysilver: koppar, zink och nickel</li><li>Lödtenn: bly och tenn</li></ul>"},
+  {k:"kan",q:"Vad är en emulsion?",a:"<p>En blandning av två vätskor som egentligen inte löser sig i varandra, t.ex. fett och vatten, där den ena är finfördelad i små droppar i den andra. Exempel: hudkräm och smör.</p>"},
+  {k:"kan",q:"Vad händer om ett glas läsk står i solen?",a:"<p>Gaser löser sig sämre i varmt vatten. När läsken blir varm kan den inte hålla kvar lika mycket koldioxid, så gasen bubblar ut och läsken blir avslagen.</p>"},
+  {k:"fund",q:"Förklara varför en öppnad läsk behåller kolsyran bättre om den står i kylen än i rumstemperatur.",a:"<p>Gasers löslighet är större i kallt vatten. I kylan kan mer koldioxid stanna löst i vätskan.</p>"},
+  {k:"kan",q:"Varför sjunker sanden snabbare än leran i en uppslamning?",a:"<p>Lerpartiklarna är mindre och lättare, så de sjunker långsammare än sandkornen.</p>"},
+  {k:"kan",q:"Hur kan diskmedel få bort fett?",a:"<p>Diskmedel innehåller ämnen med en fettvänlig och en vattenvänlig del. De finfördelar fettet: den fettvänliga delen fäster vid fettet och den vattenvänliga delen är utåt, så fettet kan sköljas bort med varmt vatten.</p>"},
+  {k:"kan",q:"Hur kan fiskar andas under vatten?",a:"<p>Syre är löst i vattnet. Fiskarna tar upp det lösta syret med sina gälar.</p>"},
+  {k:"kan",q:"Hur mycket guld innehåller ett 18 karats smycke?",a:"<p>18/24 = 75 % rent guld.</p>"},
+  {k:"fund",q:"Handvärmare: vad tror du händer när man knäpper på metallplattan?",a:"<p>Vätskan är en övermättad lösning. När man knäpper bildas små ”groddar” som kristaller kan växa på. Ämnet faller ut som kristaller och avger då energi i form av värme, precis som när socker bildar kristaller.</p>"},
+  {k:"fund",q:"Hur gör man för att återanvända handvärmaren och vad händer inuti den?",a:"<p>Man värmer den, t.ex. i kokande vatten. Då löses kristallerna upp igen och tar upp energi. När den svalnar har man åter en övermättad lösning som är redo att användas.</p>"},
+  {k:"tf",q:"Dricksvatten är inte ett rent ämne.",tf:true,why:"Kranvatten innehåller små mängder salter och klorföreningar, så det är en blandning."},
+  {k:"tf",q:"Luft är en blandning.",tf:true,why:"Kväve, syre, koldioxid med mera."},
+  {k:"tf",q:"En lösning kan inte vara färgad.",tf:false,why:"Saft är en färgad lösning."},
+  {k:"tf",q:"En legering är en kemisk förening mellan två eller flera metaller.",tf:false,why:"En legering är en blandning (fast lösning). Metallerna är inte kemiskt bundna till varandra."}
+ ]},
+
+{id:"separera",nr:7,sym:"Se",kap:1,title:"Att separera ämnen",pages:"s. 46–50",
+ intro:"Separationsmetoder, och hur dricksvatten och avloppsvatten renas.",
+ el:{s:"Cl",n:"Klor",z:17,f:"Klor eller ozon tillsätts i vattenverket för att döda bakterier. Det används också i simhallar."},letter:"I",
+ cards:[
+  {t:"Separationsmetod",d:"En metod för att skilja ämnen i en blandning åt, för att få fram rena ämnen. Hemma: filtrering, extrahering, indunstning. I industrin och laboratorier även destillering, sedimentering och kromatografi."},
+  {t:"Extrahering",d:"Att lösa ut vissa ämnen ur en blandning. När varmt vatten passerar malet kaffe löser sig färg- och smakämnen i vattnet."},
+  {t:"Filtrering",d:"Små partiklar passerar genom ett filter medan större fastnar. Kaffesumpen stannar kvar i filtret."},
+  {t:"Indunstning",d:"Vätskan får avdunsta så att det lösta ämnet blir kvar. Används för att få fram havssalt: havsvatten avdunstar i stora bassänger."},
+  {t:"Destillering",d:"Bygger på att ämnen har olika kokpunkter. Ämnet med lägst kokpunkt kokar först, blir gas, leds genom en kylare och blir flytande igen i en annan behållare. Höj temperaturen stegvis för att separera fler ämnen."},
+  {t:"Destillerat vatten",d:"Rent vatten utan lösta ämnen. Tillverkas genom destillation."},
+  {t:"Kromatografi",d:"Ämnen i en lösning sugs upp olika fort över ett papper eller annat poröst material. Används i industrin, för miljöanalyser och för att spåra dopningsmedel. Visar vilka ämnen som finns och hur mycket."},
+  {t:"Sedimentering",d:"Tyngre partiklar i en vätska sjunker till botten. Används t.ex. i reningsverk."},
+  {t:"Sediment",d:"Det som har sjunkit till botten vid sedimentering, t.ex. sand och grus."},
+  {t:"Vattenverk",d:"Där vattnet kontrolleras och renas innan det kommer ut i kranen."},
+  {t:"Grundvatten och ytvatten",d:"Dricksvatten kommer från grundvatten eller ytvatten (sjöar och älvar). Ytvatten är en blandning och måste alltid renas."},
+  {t:"Ytvatten renas i fem steg",d:"<b>1.</b> Grovfiltrering (löv, plast silas bort) <b>2.</b> Kemisk rening (partiklar klumpar ihop sig och sedimenterar) <b>3.</b> Filtrering i sandfilter <b>4.</b> Desinfektion med klor eller ozon <b>5.</b> Tillsats av kalk (svagt basiskt så det inte fräter på ledningarna)."},
+  {t:"Reningsverk",d:"Tar emot avloppsvatten från hushåll, industrier och gator och renar det innan det släpps ut i hav, sjöar och vattendrag."},
+  {t:"Avloppsvatten renas i fyra steg",d:"<b>1.</b> Mekanisk rening (galler) <b>2.</b> Biologisk rening (bakterier bryter ned organiskt material) <b>3.</b> Kemisk rening (fosfater sedimenteras bort) <b>4.</b> Kväverening."},
+  {t:"Rötslam",d:"De fasta resterna som blir kvar i reningsverket. Kan innehålla tungmetaller, mikroplaster och mediciner. Används för att tillverka biogas till bilar och bussar."}
+ ],
+ qs:[
+  {k:"kan",q:"Hur kan man skilja sand från vatten?",a:"<p>Med filtrering (sanden fastnar i filtret) eller sedimentering (låt sanden sjunka och häll av vattnet).</p>"},
+  {k:"kan",q:"Hur fungerar ett filter?",a:"<p>Små partiklar, t.ex. vatten med lösta ämnen, passerar genom filtret medan större partiklar fastnar.</p>"},
+  {k:"kan",q:"Hur kan man skilja salt från vatten?",a:"<p>Med indunstning: låt vattnet avdunsta så att saltet blir kvar. Med destillering får man dessutom tillbaka vattnet.</p>"},
+  {k:"kan",q:"Hur tillverkar man destillerat vatten?",a:"<p>Genom destillation: vattnet kokas, vattenångan leds genom en kylare och blir flytande igen i en annan behållare. De lösta ämnena blir kvar.</p>"},
+  {k:"kan",q:"Vilken separationsmetod bygger på att ämnen har olika kokpunkter?",a:"<p><b>Destillering.</b></p>"},
+  {k:"kan",q:"Hur renas avloppsvatten?",a:"<p>I ett reningsverk i fyra steg: mekanisk rening, biologisk rening, kemisk rening och ibland kväverening.</p>"},
+  {k:"kan",q:"Var kommer vårt dricksvatten ifrån?",a:"<p>Från grundvatten eller från ytvatten i en sjö eller älv.</p>"},
+  {k:"kan",q:"Vad kan man göra för att undvika frätskador på vattenledningar?",a:"<p>Tillsätta kalk så att dricksvattnet blir svagt basiskt.</p>"},
+  {k:"kan",q:"Vilka två separationsmetoder använder du när du brygger kaffe?",a:"<p>Extrahering (färg- och smakämnen löser sig i vattnet) och filtrering (kaffesumpen stannar i filtret).</p>"},
+  {k:"ihop",q:"Vilken metod hör ihop med <b>miljöanalys</b>?",opts:["Filtrering","Destillering","Sedimentering","Kromatografi","Indunstning"],c:3,why:"Kromatografi används för olika miljöanalyser."},
+  {k:"ihop",q:"Vilken metod hör ihop med att <b>brygga kaffe</b>?",opts:["Filtrering","Destillering","Sedimentering","Kromatografi","Indunstning"],c:0,why:"Kaffesumpen fastnar i filtret."},
+  {k:"ihop",q:"Vilken metod hör ihop med ett <b>reningsverk</b>?",opts:["Filtrering","Destillering","Sedimentering","Kromatografi","Indunstning"],c:2,why:"I reningsverk får sand och skräp sjunka till botten i stora bassänger."},
+  {k:"ihop",q:"Vilken metod hör ihop med <b>framställning av havssalt</b>?",opts:["Filtrering","Destillering","Sedimentering","Kromatografi","Indunstning"],c:4,why:"Havsvattnet avdunstar och saltet blir kvar."},
+  {k:"ihop",q:"Vilken metod hör ihop med att <b>tillverka bensin</b>?",opts:["Filtrering","Destillering","Sedimentering","Kromatografi","Indunstning"],c:1,why:"Bensin separeras ur råolja med destillering, eftersom ämnena har olika kokpunkter."},
+  {k:"fund",q:"Förklara skillnaden mellan indunstning och destillering.",a:"<p>Vid <b>indunstning</b> får vätskan avdunsta och försvinna, man får bara kvar det lösta ämnet. Vid <b>destillering</b> fångas gasen upp och kyls så att vätskan också samlas upp. Man kan även separera flera vätskor med olika kokpunkter.</p>"},
+  {k:"fund",q:"Hur fungerar en destillationsapparat?",a:"<p>Lösningen värms i en kolv. Ämnet med lägst kokpunkt kokar först och blir gas. Gasen leds in i en kylare där kallt vatten strömmar runt röret, så att gasen kondenserar till vätska. Vätskan (destillatet) droppar ned i en annan behållare.</p>"},
+  {k:"klur",q:"Planera ett försök: en blandning består av vatten, salt, sand och små korkbitar. Hur får du tillbaka alla ämnen för sig?",a:"<ol><li>Plocka eller skumma bort korkbitarna som flyter (låg densitet).</li><li>Filtrera bort sanden (eller låt den sedimentera och häll av).</li><li>Destillera saltvattnet: vattnet samlas upp och saltet blir kvar. Med indunstning får du bara saltet.</li></ol><p><b>Risker:</b> heta kolvar och brännare, glas som kan gå sönder. Använd skyddsglasögon.</p>"}
+ ]},
+
+{id:"analysera",nr:8,sym:"An",kap:1,title:"Att analysera ämnen",pages:"s. 51–53",
+ intro:"DNA-analys, reagens, dopingprov och miljöanalyser.",
+ el:{s:"Ca",n:"Kalcium",z:20,f:"Kalkvatten innehåller kalcium. Det grumlas när man blåser ner koldioxid i det, så det är ett reagens på koldioxid."},letter:"U",
+ cards:[
+  {t:"Analys",d:"Att undersöka ett prov för att ta reda på vilka ämnen som finns i det, och ibland hur mycket. Exempel: dopingtester och blod från brottsplatser."},
+  {t:"DNA-analys",d:"Ger information om ursprung och släktingar, ärftliga sjukdomar och kan hjälpa till att hitta en gärningsman. Provet kan vara ett salivprov."},
+  {t:"Elektrofores",d:"Metod som separerar molekyler med hjälp av elektricitet. Provet läggs i en gel i ett elektriskt fält. Långa molekyler vandrar långsamt och korta fort."},
+  {t:"Reagens",d:"Ett ämne som reagerar på ett speciellt sätt med ett annat ämne, så att man kan känna igen det. Ett kännetecken."},
+  {t:"Kalkvatten",d:"Reagens på koldioxid. Blåser man utandningsluft i kalkvatten blir det grumligt."},
+  {t:"Glödande trästicka",d:"Reagens på syrgas. Stickan flammar upp och börjar brinna i ren syrgas."},
+  {t:"Knallgas",d:"En blandning av vätgas och luft eller syrgas. En brinnande sticka får den att smälla, så knallgasprovet är ett reagens på väte. Väte och syre reagerar och bildar vatten."},
+  {t:"Reagensstickor",d:"Doppas i t.ex. urin och färgen jämförs med en färgskala. Mycket socker kan tyda på diabetes, mycket protein på fel på njurarna. Graviditetstest fungerar också så."},
+  {t:"Dopingprov",d:"Prov som avslöjar otillåtna medel hos idrottare. Analyseras i särskilda laboratorier."},
+  {t:"GC-MS",d:"Gaskromatografi och masspektrometri. Provet delas upp efter molekylernas egenskaper och visas som toppar i ett diagram som jämförs med kända ämnen."},
+  {t:"Miljöanalys",d:"Analyser av luft, vatten och mark för att se hur miljön mår, t.ex. luftföroreningar, pollen och koldioxidhalten i atmosfären."}
+ ],
+ qs:[
+  {k:"kan",q:"Vad menas med en analys?",a:"<p>Att undersöka ett prov för att ta reda på vilka ämnen som finns i det (och hur mycket).</p>"},
+  {k:"kan",q:"Ge exempel på några områden där man gör kemiska analyser.",a:"<p>Dopingtester inom idrotten, brottsutredningar, sjukvården (urinprov, blodprov), DNA-analys för släktforskning och miljöanalyser av luft, vatten och mark.</p>"},
+  {k:"kan",q:"Vad kan man undersöka med gaskromatografi och masspektrometri (GC-MS)?",a:"<p>Vilka ämnen som finns i ett prov, t.ex. om ett dopingprov innehåller förbjudna medel.</p>"},
+  {k:"kan",q:"Vad kan man få fram vid en DNA-analys?",a:"<p>Information om ens ursprung och släktingar, ärftliga sjukdomar, och vem som kan ha varit på en brottsplats.</p>"},
+  {k:"kan",q:"Vad menas med ett reagens?",a:"<p>Ett ämne som reagerar på ett speciellt sätt med ett annat ämne, så att man kan känna igen det. Kalkvatten är t.ex. reagens på koldioxid.</p>"},
+  {k:"kan",q:"Nämn tre reagens och vad de visar.",a:"<ul><li>Kalkvatten grumlas av koldioxid.</li><li>En glödande trästicka flammar upp i syrgas.</li><li>Knallgas (väte + luft) smäller av en brinnande sticka.</li></ul>"},
+  {k:"kan",q:"Hur fungerar elektrofores?",a:"<p>Provet läggs i en gel i ett elektriskt fält. Molekylerna vandrar genom gelen: långa molekyler långsamt, korta fort. Så separeras de.</p>"},
+  {k:"kan",q:"Varför analyserar man koldioxidhalten i atmosfären?",a:"<p>Förhöjda halter av koldioxid är ett stort miljöproblem som påverkar klimatet så att medeltemperaturen höjs. Analyserna gör att man kan följa förändringen över tid.</p>"},
+  {k:"tf",q:"En analys av ett prov säger hur giftigt ämnet är.",tf:false,why:"En analys visar vilka ämnen som finns i provet (och hur mycket)."},
+  {k:"tf",q:"Med reagensstickor kan man få reda på mer om sina förfäder.",tf:false,why:"Det gör man med DNA-analys. Reagensstickor används t.ex. för urinprov."},
+  {k:"tf",q:"Man mäter koldioxidhalten i luften därför att koldioxid är giftigt för oss människor.",tf:false,why:"Man mäter den för att höga halter påverkar klimatet."},
+  {k:"tf",q:"Kalkvatten är ett reagens på koldioxid.",tf:true,why:"Kalkvatten grumlas av koldioxid."}
+ ]},
+
+{id:"vatten",nr:9,sym:"Vk",kap:2,title:"Vattnets kretslopp",pages:"s. 67–69",
+ intro:"Kapitel 2. Fasförändringar i vattnets kretslopp, hur kretsloppet renar vattnet och hur temperaturen påverkar vattenånga och lösta gaser. Kretslopp och energi (s. 64–66) är bakgrund.",
+ el:{s:"Na",n:"Natrium",z:11,f:"Salt består av natrium och klor. När havsvatten avdunstar stannar saltet kvar i havet. Bara rent vatten stiger upp."},letter:"S",
+ cards:[
+  {t:"Kretslopp",d:"<i>Bakgrund s. 64.</i> En process som sker varv efter varv utan slut. Atomerna försvinner aldrig, de kombineras om till nya ämnen."},
+  {t:"Kretslopp behöver energi",d:"<i>Bakgrund s. 65.</i> Solens värme driver t.ex. vattnets kretslopp genom att få vatten att avdunsta."},
+  {t:"Vattnets kretslopp",d:"Solen värmer vattenytan → vattnet avdunstar → vattenånga stiger och kondenserar till moln → nederbörd (regn, snö) → vattnet rinner till sjöar och hav eller ner i marken som grundvatten."},
+  {t:"Avdunsta",d:"När vatten övergår från flytande form till gas (vattenånga). Sker när solen värmer sjöar, hav, mark och växter."},
+  {t:"Kondensera",d:"När vattenånga kyls och blir vattendroppar. Högre upp i atmosfären är det kallare, där bildas moln."},
+  {t:"Nederbörd",d:"Vatten som faller till marken som regn eller frusna iskristaller (snö)."},
+  {t:"Fasförändringar i kretsloppet",d:"Vattnet omvandlas mellan fast form, flytande form och gasform: avdunstning, kondensation, frysning och smältning."},
+  {t:"Rent vatten i gasform",d:"När havsvatten avdunstar är det bara vattenmolekylerna som blir gas. Salt och andra partiklar blir kvar i havet."},
+  {t:"Havsis är nästan saltfri",d:"När havsvatten fryser bildar vattenmolekylerna ett regelbundet mönster, iskristaller. Saltet passar inte in i mönstret."},
+  {t:"Grundvatten",d:"Vatten som filtreras genom marken och samlas under jorden. Det renaste vattnet, därför tar vi helst dricksvatten från brunnar som når grundvattnet."},
+  {t:"Tre naturliga separationsmetoder",d:"Vattnets kretslopp renar vattnet genom <b>avdunstning, kristallisation och filtrering</b>."},
+  {t:"Temperatur och vattenånga",d:"Det är temperaturen som styr avdunstning och kondensation. Varm luft kan innehålla mer vattenånga. Luft innehåller alltid en viss mängd vattenånga."},
+  {t:"Imma",d:"När varm luft möter kalla glasögon kondenserar vattenångan i luften till små droppar. Imman visar att det finns vatten i luften."},
+  {t:"Gasers löslighet i vatten",d:"Ju kallare vatten, desto mer gas kan lösas. Ett glas kallt vatten som står framme över natten får gasbubblor när det blir rumsvarmt."},
+  {t:"Syre och koldioxid i vatten",d:"I luft finns ca 500 gånger mer syrgas än koldioxid. I vatten är halten koldioxid mycket större, syre bara dubbelt så mycket. Koldioxid löser sig lätt och bildar kolsyra."}
+ ],
+ qs:[
+  {k:"kan",q:"Vad är ett kretslopp?",a:"<p>En process som sker varv efter varv utan slut. Ämnena omvandlas men atomerna försvinner aldrig.</p>"},
+  {k:"kan",q:"Vad krävs för att ett kretslopp ska hållas igång?",a:"<p>Energi, t.ex. solens värme som får vatten att avdunsta.</p>"},
+  {k:"kan",q:"Beskriv vattnets kretslopp.",a:"<p>Solen värmer hav, sjöar, mark och växter så att vatten avdunstar. Vattenångan stiger och kondenserar till vattendroppar som bildar moln. När dropparna blir stora faller de som regn eller snö. Vattnet rinner till sjöar och hav eller ner genom marken till grundvattnet, och så börjar det om.</p>"},
+  {k:"kan",q:"Vilka fasförändringar sker i vattnets kretslopp?",a:"<p>Avdunstning (flytande → gas), kondensation (gas → flytande), frysning till snö och is (flytande → fast) och smältning (fast → flytande).</p>"},
+  {k:"kan",q:"Varför är vattenångan som avdunstar från havet rent vatten?",a:"<p>Det är bara vattenmolekylerna som avdunstar. Salt och andra lösta ämnen blir kvar i havet.</p>"},
+  {k:"kan",q:"Varför blir havsis nästan helt fri från salt?",a:"<p>När vattnet fryser bildar vattenmolekylerna ett regelbundet mönster. Saltet passar inte in i mönstret och blir inte en del av isen.</p>"},
+  {k:"kan",q:"Vilka tre separationsmetoder renar vattnet i vattnets kretslopp?",a:"<p>Avdunstning, kristallisation och filtrering.</p>"},
+  {k:"kan",q:"Varför tar vi helst dricksvatten från brunnar som når grundvattnet?",a:"<p>Grundvattnet har filtrerats genom marken och är det renaste vattnet.</p>"},
+  {k:"kan",q:"Vad styr hur mycket vattenånga som finns i luften?",a:"<p>Temperaturen. När temperaturen stiger avdunstar mer vatten. När den sjunker kondenserar vattenångan till droppar, moln och nederbörd.</p>"},
+  {k:"kan",q:"Varför får man imma på glasögonen när man kommer in från kylan?",a:"<p>Den varma luften inomhus innehåller vattenånga. När den möter de kalla glasögonen kyls ångan och kondenserar till små droppar.</p>"},
+  {k:"kan",q:"Varför bildas det gasbubblor i ett glas kallt vatten som står framme över natten?",a:"<p>När vattnet blir varmare minskar gasernas löslighet. Luften som var löst i det kalla vattnet ”får inte längre plats” och bildar bubblor.</p>"},
+  {k:"kan",q:"Varför är det viktigt att syre kan lösas i vatten?",a:"<p>Djur som lever i vatten, t.ex. fiskar, andas syret som är löst i vattnet.</p>"},
+  {k:"kan",q:"Vad är kolsyra?",a:"<p>Koldioxid som är löst i vatten.</p>"},
+  {k:"klur",q:"Vem har rätt? Hur kan man märka att luften innehåller vattenånga?",opts:["A: Det blir dagg i gräset.","B: Luften känns kall.","C: Det blir imma på glasögonen.","D: Det ryker när man andas."],c:-1,multi:[0,2,3],why:"A, C och D visar alla att vattenånga kondenserar till droppar. Att luften känns kall (B) säger inget om vattenånga."},
+  {k:"tf",q:"I ett kretslopp förändras inte de kemiska föreningarna.",tf:false,why:"Föreningarna kan förändras på vägen. Det är atomerna som inte förändras."},
+  {k:"tf",q:"I ett kretslopp finns atomerna kvar eftersom de inte kan förstöras.",tf:true,why:"Atomer kan varken skapas eller förstöras."},
+  {k:"tf",q:"Ett kretslopp skapar lika mycket energi som det förbrukar.",tf:false,why:"Ett kretslopp behöver tillförd energi, t.ex. från solen."},
+  {k:"tf",q:"Olika kretslopp tar olika lång tid för att gå ett varv.",tf:true,why:"Mineralernas kretslopp tar hundratals miljoner år, kolets snabba kretslopp kan ta månader."},
+  {k:"tf",q:"Kallt vatten kan lösa mer syre än varmt vatten.",tf:true,why:"Gasers löslighet är störst i kallt vatten."},
+  {k:"tf",q:"Vattenångan som stiger från havet är salt.",tf:false,why:"Bara vattenmolekylerna avdunstar. Saltet stannar i havet."}
+ ]},
+
+{id:"kluringar",nr:10,sym:"Kl",kap:3,title:"Kluringar och resonemang",pages:"s. 54–57",
+ intro:"Bonusområde med uppslagsfrågor där man får tänka till och resonera. Bra repetition inför provet.",
+ el:{s:"Bi",n:"Vismut",z:83,f:"På 1980-talet lyckades en kemist omvandla en liten mängd vismut till guld. Alkemisternas dröm, men alldeles för dyrt."},letter:"",
+ cards:[
+  {t:"Grundämne, förening eller blandning?",d:"<b>Grundämne:</b> ett slags atomer (O<sub>2</sub>, Cu). <b>Kemisk förening:</b> olika atomer bundna ihop (H<sub>2</sub>O). <b>Blandning:</b> flera ämnen blandade men inte bundna (luft, choklad)."},
+  {t:"Nya egenskaper",d:"När ämnen reagerar kan den nya föreningen få helt andra egenskaper. Kol och syre är inte giftiga, men kolmonoxid (CO) är en giftig gas."},
+  {t:"Ingenting försvinner",d:"Utsläpp försvinner inte för att skorstenen är hög. Atomerna sprids ut och hamnar någon annanstans, i luft, vatten och mark."}
+ ],
+ qs:[
+  {k:"klur",q:"Vem har rätt? När ämne A och B reagerar med varandra bildas ett giftigt ämne C. Kan det bli så?",opts:["A: C kan bli giftigt fastän A och B inte är giftiga.","B: Är A och B giftiga, blir C också giftigt.","C: Det räcker med att ett av ämnena A eller B är giftigt, då blir C också giftigt."],c:0,why:"En kemisk förening har andra egenskaper än ämnena den bildas av. Kol och syre är inte giftiga men kolmonoxid är det. Åt andra hållet kan giftiga ämnen bilda ofarliga föreningar."},
+  {k:"bort",q:"Vad ska bort: choklad, kopparplåt, kol eller syrgas (O<sub>2</sub>)? Motivera.",opts:["Choklad","Kopparplåt","Kol","Syrgas"],c:0,why:"Choklad är en blandning av många ämnen. Koppar, kol och syrgas är grundämnen. (Man kan också säga syrgas eftersom det är den enda gasen, men grundämne kontra blandning är den kemiska tanken.)"},
+  {k:"fund",q:"Förr trodde man att alla utsläpp från en fabrik försvann bara man byggde tillräckligt höga skorstenar. Hur vet du att det inte är så?",a:"<p>Ingenting försvinner. Atomerna i utsläppen finns kvar. De sprids med vinden och kommer ner någon annanstans, i luft, vatten och mark, och kan skada miljö och hälsa där.</p>"},
+  {k:"fund",q:"Ta ställning: en del kemikalier som har framställts har varit skadliga. Det skulle bli bättre om man inte framställde nya kemikalier. Tycker du det är ett bra förslag?",a:"<p>Här finns inget enda rätt svar. Ett bra svar tar upp båda sidor:</p><ul><li><b>För:</b> vissa kemikalier har skadat människor och natur, t.ex. hälsofarliga tillsatser och kopparföreningar i havet.</li><li><b>Emot:</b> nya kemikalier behövs för läkemedel (t.ex. penicillin), miljövänliga material och nya drivmedel. Grön kemi och miljömärkning gör det säkrare.</li></ul>"},
+  {k:"fund",q:"Beskriv skillnaden mellan hur alkemisterna arbetade och hur en kemist arbetar i dag.",a:"<p>Alkemister provade sig fram mot drömmar som guld och livselixir. Dagens kemister arbetar naturvetenskapligt: hypotes, experiment, noggrann dokumentation, kritisk granskning och ett gemensamt kemispråk.</p>"},
+  {k:"fund",q:"Förklara skillnaden mellan indunstning och destillering.",a:"<p>Indunstning: vätskan avdunstar och försvinner, det lösta ämnet blir kvar. Destillering: gasen kyls och samlas upp, så att du får tillbaka vätskan också.</p>"},
+  {k:"fund",q:"Rita i huvudet: i en ruta svävar runda partiklar långt ifrån varandra. Är det fast, flytande eller gas?",a:"<p>Gas. I gasform är partiklarna så långt ifrån varandra att de inte längre har kontakt. I flytande form ligger de nära men kan glida runt, i fast form ligger de tätt och ordnat.</p>"},
+  {k:"tf",q:"Ett grundämne kan bestå av molekyler.",tf:true,why:"Till exempel syrgas, O<sub>2</sub>: två likadana atomer."},
+  {k:"tf",q:"Mässing är ett grundämne.",tf:false,why:"Mässing är en legering, en blandning av koppar och zink."}
+ ]}
+];
+
+/* ---------- Lagring (sparas i den här webbläsaren) ---------- */
+var KEY="kemiplugget-v1";
+function fresh(){return {cards:{},qs:{},unlocked:[],last:null,gold:false,reverse:false,name:"",hideDone:false,eggs:{}};}
+function load(){try{var r=localStorage.getItem(KEY);if(r){var o=JSON.parse(r);var f=fresh();for(var k in o)f[k]=o[k];return f;}}catch(e){}return fresh();}
+var S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+/* ---------- Hjälpare ---------- */
+function $(s,r){return (r||document).querySelector(s);}
+function byId(id){for(var i=0;i<AREAS.length;i++)if(AREAS[i].id===id)return AREAS[i];return null;}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function known(a){var o=S.cards[a.id]||{},n=0;for(var k in o)if(o[k]&&+k<a.cards.length)n++;return n;}
+function qok(a){var o=S.qs[a.id]||{},n=0;for(var k in o)if(o[k]==="ok"&&+k<a.qs.length)n++;return n;}
+function prog(a){var kc=known(a),qo=qok(a),kt=a.cards.length,qt=a.qs.length;return {kc:kc,kt:kt,qo:qo,qt:qt,pct:Math.round(100*(kc+qo)/(kt+qt)),done:kc>=kt&&qo>=qt};}
+function totalPct(){var d=0,t=0;AREAS.forEach(function(a){var p=prog(a);d+=p.kc+p.qo;t+=p.kt+p.qt;});return Math.round(100*d/t);}
+var KIND={kan:"Kan du?",tf:"Rätt eller fel?",fund:"Fundera och förklara",fyll:"Vilket ord saknas?",klur:"Vem har rätt?",ihop:"Vilka hör ihop?",bort:"Vad ska bort?",symbol:"Farosymbol"};
+
+/* ---------- Tillstånd för vyn ---------- */
+var V={view:"home",area:null,tab:"kort"};
+var D=null;   // kortlek
+var UI={};    // tillfälligt läge för frågor
+var streak=0;
+
+function setLast(){S.last={area:V.area,tab:V.tab};save();}
+
+/* ---------- Header ---------- */
+function updTotal(){var p=totalPct();$("#totalPct").textContent=p+" %";$("#totalBar").style.width=p+"%";}
+
+/* ---------- Startsida ---------- */
+function renderHome(){
+  var h='<div class="stack">';
+  h+='<section class="hero"><div class="eyebrow">NO · Kemi · Åk 7</div><h1>Kemins grunder</h1><p class="lead">Begreppskort och instuderingsfrågor för kapitel 1 och vattnets kretslopp. Ta ett område i taget. Allt du gör sparas i den här webbläsaren, så du kan ta paus och fortsätta senare.</p></section>';
+  if(S.last&&byId(S.last.area)){var la=byId(S.last.area);var lp=prog(la);
+    h+='<button class="continue" data-act="continue"><div><small>Fortsätt där du slutade</small><b>'+esc(la.title)+'</b><small>'+(S.last.tab==="fragor"?"Frågor":"Begreppskort")+' · '+lp.pct+' % klart</small></div><span class="arrow" aria-hidden="true">→</span></button>';}
+  h+='<div class="sec-h"><h2>Områden</h2><div class="legend"><span><i style="background:var(--t1)"></i>Kap 1</span><span><i style="background:var(--t2)"></i>Kap 2</span><span><i style="background:var(--t3)"></i>Bonus</span></div></div>';
+  h+='<div class="tiles">';
+  AREAS.forEach(function(a){var p=prog(a);
+    h+='<button class="tile k'+a.kap+(p.done?' done':'')+'" data-act="open" data-id="'+a.id+'" aria-label="'+esc(a.title)+', '+p.pct+' procent klart"><div class="row"><span>'+a.nr+'</span><span>'+p.pct+' %</span></div>'+(p.done?'<span class="badge">Klar</span>':'')+'<div class="sym">'+a.sym+'</div><div class="nm">'+esc(a.title)+'</div><div class="pg">'+a.pages+' · '+a.cards.length+' kort · '+a.qs.length+' frågor</div><div class="bar"><i style="width:'+p.pct+'%"></i></div></button>';});
+  h+='</div>';
+  // Samling
+  h+='<div class="sec-h"><h2>Din samling</h2><span class="hint">'+S.unlocked.length+' av '+AREAS.length+'</span></div>';
+  h+='<p class="hint" style="margin:-8px 0 0">Varje område du gör klart låser upp ett grundämne och en bokstav. Bokstäverna bildar en hemlig kod.</p>';
+  h+='<div class="collection">';
+  AREAS.forEach(function(a){var on=S.unlocked.indexOf(a.id)>-1;
+    h+=on?'<button class="slot on'+(a.letter?'':' bonus')+'" data-act="fact" data-id="'+a.id+'" aria-label="'+a.el.n+'"><b>'+a.el.s+'</b><span>'+(a.letter||'★')+'</span></button>':'<div class="slot" aria-label="Låst">?</div>';});
+  h+='</div>';
+  // Hemliga labbet
+  h+='<section class="lab"><h2 style="font-size:1.1rem">Hemliga labbet</h2><p class="hint" style="margin:4px 0 0">Har du hittat en kod? Blanda den här. Ledtrådar finns gömda på sidan.</p><form id="codeForm" autocomplete="off"><input id="code" type="text" inputmode="text" autocapitalize="characters" spellcheck="false" placeholder="Skriv en kod" aria-label="Hemlig kod"><button class="btn primary" type="submit">Blanda</button></form></section>';
+  h+='<div class="foot"><button class="linkbtn" data-act="ask-reset">Nollställ alla framsteg</button>'+(S.gold?' · <button class="linkbtn" data-act="gold-off">Stäng av guldläget</button>':'')+'<br>Underlag: kapitel 1 Kemins grunder s. 9–61 och kapitel 2 s. 67–69.</div>';
+  h+='</div>';
+  $("#app").innerHTML=h;
+}
+
+/* ---------- Område ---------- */
+function areaHead(a){var p=prog(a);
+  return '<div class="progline" id="areaProg"><div class="pbox'+(p.kc>=p.kt?' full':'')+'"><div class="lbl">Begrepp jag kan</div><div class="num">'+p.kc+' / '+p.kt+'</div><div class="meter"><i style="width:'+(100*p.kc/p.kt)+'%"></i></div></div><div class="pbox'+(p.qo>=p.qt?' full':'')+'"><div class="lbl">Frågor klara</div><div class="num">'+p.qo+' / '+p.qt+'</div><div class="meter"><i style="width:'+(100*p.qo/p.qt)+'%"></i></div></div></div>';}
+function renderArea(){
+  var a=byId(V.area);
+  var h='<div class="stack"><div><button class="back" data-act="home">← Alla områden</button></div>';
+  h+='<div class="area-head"><div class="mini k'+a.kap+'"><small>'+a.nr+'</small><b>'+a.sym+'</b></div><div><div class="eyebrow">'+(a.kap===1?'Kapitel 1':a.kap===2?'Kapitel 2':'Bonus')+' · '+a.pages+'</div><h1>'+esc(a.title)+'</h1><p class="lead">'+a.intro+'</p></div></div>';
+  h+=areaHead(a);
+  h+='<div class="tabs" role="tablist"><button role="tab" aria-selected="'+(V.tab==="kort")+'" data-act="tab" data-tab="kort">Begreppskort</button><button role="tab" aria-selected="'+(V.tab==="fragor")+'" data-act="tab" data-tab="fragor">Frågor</button></div>';
+  h+='<div id="pane">'+(V.tab==="kort"?deckHTML(a):qsHTML(a))+'</div></div>';
+  $("#app").innerHTML=h;
+}
+function refreshHead(){var a=byId(V.area);var el=$("#areaProg");if(el)el.outerHTML=areaHead(a);updTotal();}
+
+/* ---------- Kortlek ---------- */
+function buildDeck(a,review){
+  var k=S.cards[a.id]||{};
+  var q=a.cards.map(function(_,i){return i;}).filter(function(i){return review||!k[i];});
+  D={area:a.id,queue:shuffle(q),flipped:false,review:!!review,seen:0};
+}
+function deckHTML(a){
+  if(!D||D.area!==a.id)buildDeck(a,false);
+  var p=prog(a);
+  if(!D.queue.length){
+    return '<div class="empty stack"><div><h3>'+(D.review?'Repetition klar':'Alla kort kan du!')+'</h3><p class="hint" style="margin:0">'+(p.qo<p.qt?'Fortsätt med frågorna för att bli helt klar med området.':'Snyggt jobbat.')+'</p></div><div class="row-btns">'+(p.qo<p.qt?'<button class="btn primary" data-act="tab" data-tab="fragor">Till frågorna</button>':'')+'<button class="btn" data-act="review">Repetera alla kort</button></div><div><button class="linkbtn" data-act="reset-cards">Börja om korten från noll</button></div></div>';
+  }
+  var c=a.cards[D.queue[0]];
+  var term=c.svg?'<div class="kind">Farosymbol</div><div style="margin-top:8px">'+haz(c.svg)+'</div>':'<span class="sticky">'+c.t+'</span>';
+  var front,back;
+  if(!S.reverse){
+    front='<div class="kind">Begrepp</div><div class="content">'+term+'</div><div class="note">Tryck för att vända</div>';
+    back='<div class="content deftext">'+(c.svg?'<b class="term">'+c.t+'</b>':'<b class="term">'+c.t+'</b>')+c.d+'</div>';
+  }else{
+    front='<div class="kind">Vilket begrepp?</div><div class="content revtext">'+(c.svg?haz(c.svg):c.d.replace(new RegExp(c.t.replace(/<[^>]+>/g,'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),'…'))+'</div><div class="note">Tryck för att vända</div>';
+    back='<div class="kind">Svar</div><div class="content">'+(c.svg?'<span class="sticky">'+c.t+'</span><p class="deftext" style="margin-top:14px">'+c.d+'</p>':'<span class="sticky">'+c.t+'</span>')+'</div>';
+  }
+  var left=D.queue.length;
+  var h='<div class="stack">';
+  h+='<div class="deckmeta"><span>'+(D.review?'Repetition · ':'')+left+' kort kvar</span><span>Du kan '+p.kc+' av '+p.kt+'</span></div>';
+  h+='<div class="flash'+(D.flipped?' flipped':'')+'" id="flash" role="button" tabindex="0" aria-label="Vänd kortet" data-act="flip"><div class="inner"><div class="face">'+front+'</div><div class="face backside">'+back+'</div></div></div>';
+  h+='<div class="judge"><button class="btn bad" data-act="again">Öva mer</button><button class="btn ok" data-act="know">Kan!</button></div>';
+  h+='<div class="tools"><button class="btn small ghost" data-act="reverse" aria-pressed="'+S.reverse+'">'+(S.reverse?'Visa begreppet först':'Visa förklaringen först')+'</button><button class="btn small ghost" data-act="shuffle">Blanda</button></div>';
+  h+='</div>';
+  return h;
+}
+function renderPane(){var a=byId(V.area);$("#pane").innerHTML=V.tab==="kort"?deckHTML(a):qsHTML(a);}
+
+function onKnow(){
+  var a=byId(V.area);if(!D||!D.queue.length)return;
+  var i=D.queue.shift();
+  if(!D.review){S.cards[a.id]=S.cards[a.id]||{};S.cards[a.id][i]=1;save();}
+  D.flipped=false;streak++;
+  if(streak===5)toast("<b>Kedjereaktion!</b> Fem kort i rad.");
+  if(streak===10)toast("<b>Tio i rad!</b> Psst… testa koden <b>H2O</b> i hemliga labbet.");
+  if(streak===25)toast("<b>25 i rad!</b> Du reagerar snabbare än knallgas.");
+  renderPane();refreshHead();checkDone(a);
+}
+function onAgain(){
+  if(!D||!D.queue.length)return;
+  var i=D.queue.shift();D.queue.splice(Math.min(3,D.queue.length),0,i);D.flipped=false;streak=0;renderPane();
+}
+function flip(){D.flipped=!D.flipped;var f=$("#flash");if(f)f.classList.toggle("flipped",D.flipped);}
+
+/* ---------- Frågor ---------- */
+function qsHTML(a){
+  var h='<div class="stack"><div class="qfilter"><span>'+qok(a)+' av '+a.qs.length+' klara</span><label class="switch"><input type="checkbox" id="hideDone" '+(S.hideDone?'checked':'')+'> Dölj klara frågor</label></div>';
+  a.qs.forEach(function(q,i){var st=(S.qs[a.id]||{})[i];if(S.hideDone&&st==="ok")return;h+=qHTML(a,q,i);});
+  if(S.hideDone&&qok(a)===a.qs.length)h+='<div class="empty"><h3>Alla frågor klara!</h3><p class="hint" style="margin:0">Stäng av filtret för att se dem igen.</p></div>';
+  h+='<div><button class="linkbtn" data-act="reset-qs">Börja om frågorna från noll</button></div></div>';
+  return h;
+}
+function qHTML(a,q,i){
+  var st=(S.qs[a.id]||{})[i];var key=a.id+":"+i;var u=UI[key]||{};
+  var chip=st==="ok"?'<span class="chip ok">Klar</span>':st==="again"?'<span class="chip again">Öva mer</span>':'';
+  var h='<article class="q" id="q-'+i+'" data-st="'+(st||'')+'"><div class="q-head"><span class="q-kind">'+(i+1)+' · '+(KIND[q.k]||'')+'</span>'+chip+'</div>';
+  if(q.svg)h+='<div>'+haz(q.svg).replace('class="hz"','class="hz hzq"')+'</div>';
+  h+='<p class="q-text">'+q.q+'</p>';
+  if(q.k==="tf"){
+    var picked=u.pick!=null;
+    h+='<div class="opts two">';
+    [true,false].forEach(function(v,j){var cls="";if(picked){if(v===q.tf)cls=" right";else if(u.pick===j)cls=" wrong";}
+      h+='<button class="opt'+cls+'" data-act="tf" data-i="'+i+'" data-j="'+j+'"'+(picked?' disabled':'')+'>'+(v?'Rätt':'Fel')+'</button>';});
+    h+='</div>';
+    if(picked){var ok=([true,false][u.pick]===q.tf);
+      h+='<div class="answer"><p class="feedback '+(ok?'ok':'bad')+'">'+(ok?'Rätt svar!':'Inte riktigt. Påståendet är '+(q.tf?'rätt':'fel')+'.')+'</p><p>'+q.why+'</p></div>';
+      if(!ok)h+='<div class="row-btns"><button class="btn small" data-act="retry" data-i="'+i+'">Försök igen</button></div>';}
+  }else if(q.opts){
+    var picked2=u.pick!=null;var multi=q.multi;
+    h+='<div class="opts">';
+    q.opts.forEach(function(o,j){var cls="";var right=multi?multi.indexOf(j)>-1:j===q.c;
+      if(picked2){if(right)cls=" right";else if(u.pick===j)cls=" wrong";}
+      h+='<button class="opt'+cls+'" data-act="mc" data-i="'+i+'" data-j="'+j+'"'+(picked2?' disabled':'')+'>'+o+'</button>';});
+    h+='</div>';
+    if(picked2){var ok2=multi?multi.indexOf(u.pick)>-1:u.pick===q.c;
+      h+='<div class="answer"><p class="feedback '+(ok2?'ok':'bad')+'">'+(ok2?(multi?'Ja! Fler svar stämmer, se förklaringen.':'Rätt svar!'):'Inte riktigt.')+'</p><p>'+q.why+'</p></div>';
+      if(!ok2)h+='<div class="row-btns"><button class="btn small" data-act="retry" data-i="'+i+'">Försök igen</button></div>';}
+  }else{
+    if(!u.rev){h+='<div class="row-btns"><button class="btn primary" data-act="reveal" data-i="'+i+'">Visa svar</button></div><p class="hint" style="margin:-4px 0 0">Tänk ut ditt svar först, säg det högt eller skriv ner det.</p>';}
+    else{h+='<div class="answer">'+q.a+'</div><p class="hint" style="margin:0">Hur gick det jämfört med facit?</p><div class="row-btns"><button class="btn bad" data-act="self-again" data-i="'+i+'">Öva mer</button><button class="btn ok" data-act="self-ok" data-i="'+i+'">Jag kunde det</button></div>';}
+  }
+  h+='</article>';return h;
+}
+function setQ(a,i,v){S.qs[a.id]=S.qs[a.id]||{};if(v==null)delete S.qs[a.id][i];else S.qs[a.id][i]=v;save();}
+function updQ(i){var a=byId(V.area);var el=$("#q-"+i);if(el)el.outerHTML=qHTML(a,a.qs[i],i);var f=$(".qfilter span");if(f)f.textContent=qok(a)+" av "+a.qs.length+" klara";refreshHead();checkDone(a);}
+
+/* ---------- Klart & upplåsning ---------- */
+function checkDone(a){
+  var p=prog(a);
+  if(p.done&&S.unlocked.indexOf(a.id)<0){
+    S.unlocked.push(a.id);save();
+    setTimeout(function(){burst();showUnlock(a);},350);
+  }
+}
+function showUnlock(a){
+  var main=AREAS.filter(function(x){return x.letter;});
+  var have=main.filter(function(x){return S.unlocked.indexOf(x.id)>-1;}).length;
+  var code=main.map(function(x){return S.unlocked.indexOf(x.id)>-1?x.letter:"_";}).join(" ");
+  modal('<h2>'+esc(a.title)+' är klart!</h2><p style="margin:0">Du har låst upp ett nytt grundämne.</p><div class="bigtile"><small>'+a.el.z+'</small><b>'+a.el.s+'</b><small>'+a.el.n+'</small></div><p style="margin:0">'+esc(a.el.f)+'</p>'+(a.letter?'<p style="margin:0">Hemlig bokstav: <span class="letter">'+a.letter+'</span></p><p class="mono" style="margin:0;letter-spacing:.15em">'+code+'</p>'+(have===main.length?'<p style="margin:0"><b>Alla bokstäver hittade!</b> Skriv namnet i hemliga labbet.</p>':''):'<p style="margin:0">Bonusmärke: <b>Alkemistens stjärna ★</b></p>')+'<button class="btn primary" data-act="close">Fortsätt</button>');
+}
+function showFact(a){modal('<div class="bigtile"><small>'+a.el.z+'</small><b>'+a.el.s+'</b><small>'+a.el.n+'</small></div><h2>'+a.el.n+'</h2><p style="margin:0">'+esc(a.el.f)+'</p>'+(a.letter?'<p style="margin:0">Bokstav: <span class="letter">'+a.letter+'</span></p>':'')+'<button class="btn primary" data-act="close">Stäng</button>');}
+
+/* ---------- Modal & toast ---------- */
+function modal(html){var m=$("#modal");m.innerHTML='<div class="dialog" role="dialog" aria-modal="true">'+html+'</div>';m.hidden=false;var b=m.querySelector("button,input");if(b)b.focus();}
+function closeModal(){var m=$("#modal");m.hidden=true;m.innerHTML="";}
+function toast(html){var t=document.createElement("div");t.className="toast";t.innerHTML=html;$("#toasts").appendChild(t);setTimeout(function(){t.remove();},3800);}
+
+/* ---------- Konfetti (grundämnessymboler) ---------- */
+var fx=$("#fx"),ctx=fx.getContext("2d"),parts=[],raf=null;
+var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function sizeFx(){var d=window.devicePixelRatio||1;fx.width=innerWidth*d;fx.height=innerHeight*d;ctx.setTransform(d,0,0,d,0,0);}
+function burst(labels,count,rain){
+  if(reduce)return;sizeFx();
+  labels=labels||["H","He","Li","C","N","O","Na","Cu","Fe","Au","Ag","Cl","Ca","S"];
+  var cols=["#2346d6","#f5d63d","#17845a","#c8432c","#7f97ff","#e3b341"];
+  for(var i=0;i<(count||70);i++){parts.push({x:rain?Math.random()*innerWidth:innerWidth/2+(Math.random()-.5)*80,y:rain?-20-Math.random()*innerHeight*.6:innerHeight*.45,vx:rain?0:(Math.random()-.5)*9,vy:rain?2+Math.random()*3:-4-Math.random()*8,r:(Math.random()-.5)*.3,a:Math.random()*6,t:labels[i%labels.length],c:cols[i%cols.length],life:0});}
+  if(!raf)raf=requestAnimationFrame(step);
+}
+function step(){
+  ctx.clearRect(0,0,innerWidth,innerHeight);
+  parts=parts.filter(function(p){return p.y<innerHeight+40&&p.life<400;});
+  parts.forEach(function(p){p.vy+=0.18;p.x+=p.vx;p.y+=p.vy;p.a+=p.r;p.life++;
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.fillStyle=p.c;ctx.fillRect(-13,-11,26,22);ctx.fillStyle=(p.c==="#f5d63d"||p.c==="#e3b341")?"#231e00":"#fff";ctx.font="700 12px ui-monospace,Menlo,monospace";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(p.t,0,1);ctx.restore();});
+  if(parts.length)raf=requestAnimationFrame(step);else{raf=null;ctx.clearRect(0,0,innerWidth,innerHeight);}
+}
+
+/* ---------- Hemliga koder ---------- */
+function applyGold(){if(S.gold)document.documentElement.setAttribute("data-gold","1");else document.documentElement.removeAttribute("data-gold");}
+function allMain(){return AREAS.filter(function(x){return x.letter;}).every(function(x){return S.unlocked.indexOf(x.id)>-1;});}
+function runCode(raw){
+  var c=raw.toUpperCase().replace(/\s+/g,"").replace(/₂/g,"2");
+  S.eggs[c]=1;save();
+  if(c==="H2O"){burst(["H₂O","H₂O","💧"],60,true);toast("<b>Det regnar!</b> Vattnets kretslopp i full gång.");return;}
+  if(c==="112"){toast("<b>Rädda · Varna · Larma 112 · Släcka.</b> Du kan minnesregeln!");burst(["🔥","O₂","Δ"],30);return;}
+  if(c==="KHEMS"){toast("<b>Egypterna nickar gillande.</b> Ordet kemi kan komma från khems.");return;}
+  if(c==="AU"||c==="GULD"){S.gold=!S.gold;save();applyGold();toast(S.gold?"<b>Alkemisternas dröm!</b> Allt blev guld.":"Guldet blev vanlig metall igen.");if(S.gold)burst(["Au","Au","Au"],50);if(V.view==="home")renderHome();return;}
+  if(c==="C+O2"||c==="CO2"||c==="C+O2→CO2"){toast("<b>C + O₂ → CO₂</b> Kolet reagerade med syret. Ingenting försvann!");return;}
+  if(c==="MENDELEJEV"){toast("<b>Dmitrij gillar ordning.</b> 118 grundämnen och jakten på nummer 119 pågår.");burst(["119","?"],20);return;}
+  if(c==="FLEMING"||c==="PENICILLIN"){toast("<b>Upptäckt av en slump!</b> Ibland är misstag guld värda.");return;}
+  if(c==="BERZELIUS"){
+    if(allMain()){showDiploma();burst(null,120);}
+    else toast("<b>Rätt kod!</b> Men diplomet kräver att alla nio områden är klara. Kämpa på!");
+    return;}
+  toast("Inget hände. Fel blandning, kanske?");
+}
+function showDiploma(){
+  var d=new Date().toLocaleDateString("sv-SE",{year:"numeric",month:"long",day:"numeric"});
+  modal('<div class="diploma"><div class="eyebrow">Kemiplugget</div><h2>Diplom</h2><p style="margin:8px 0 0">Härmed intygas att</p><div class="nm" id="dipName">'+(S.name?esc(S.name):'Ditt namn')+'</div><p style="margin:0">har klarat alla områden i <b>Kemins grunder</b> och vattnets kretslopp. Berzelius hade varit stolt.</p><p class="hint" style="margin:10px 0 0">'+d+'</p></div><label class="hint" for="nameIn" style="text-align:left">Skriv ditt namn på diplomet</label><input type="text" id="nameIn" value="'+esc(S.name||"")+'" maxlength="40"><p class="hint" style="margin:0">Ta en skärmbild och visa!</p><button class="btn primary" data-act="close">Stäng</button>');
+  var n=$("#nameIn");n.addEventListener("input",function(){S.name=n.value;save();$("#dipName").textContent=n.value||"Ditt namn";});
+}
+
+/* ---------- Navigering & händelser ---------- */
+function go(view,area,tab){V.view=view;if(area)V.area=area;if(tab)V.tab=tab;if(view==="area"){if(!D||D.area!==V.area)D=null;setLast();renderArea();}else renderHome();updTotal();window.scrollTo(0,0);}
+
+var logoTaps=0,logoTimer=null;
+document.addEventListener("click",function(e){
+  var b=e.target.closest("[data-act]");
+  if(!b){if(e.target===$("#modal"))closeModal();return;}
+  var act=b.getAttribute("data-act"),a=V.area?byId(V.area):null,i=+b.getAttribute("data-i"),j=+b.getAttribute("data-j");
+  switch(act){
+    case "open":go("area",b.getAttribute("data-id"),"kort");break;
+    case "continue":go("area",S.last.area,S.last.tab);break;
+    case "home":go("home");break;
+    case "tab":V.tab=b.getAttribute("data-tab");setLast();renderArea();break;
+    case "flip":flip();break;
+    case "know":onKnow();break;
+    case "again":onAgain();break;
+    case "shuffle":shuffle(D.queue);D.flipped=false;renderPane();toast("Korten är blandade.");break;
+    case "reverse":S.reverse=!S.reverse;save();D.flipped=false;renderPane();break;
+    case "review":buildDeck(a,true);renderPane();break;
+    case "reset-cards":modal('<h2>Börja om korten?</h2><p style="margin:0">Alla kort i <b>'+esc(a.title)+'</b> markeras som ej klara.</p><div class="row-btns"><button class="btn" data-act="close">Avbryt</button><button class="btn primary" data-act="do-reset-cards">Börja om</button></div>');break;
+    case "do-reset-cards":S.cards[a.id]={};save();buildDeck(a,false);closeModal();renderArea();break;
+    case "reset-qs":modal('<h2>Börja om frågorna?</h2><p style="margin:0">Alla frågor i <b>'+esc(a.title)+'</b> markeras som ej klara.</p><div class="row-btns"><button class="btn" data-act="close">Avbryt</button><button class="btn primary" data-act="do-reset-qs">Börja om</button></div>');break;
+    case "do-reset-qs":S.qs[a.id]={};save();Object.keys(UI).forEach(function(k){if(k.indexOf(a.id+":")===0)delete UI[k];});closeModal();renderArea();break;
+    case "reveal":UI[a.id+":"+i]={rev:true};updQ(i);break;
+    case "self-ok":setQ(a,i,"ok");UI[a.id+":"+i]={rev:true};updQ(i);break;
+    case "self-again":setQ(a,i,"again");delete UI[a.id+":"+i];updQ(i);break;
+    case "tf":var q=a.qs[i];var ok=([true,false][j]===q.tf);UI[a.id+":"+i]={pick:j};setQ(a,i,ok?"ok":"again");updQ(i);break;
+    case "mc":var q2=a.qs[i];var ok2=q2.multi?q2.multi.indexOf(j)>-1:j===q2.c;UI[a.id+":"+i]={pick:j};setQ(a,i,ok2?"ok":"again");updQ(i);break;
+    case "retry":delete UI[a.id+":"+i];updQ(i);break;
+    case "fact":showFact(byId(b.getAttribute("data-id")));break;
+    case "close":closeModal();if(V.view==="home")renderHome();break;
+    case "ask-reset":modal('<h2>Nollställa allt?</h2><p style="margin:0">Alla kort, frågor och din samling försvinner. Det går inte att ångra.</p><div class="row-btns"><button class="btn" data-act="close">Avbryt</button><button class="btn bad" data-act="do-reset-all">Nollställ</button></div>');break;
+    case "do-reset-all":S=fresh();save();D=null;UI={};applyGold();closeModal();renderHome();updTotal();toast("Allt är nollställt. Lycka till!");break;
+    case "gold-off":S.gold=false;save();applyGold();renderHome();break;
+  }
+});
+document.addEventListener("change",function(e){if(e.target.id==="hideDone"){S.hideDone=e.target.checked;save();renderPane();}});
+document.addEventListener("submit",function(e){if(e.target.id==="codeForm"){e.preventDefault();var inp=$("#code");if(inp.value.trim()){runCode(inp.value.trim());inp.value="";inp.blur();}}});
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"&&!$("#modal").hidden){closeModal();return;}
+  if(V.view!=="area"||V.tab!=="kort"||!$("#modal").hidden)return;
+  var tag=(e.target.tagName||"").toLowerCase();if(tag==="input"||tag==="textarea")return;
+  if(e.key===" "||e.key==="Enter"){if(e.target.closest&&e.target.closest("button"))return;e.preventDefault();flip();}
+  else if(e.key==="ArrowRight"||e.key==="2")onKnow();
+  else if(e.key==="ArrowLeft"||e.key==="1")onAgain();
+});
+
+// Påskägg: tryck på atomen i loggan 7 gånger
+$("#logo").addEventListener("click",function(){
+  logoTaps++;clearTimeout(logoTimer);logoTimer=setTimeout(function(){logoTaps=0;},1500);
+  if(logoTaps>=7){logoTaps=0;var l=$("#logo");l.classList.add("split");burst(["p⁺","n⁰","e⁻"],45);toast("<b>Du splittrade atomen!</b> Atomos betyder odelbar… grekerna hade fel.");setTimeout(function(){l.classList.remove("split");},2200);}
+  else if(logoTaps===1){go("home");}
+});
+
+/* ---------- Start ---------- */
+applyGold();renderHome();updTotal();
+(function(){var h=new Date().getHours();if(h>=22||h<5)setTimeout(function(){toast("<b>Sent ute?</b> Även kemister behöver sova. Allt du gjort är sparat.");},900);})();
+window.addEventListener("resize",function(){if(raf)sizeFx();});
+})();
+</script>
+
+</body>
+</html>
