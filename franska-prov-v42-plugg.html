@@ -1,0 +1,867 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Franska v 42</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@600;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Caveat:wght@600&display=swap">
+<style>
+/* Layout: a French "cahier" (Seyès-ruled notebook) — one column, cards pinned on the page, sticky progress header */
+:root{
+  --paper:#fbfcff; --rule:#d8e2f5; --rule-strong:#b9c9ea; --margin:#f2a9a9;
+  --ink:#1d2b5c; --ink-soft:#56628c; --card:#ffffff; --line:#dfe5f3;
+  --bleu:#2f54d6; --bleu-soft:#e6ecff;
+  --perroquet:#2e8b4e; --perroquet-soft:#e2f4e7;
+  --rouge:#d13a3a; --rouge-soft:#fde8e6;
+  --soleil:#f2b705; --soleil-soft:#fff4cc;
+  --shadow:0 1px 0 rgba(29,43,92,.06),0 6px 18px -10px rgba(29,43,92,.35);
+  --f-display:"Grandstander","Chalkboard SE","Comic Sans MS",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",-apple-system,"Segoe UI",system-ui,sans-serif;
+  --f-hand:"Caveat","Bradley Hand","Segoe Print",cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#17201c; --rule:#1f2b26; --rule-strong:#26352f; --margin:#5a2e2e;
+  --ink:#eef3ea; --ink-soft:#a8b5ad; --card:#1f2a25; --line:#2f3d37;
+  --bleu:#8eaaff; --bleu-soft:#24305a;
+  --perroquet:#6fd492; --perroquet-soft:#1e3a29;
+  --rouge:#ff8a80; --rouge-soft:#45231f;
+  --soleil:#ffd257; --soleil-soft:#3d3416;
+  --shadow:0 6px 18px -10px rgba(0,0,0,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#17201c; --rule:#1f2b26; --rule-strong:#26352f; --margin:#5a2e2e;
+  --ink:#eef3ea; --ink-soft:#a8b5ad; --card:#1f2a25; --line:#2f3d37;
+  --bleu:#8eaaff; --bleu-soft:#24305a;
+  --perroquet:#6fd492; --perroquet-soft:#1e3a29;
+  --rouge:#ff8a80; --rouge-soft:#45231f;
+  --soleil:#ffd257; --soleil-soft:#3d3416;
+  --shadow:0 6px 18px -10px rgba(0,0,0,.7); color-scheme:dark}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; color:var(--ink); font:17px/1.5 var(--f-body);
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(90deg,transparent 30px,var(--margin) 30px,var(--margin) 32px,transparent 32px),
+    linear-gradient(var(--rule-strong) 1px,transparent 1px),
+    linear-gradient(var(--rule) 1px,transparent 1px);
+  background-size:100% 100%,100% 32px,100% 8px;
+  background-attachment:local;
+  min-height:100%;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid var(--bleu);outline-offset:2px;border-radius:8px}
+
+.wrap{max-width:640px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top .in{max-width:640px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px 12px;display:flex;flex-direction:column;gap:8px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:42px;height:42px;border-radius:50%;border:none;background:var(--perroquet-soft);font-size:24px;display:grid;place-items:center;flex:none;transition:transform .2s}
+.logo:active{transform:scale(.9) rotate(-12deg)}
+.brand h1{font:800 22px/1.1 var(--f-display);margin:0;letter-spacing:-.01em;text-wrap:balance}
+.brand .sub{font-size:13px;color:var(--ink-soft)}
+.brand .grow{flex:1;min-width:0}
+.back{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-weight:700;font-size:15px}
+.totbar{display:flex;align-items:center;gap:10px;font-variant-numeric:tabular-nums}
+.bar{flex:1;height:14px;border-radius:999px;background:var(--bleu-soft);overflow:hidden;position:relative}
+.bar>i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--bleu),var(--perroquet));border-radius:999px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.totnum{font-weight:700;font-size:14px;white-space:nowrap}
+.totnum small{font-weight:400;color:var(--ink-soft)}
+
+/* home */
+.hero{margin:18px 0 6px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.ring{width:108px;height:108px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .pct{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font:800 26px/1 var(--f-display)}
+.ring .pct small{display:block;font:400 12px/1.2 var(--f-body);color:var(--ink-soft)}
+.hero h2{font:800 24px/1.15 var(--f-display);margin:0 0 4px;text-wrap:balance}
+.hero p{margin:0;color:var(--ink-soft);font-size:15px}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.chip{font-size:13px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);white-space:nowrap}
+.chip.ok{background:var(--perroquet-soft);color:var(--perroquet);border-color:transparent}
+.chip.left{background:var(--soleil-soft);border-color:transparent}
+.chip.egg{background:var(--bleu-soft);color:var(--bleu);border-color:transparent}
+
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 8px}
+.btn{border:none;border-radius:14px;padding:13px 14px;font-weight:700;font-size:16px;background:var(--card);box-shadow:var(--shadow);border:1px solid var(--line);text-align:center}
+.btn.primary{background:var(--bleu);color:#fff;border-color:transparent}
+:root[data-theme="dark"] .btn.primary{color:#0f1630}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary{color:#0f1630}}
+.btn.green{background:var(--perroquet);color:#fff;border-color:transparent}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.5}
+
+.group-h{font:600 26px/1 var(--f-hand);color:var(--rouge);margin:22px 0 8px 4px;transform:rotate(-1deg)}
+.list{display:flex;flex-direction:column;gap:10px}
+.sec{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow)}
+.sec .t{font-weight:700;font-size:17px;min-width:0}
+.sec .s{font-size:13px;color:var(--ink-soft);grid-column:1}
+.sec .n{font-variant-numeric:tabular-nums;font-weight:700;font-size:14px;grid-row:1/3;grid-column:2;text-align:right}
+.sec .n small{display:block;font-weight:400;color:var(--ink-soft);font-size:12px}
+.sec .mini{grid-column:1/3;height:6px;border-radius:9px;background:var(--bleu-soft);overflow:hidden;margin-top:4px}
+.sec .mini i{display:block;height:100%;background:var(--bleu);border-radius:9px}
+.sec.done{border-color:var(--perroquet)}
+.sec.done .mini i{background:var(--perroquet)}
+.sec.done .n{color:var(--perroquet)}
+
+/* section view */
+.tabs{display:flex;gap:6px;margin:16px 0 12px;background:var(--bleu-soft);padding:4px;border-radius:14px}
+.tabs button{flex:1;border:none;background:transparent;padding:9px;border-radius:10px;font-weight:700;font-size:15px;color:var(--ink-soft)}
+.tabs button[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+.sechead h2{font:800 26px/1.15 var(--f-display);margin:16px 0 2px;text-wrap:balance}
+.sechead p{margin:0;color:var(--ink-soft);font-size:14px}
+.tip{background:var(--soleil-soft);border-radius:14px;padding:12px 14px;margin:12px 0;font-size:15px}
+.tip b{font-family:var(--f-display)}
+.tip table{border-collapse:collapse;margin-top:6px;font-size:15px}
+.tip td{padding:2px 14px 2px 0}
+.tip td:first-child{color:var(--ink-soft)}
+.tip .hand{font-family:var(--f-hand);font-size:21px;color:var(--rouge)}
+.rows{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-top:1px solid var(--line)}
+.row:first-child{border-top:none}
+.row .sv{min-width:0;font-size:15px}
+.row .fr{min-width:0;font-weight:700;font-size:16px;border:none;background:none;text-align:left;padding:0}
+.row .fr.hid{color:transparent;background:var(--bleu-soft);border-radius:6px;user-select:none}
+.row .fr.hid::after{content:"tryck";color:var(--ink-soft);font-weight:400;font-size:12px;padding-left:8px}
+.row.ok .sv::before{content:"✓ ";color:var(--perroquet);font-weight:700}
+.say{border:none;background:var(--bleu-soft);color:var(--bleu);width:34px;height:34px;border-radius:50%;font-size:15px;flex:none}
+.toolrow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.link{border:none;background:none;color:var(--bleu);font-weight:700;padding:4px 0}
+
+/* practice */
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:18px 16px;display:flex;flex-direction:column;gap:12px}
+.pmeta{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.streak{color:var(--rouge);font-weight:700}
+.prompt-l{font-size:13px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em}
+.prompt{font:800 26px/1.2 var(--f-display);text-wrap:balance;overflow-wrap:anywhere}
+.prompt small{display:block;font:400 15px/1.3 var(--f-body);color:var(--ink-soft);margin-top:4px}
+.ans{width:100%;font-size:20px;padding:12px 14px;border-radius:14px;border:2px solid var(--line);background:var(--paper);color:var(--ink)}
+.ans:focus{border-color:var(--bleu);outline:none}
+.accents{display:flex;gap:6px;flex-wrap:wrap}
+.accents button{border:1px solid var(--line);background:var(--paper);border-radius:10px;min-width:38px;height:38px;font-size:18px;font-weight:700}
+.pbtns{display:grid;grid-template-columns:auto auto 1fr;gap:8px}
+.pbtns .btn{padding:12px}
+.fb{border-radius:14px;padding:12px 14px;font-size:16px}
+.fb .big{font:600 30px/1 var(--f-hand);display:block;margin-bottom:4px}
+.fb.good{background:var(--perroquet-soft)}
+.fb.good .big{color:var(--perroquet)}
+.fb.bad{background:var(--rouge-soft)}
+.fb.bad .big{color:var(--rouge)}
+.fb.near{background:var(--soleil-soft)}
+.fb .corr{font-weight:700;font-size:19px}
+.fb .yours{text-decoration:line-through;text-decoration-color:var(--rouge);color:var(--ink-soft)}
+.hint{font-family:ui-monospace,Menlo,monospace;font-size:17px;letter-spacing:.06em;color:var(--bleu)}
+.opts{display:grid;grid-template-columns:1fr;gap:8px}
+.opts button{text-align:left;border:2px solid var(--line);background:var(--paper);border-radius:14px;padding:12px 14px;font-weight:700;font-size:16px}
+.opts button.right{border-color:var(--perroquet);background:var(--perroquet-soft)}
+.opts button.wrong{border-color:var(--rouge);background:var(--rouge-soft)}
+.clockwrap{display:flex;justify-content:center}
+.clockwrap svg{width:180px;height:180px;max-width:100%}
+.finish{text-align:center;padding:28px 16px}
+.finish .big{font:800 34px/1.1 var(--f-display);margin:6px 0}
+.finish p{color:var(--ink-soft)}
+
+/* texts */
+.dlg{display:flex;flex-direction:column;gap:2px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px}
+.ln{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:8px;border-radius:10px;border:none;background:none;text-align:left;width:100%}
+.ln:active{background:var(--bleu-soft)}
+.ln .who{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--bleu);padding-top:4px;width:78px;overflow-wrap:anywhere}
+.ln .who:empty{width:78px}
+.ln .f{font-size:17px;min-width:0}
+.ln .sv2{grid-column:2;font-family:var(--f-hand);font-size:21px;line-height:1.15;color:var(--rouge)}
+.ln.narr .f{font-style:italic;color:var(--ink-soft)}
+.readbox{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0;flex-wrap:wrap}
+.dots{display:flex;gap:6px}
+.dots i{width:16px;height:16px;border-radius:50%;border:2px solid var(--perroquet)}
+.dots i.on{background:var(--perroquet)}
+.textpick{display:flex;gap:6px;margin:8px 0 4px}
+.textpick button{flex:1;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:8px 4px;font-weight:700;font-size:14px}
+.textpick button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+
+footer.f{margin-top:36px;text-align:center;color:var(--ink-soft);font-size:14px;display:flex;flex-direction:column;gap:10px;align-items:center}
+footer.f .sign{font:600 26px/1 var(--f-hand);color:var(--rouge)}
+.danger{border:1px solid var(--line);background:transparent;border-radius:999px;padding:6px 14px;font-size:13px;color:var(--ink-soft)}
+.danger.arm{background:var(--rouge);color:#fff;border-color:transparent}
+
+/* toast + fun */
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(150%);background:var(--ink);color:var(--paper);padding:12px 16px;border-radius:16px;font-weight:700;max-width:calc(100% - 32px);width:max-content;z-index:30;transition:transform .35s cubic-bezier(.2,.9,.3,1.3);text-align:center;box-shadow:0 10px 30px -10px rgba(0,0,0,.5)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:25}
+.flyer{position:fixed;top:30%;left:-120px;font-size:64px;z-index:26;pointer-events:none;animation:fly 3.6s ease-in-out forwards}
+.flyer .bub{position:absolute;left:70px;top:-58px;width:220px;font:600 20px/1.1 var(--f-hand);background:var(--card);color:var(--ink);border:2px solid var(--ink);border-radius:16px;padding:8px 10px}
+@keyframes fly{0%{transform:translate(0,0) rotate(-8deg)}30%{transform:translate(45vw,-40px) rotate(6deg)}60%{transform:translate(55vw,20px) rotate(-6deg)}100%{transform:translate(120vw,-120px) rotate(10deg)}}
+.shake{animation:shake .5s}
+@keyframes shake{0%,100%{transform:none}20%{transform:translate(-8px,3px) rotate(-1deg)}40%{transform:translate(7px,-4px) rotate(1deg)}60%{transform:translate(-5px,2px)}80%{transform:translate(4px,-2px)}}
+.pop{animation:pop .35s}
+@keyframes pop{50%{transform:scale(1.06)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:380px){.hero{grid-template-columns:1fr;justify-items:start}.row{grid-template-columns:1fr auto}.row .sv{grid-column:1/3}}
+</style>
+</head>
+<body>
+
+
+<header class="top"><div class="in">
+  <div class="brand">
+    <button class="back" id="backBtn" hidden aria-label="Tillbaka till översikten">‹ Alla</button>
+    <button class="logo" id="logo" aria-label="Papegojan">🦜</button>
+    <div class="grow">
+      <h1 id="hTitle">Franska v 42</h1>
+      <div class="sub" id="hSub">Kapitel 1A–1C · Prov i åk 7</div>
+    </div>
+  </div>
+  <div class="totbar" aria-live="polite">
+    <div class="bar" role="progressbar" aria-label="Hela provet" id="totBar"><i id="totFill" style="width:0"></i></div>
+    <div class="totnum" id="totNum">0 %</div>
+  </div>
+</div></header>
+
+<main class="wrap" id="app"></main>
+<div class="toast" id="toast" role="status"></div>
+<canvas id="fx"></canvas>
+
+<script>
+/* ============ DATA ============ */
+const S = [
+ {g:"Läs texterna", id:"tx", t:"Texterna 1A, 1B, 1C", s:"Läs varje text 3 gånger · s. 12–13, 16–17, 20–21", type:"text"},
+
+ {g:"Glosor (bara förprickade)", id:"g1a", t:"Glosor 1A", s:"Toujours en retard · s. 95", items:[
+  ["alltid","toujours"],["trött","fatigué",["fatiguée"],"fatigué / fatiguée"],["senare","plus tard"],
+  ["frukost","petit déjeuner",["le petit déjeuner","petit-déjeuner","le petit-déjeuner"],"le petit déjeuner (m)"],
+  ["färdig, klar","prêt",["prête"],"prêt / prête"],["genast, på en gång","tout de suite"],
+  ["jag är hungrig","j'ai faim",[],"j'ai faim (avoir faim)"],["jag går","je vais",[],"je vais (aller)"],
+  ["du går / går du?","tu vas",[],"tu vas (aller)"],["direkt","directement"],["hem","à la maison"],
+  ["tusan också!","mince"],["buss","bus",["le bus"],"le bus (m)"],["väska","sac",["le sac"],"le sac (m)"],
+  ["jag är törstig","j'ai soif",[],"j'ai soif (avoir soif)"]]},
+ {g:"Glosor (bara förprickade)", id:"g1b", t:"Glosor 1B", s:"Dépêche-toi ! · s. 95", items:[
+  ["verkligen","vraiment"],["jag har bråttom","je suis pressé",["je suis pressée"],"je suis pressé(e) (être pressé)"],
+  ["man missar","on rate",[],"on rate (rater)"],["första","premier",["première"],"premier / première"],
+  ["nej men? vad nu?","tiens"],["på grund av","à cause de"],
+  ["kär (i)","amoureux",["amoureuse","amoureux de","amoureuse de"],"amoureux / amoureuse (de)"],
+  ["eftersom","comme"],["Mathilde tar","Mathilde prend",[],"Mathilde prend (prendre)"],
+  ["båda två","tous les deux",["toutes les deux"]],["titta!","regarde",[],"regarde (regarder)"],
+  ["stackars","pauvre"],["idrott, sport","sport",["le sport"],"le sport (m)"],
+  ["vi slutar, man slutar","on finit",[],"on finit (finir)"],["glasögon","lunettes",["les lunettes"],"les lunettes (f pl)"]]},
+ {g:"Glosor (bara förprickade)", id:"g1c", t:"Glosor 1C", s:"En classe · s. 96", items:[
+  ["klassrum","salle de classe",["la salle de classe"],"la salle de classe (f)"],["utom","sauf"],["sjuk","malade"],
+  ["man knackar, det knackar","on frappe",[],"on frappe (frapper)"],["kom in!","entrez",[],"entrez ! (entrer)"],
+  ["vi missade","on a raté"],["fort","vite"],["sida","page",["la page"],"la page (f)"],
+  ["ursäkta mig","excusez-moi"],["det räcker","ça suffit"],["räck mig, skicka mig","passe-moi",[],"passe-moi (passer)"],
+  ["(kulspets)penna","stylo",["le stylo"],"le stylo (m)"],["jag kan","je peux",[],"je peux (pouvoir)"],
+  ["toalett","toilettes",["les toilettes"],"les toilettes (f pl)"],["tystnad","silence",["le silence"],"le silence (m)"],
+  ["blyertspennan","le crayon",["crayon"]]]},
+
+ {g:"Fraser", id:"r1a", t:"Regardez 1A", s:"Fraser, être och aller · s. 14", items:[
+  ["Jag är trött.","Je suis fatigué.",["Je suis fatiguée."]],["Skynda dig!","Dépêche-toi !"],
+  ["Frukosten är klar.","Le petit déjeuner est prêt."],["Jag är hungrig.","J'ai faim."],
+  ["Vad gör du?","Qu'est-ce que tu fais ?"],["i eftermiddag","cet après-midi"],
+  ["Jag går till Karim.","Je vais chez Karim."],["Du är sen.","Tu es en retard."],
+  ["Han är trevlig.","Il est sympa."],["Hon är cool.","Elle est cool."],["Man/Vi är här.","On est ici."],
+  ["Jag åker till Paris.","Je vais à Paris."],["Mår du bra?","Tu vas bien ?"],
+  ["Han går/åker hem.","Il va à la maison."],["Hon går på café.","Elle va au café."],["Vi går hem till dig.","On va chez toi."]]},
+ {g:"Fraser", id:"r1b", t:"Regardez 1B", s:"Fraser · s. 18", items:[
+  ["Jag är verkligen stressad.","Je suis vraiment pressé.",["Je suis vraiment pressée."]],
+  ["när man missar den första bussen","quand on rate le premier bus"],["Han är kär i …","Il est amoureux de"],
+  ["Mathilde tar alltid bussen.","Mathilde prend toujours le bus."],["klockan kvart över åtta","à huit heures et quart"],
+  ["Stackars François!","Pauvre François !"],["Jag vet inte.","Je ne sais pas."],
+  ["Vilken tid (När) slutar vi?","On finit à quelle heure ?"],["Hur mycket är klockan?","Quelle heure est-il ?",["Il est quelle heure ?"]],
+  ["Jag har inte mina glasögon.","Je n'ai pas mes lunettes."],["Vi är sena.","Nous sommes en retard.",["On est en retard."]]]},
+ {g:"Fraser", id:"kl", t:"Klassrumsfraser", s:"Kapitel 1C + Regardez s. 22", items:[
+  ["Hej allihop.","Bonjour, tout le monde."],["Hon är sjuk.","Elle est malade."],
+  ["Sätt er ner, tack!","Asseyez-vous, s'il vous plaît !"],["Kom in!","Entrez !"],
+  ["Ursäkta oss.","Excusez-nous."],["Slå upp (Öppna) era böcker, tack!","Ouvrez vos livres, s'il vous plaît !"],
+  ["Ursäkta mig.","Excusez-moi."],["Jag har inte min bok.","Je n'ai pas mon livre."],
+  ["Jag är ledsen. (tjej)","Je suis désolée.",[],"Je suis désolée. (kille: désolé)"],["Det räcker!","Ça suffit !"],
+  ["Kom igen, vi börjar!","Allez, on commence !"],["Vilken sida?","Quelle page ?"],
+  ["Ge mig ordboken, är du snäll.","Passe-moi le dictionnaire, s'il te plaît."],
+  ["Varsågod. / Här.","Voilà."],["Tack.","Merci."],["Jag har inte min penna.","Je n'ai pas mon stylo."],
+  ["Får jag gå på toaletten?","Je peux aller aux toilettes ?"],["När har vi engelska?","Nous avons anglais à quelle heure ?"],
+  ["Tyst, tack!","Silence, s'il vous plaît !"]]},
+ {g:"Fraser", id:"so", t:"Skolord", s:"À l'école · s. 23 + övn.bok s. 42 · med le/la!", art:true, items:[
+  ["blyertspennan","le crayon"],["linjalen","la règle"],["miniräknaren","la calculatrice"],["vita tavlan","le tableau blanc"],
+  ["surfplattan","la tablette"],["ryggsäcken","le sac à dos"],["kulspetspennan","le stylo"],["skrivboken","le cahier"],
+  ["pennvässaren","le taille-crayon"],["stiftpennan","le portemine"],["suddgummit","la gomme"],
+  ["ordboken, lexikonet","le dictionnaire"],["pennfodralet","la trousse"],["laptopen, bärbara datorn","l'ordinateur portable",[],"l'ordinateur portable (m)"],
+  ["mappen","la chemise"],["skåpet","le casier"],["pärmen","le classeur"],["stolen","la chaise"]]},
+ {g:"Fraser", id:"am", t:"Skolämnen", s:"Matières scolaires · s. 19", items:[
+  ["franska","français",["le français"]],["engelska","anglais",["l'anglais"]],["tyska","allemand",["l'allemand"]],
+  ["spanska","espagnol",["l'espagnol"]],["matematik","maths",["les maths","math","mathématiques"]],["bild","arts plastiques",["les arts plastiques"]],
+  ["teknik","technologie",["la technologie"]],["musik","éducation musicale",["l'éducation musicale"]],
+  ["historia och geografi","histoire-géographie",["l'histoire-géographie","histoire géographie","histoire-géo"]],
+  ["samhällskunskap","enseignement civique",["l'enseignement civique"]],
+  ["biologi och kemi (förkortning)","SVT",["les SVT","sciences de la vie et de la terre"],"SVT (sciences de la vie et de la terre)"],
+  ["fysik","sciences physiques",["les sciences physiques"]],
+  ["idrott och hälsa (förkortning)","EPS",["sport","l'EPS","éducation physique et sportive"],"EPS (éducation physique et sportive) / sport"],
+  ["religion","religion",["la religion"]],["kemi","chimie",["la chimie"]]]},
+
+ {g:"Verb och uttryck", id:"et", t:"Être – att vara", s:"Alla personer i presens · s. 18", tip:"etre", items:[
+  ["jag är","je suis"],["du är","tu es"],["han är","il est"],["hon är","elle est"],["man är / vi är","on est"],
+  ["vi är (nous)","nous sommes"],["ni är","vous êtes"],["de är (killar/blandat)","ils sont"],["de är (bara tjejer)","elles sont"],
+  ["Jag är trött.","Je suis fatigué.",["Je suis fatiguée."]],["Du är sen.","Tu es en retard."],["Vi är sena. (nous)","Nous sommes en retard."]]},
+ {g:"Verb och uttryck", id:"av", t:"Avoir – att ha", s:"Alla personer i presens · s. 22", tip:"avoir", items:[
+  ["jag har","j'ai"],["du har","tu as"],["han har","il a"],["hon har","elle a"],["man har / vi har","on a"],
+  ["vi har (nous)","nous avons"],["ni har","vous avez"],["de har (killar/blandat)","ils ont"],["de har (bara tjejer)","elles ont"],
+  ["Sophie har en bror.","Sophie a un frère."],["Vi har en cykel. (nous)","Nous avons un vélo."],["Mina kusiner har en katt.","Mes cousins ont un chat."],
+  ["Vi har franska klockan tio. (on)","On a français à dix heures.",["On a français à 10 heures."]],["Jag har inte min bok.","Je n'ai pas mon livre."]]},
+ {g:"Verb och uttryck", id:"al", t:"Aller – att gå, åka", s:"Singular: jag, du, han, hon, man · s. 14", tip:"aller", items:[
+  ["jag går","je vais"],["du går","tu vas"],["han går","il va"],["hon går","elle va"],["man går / vi går","on va"],
+  ["Jag åker till Paris.","Je vais à Paris."],["Mår du bra?","Tu vas bien ?"],["Han går hem.","Il va à la maison."],
+  ["Hon går på café.","Elle va au café."],["Vi går hem till dig. (on)","On va chez toi."],["Jag går till Karim.","Je vais chez Karim."]]},
+ {g:"Verb och uttryck", id:"ut", t:"Avoir faim, soif, … ans", s:"Uttryck med avoir · kap 1A + anteckningar", tip:"uttryck", items:[
+  ["vara hungrig","avoir faim"],["vara törstig","avoir soif"],["vara … år","avoir … ans",["avoir ans"]],["vara rädd","avoir peur"],
+  ["Jag är hungrig.","J'ai faim."],["Jag är törstig.","J'ai soif."],["Marc är hungrig.","Marc a faim."],
+  ["Eleverna är rädda.","Les élèves ont peur."],["Är ni törstiga?","Vous avez soif ?"],["Ja, vi är törstiga. (nous)","Oui, nous avons soif."],
+  ["Jag är 13 år.","J'ai treize ans."],["Han är 11 år.","Il a onze ans."],["Hon är 12 år.","Elle a douze ans."]]},
+
+ {g:"Klockan", id:"kf", t:"Fråga och svara", s:"Hur mycket är klockan? · Hur dags?", tip:"klocka", items:[
+  ["Hur mycket är klockan? (2 sätt – skriv ett)","Quelle heure est-il ?",["Il est quelle heure ?"]],
+  ["Klockan är ett.","Il est une heure."],["Klockan är fem.","Il est cinq heures."],["Klockan är nio.","Il est neuf heures."],
+  ["Klockan är tolv (på dagen).","Il est midi."],["Klockan är tolv (på natten).","Il est minuit."],
+  ["Hur dags? Vilken tid?","À quelle heure ?"],["Klockan ett. (svar på hur dags)","À une heure."],
+  ["Klockan fem. (svar på hur dags)","À cinq heures."],["Klockan nio. (svar på hur dags)","À neuf heures."],
+  ["Klockan tolv på dagen. (svar på hur dags)","À midi."],["Klockan tolv på natten. (svar på hur dags)","À minuit."],
+  ["Klockan är kvart över åtta.","Il est huit heures et quart."],["Klockan är halv nio.","Il est huit heures et demie."],
+  ["Klockan är kvart i nio.","Il est neuf heures moins le quart."],["Matchen börjar halv åtta.","Le match commence à sept heures et demie."]]},
+ {g:"Klockan", id:"ka", t:"Läs av klockan", s:"Välj rätt svar · s. 19", type:"clock", tip:"klocka", clocks:[
+  [8,0],[8,5],[8,10],[8,15],[8,20],[8,25],[8,30],[8,35],[8,40],[8,45],[8,50],[8,55],[1,0],[7,30],[11,10],[4,50],[12,0],[3,15],[6,45],[10,20]]}
+];
+
+/* texts */
+const TX = [
+ {id:"t1a", name:"1A", title:"Toujours en retard", lines:[
+  ["Papa","Alexandre, il est sept heures.","Alexandre, klockan är sju."],
+  ["Alexandre","Oh non, je suis fatigué, papa.","Åh nej, jag är trött, pappa."],
+  ["","Une demi-heure plus tard.","En halvtimme senare."],
+  ["Papa","Alexandre. Dépêche-toi !!","Alexandre. Skynda dig!!"],
+  ["Alexandre","Oui, papa …","Ja, pappa …"],
+  ["Papa","Tu commences à huit heures et demie. Le petit déjeuner est prêt.","Du börjar halv nio. Frukosten är klar."],
+  ["Alexandre","Merci, papa. J'arrive tout de suite. J'ai faim.","Tack, pappa. Jag kommer på en gång. Jag är hungrig."],
+  ["Papa","Qu'est-ce que tu fais cet après-midi ?","Vad gör du i eftermiddag?"],
+  ["Alexandre","Je vais chez Karim … et ce soir, j'ai un match de foot.","Jag går till Karim … och i kväll har jag en fotbollsmatch."],
+  ["Papa","Ah bon ! À quelle heure ?","Jaså! Vilken tid?"],
+  ["Alexandre","Ben … le match commence à sept heures et demie.","Tja … matchen börjar halv åtta."],
+  ["Papa","Et après, tu vas directement à la maison !","Och efteråt går du direkt hem!"],
+  ["Alexandre","Oui, oui … bien sûr, papa.","Ja, ja … självklart, pappa."],
+  ["Papa","Tu es en retard.","Du är sen."],
+  ["Alexandre","Mince !! Mon bus. À ce soir, papa.","Tusan! Min buss. Vi ses i kväll, pappa."],
+  ["Papa","Alexandre, ton sac !","Alexandre, din väska!"],
+  ["Alexandre","Voilà mon bus !","Där är min buss!"]]},
+ {id:"t1b", name:"1B", title:"Dépêche-toi !", lines:[
+  ["Alexandre","Oh là là ! Huit heures vingt. Je suis vraiment pressé. Mais quand on rate le premier bus …","Oj då! Tjugo över åtta. Jag har verkligen bråttom. Men när man missar första bussen …"],
+  ["François","Ah, bonjour Alexandre !","Åh, hej Alexandre!"],
+  ["Ludovic","Tu es en retard, Alexandre !","Du är sen, Alexandre!"],
+  ["Alexandre","Tiens, salut Ludovic ! Salut François ! Mais vous aussi !","Nej men, hej Ludovic! Hej François! Men ni också!"],
+  ["Ludovic","Ben oui. Nous sommes en retard et c'est à cause de François. Il est amoureux de Mathilde !","Ja, tja. Vi är sena och det är på grund av François. Han är kär i Mathilde!"],
+  ["François","C'est pas vrai !","Det är inte sant!"],
+  ["Ludovic","… et comme Mathilde prend toujours le bus à huit heures et quart …","… och eftersom Mathilde alltid tar bussen kvart över åtta …"],
+  ["Alexandre","Et vous êtes ici à cause de Mathilde ? Tous les deux ? Mais elle n'est pas là, Mathilde ?","Och ni är här på grund av Mathilde? Båda två? Men hon är inte här, Mathilde?"],
+  ["Ludovic","Si, regarde … elle est là-bas avec Olivier. Elle et Olivier sont ensemble maintenant.","Jo, titta … hon är där borta med Olivier. Hon och Olivier är tillsammans nu."],
+  ["Alexandre","Pauvre François ! Je suis désolé pour toi !","Stackars François! Jag är ledsen för din skull!"],
+  ["François","Oui. C'est triste.","Ja. Det är sorgligt."],
+  ["Papegojan","Quelle heure est-il, s'il te plaît ?","Hur mycket är klockan, snälla?"],
+  ["Gökuret","Il est minuit … ou peut-être midi. Je ne sais pas.","Den är tolv på natten … eller kanske tolv på dagen. Jag vet inte."],
+  ["Alexandre","Le cours de français commence à quelle heure ?","Vilken tid börjar franskalektionen?"],
+  ["Nathalie","À huit heures et demie !","Halv nio!"],
+  ["Alexandre","Il est quelle heure ?","Hur mycket är klockan?"],
+  ["Nathalie","Il est presque huit heures vingt. Dépêche-toi ! Madame Lamotte n'aime pas quand on est en retard.","Den är nästan tjugo över åtta. Skynda dig! Madame Lamotte gillar inte när man är sen."],
+  ["Alexandre","Oui, je sais.","Ja, jag vet."],
+  ["Elev","Qu'est-ce qu'on a à trois heures ?","Vad har vi klockan tre?"],
+  ["Elev","On a sport avec monsieur Hussein.","Vi har idrott med monsieur Hussein."],
+  ["Elev","Et on finit à quelle heure ?","Och vilken tid slutar vi?"],
+  ["Elev","À cinq heures moins dix.","Tio i fem."]]},
+ {id:"t1c", name:"1C", title:"En classe", lines:[
+  ["","Dans la salle de classe, il y a dix-neuf élèves. Tout le monde est là … sauf Isabelle. Elle est malade. Alexandre, Ludovic et François sont en retard.","I klassrummet finns det nitton elever. Alla är där … utom Isabelle. Hon är sjuk. Alexandre, Ludovic och François är sena."],
+  ["Professeure","Bonjour, tout le monde.","Hej allihop."],
+  ["Élèves","Bonjour, madame.","Hej (fröken)."],
+  ["Professeure","Asseyez-vous, s'il vous plaît !","Sätt er, tack!"],
+  ["","On frappe à la porte.","Det knackar på dörren."],
+  ["Professeure","Entrez ! Ah, Alexandre … et Ludovic et François – bonjour, messieurs.","Kom in! Åh, Alexandre … och Ludovic och François – hej, mina herrar."],
+  ["Alexandre","Excusez-nous, madame, mais on a raté le bus.","Ursäkta oss, men vi missade bussen."],
+  ["Professeure","Oui, oui … Asseyez-vous … et vite !","Ja, ja … Sätt er … och fort!"],
+  ["Professeure","Ouvrez vos livres, s'il vous plaît, page dix-huit.","Slå upp era böcker på sidan arton, tack."],
+  ["Agnès","Excusez-moi, madame, je n'ai pas mon livre.","Ursäkta mig, jag har inte min bok."],
+  ["Professeure","Encore !","Igen!"],
+  ["Agnès","Je suis désolée, madame. Mais le chien d'Alexandre …","Jag är ledsen. Men Alexandres hund …"],
+  ["Professeure","Ça suffit, Agnès !","Det räcker, Agnès!"],
+  ["Professeure","Allez, on commence ! Ouvrez Le Petit Prince à la page dix-huit.","Kom igen, vi börjar! Slå upp Den lille prinsen på sidan arton."],
+  ["François","Pardon, madame. Quelle page ?","Förlåt. Vilken sida?"],
+  ["Professeure","Page dix-huit, François.","Sidan arton, François."],
+  ["Élève","Passe-moi le dictionnaire, s'il te plaît.","Räck mig ordboken, är du snäll."],
+  ["Élève","Voilà.","Varsågod."],
+  ["Élève","Merci.","Tack."],
+  ["Michelle","Madame, je n'ai pas mon stylo.","Jag har inte min penna."],
+  ["François","Madame, s'il vous plaît. Je peux aller aux toilettes ?","Snälla, får jag gå på toaletten?"],
+  ["Agnès","Nous avons anglais à quelle heure ?","Vilken tid har vi engelska?"],
+  ["Professeure","Vous avez anglais à onze heures dix. Silence, s'il vous plaît !","Ni har engelska tio över elva. Tyst, tack!"],
+  ["","Ils ont chimie aujourd'hui.","De har kemi i dag.","boom"]]}
+];
+const READS = 3;
+
+const TIPS = {
+ etre:`<b>Être – att vara</b><table>
+  <tr><td>jag är</td><td><b>je suis</b></td><td>vi är</td><td><b>nous sommes</b></td></tr>
+  <tr><td>du är</td><td><b>tu es</b></td><td>ni är</td><td><b>vous êtes</b></td></tr>
+  <tr><td>han är</td><td><b>il est</b></td><td>de är</td><td><b>ils sont</b></td></tr>
+  <tr><td>hon är</td><td><b>elle est</b></td><td>de är</td><td><b>elles sont</b></td></tr>
+  <tr><td>man/vi är</td><td><b>on est</b></td><td></td><td></td></tr></table>
+  <div class="hand">on = både ”man” och ”vi”!</div>`,
+ avoir:`<b>Avoir – att ha</b><table>
+  <tr><td>jag har</td><td><b>j'ai</b></td><td>vi har</td><td><b>nous avons</b></td></tr>
+  <tr><td>du har</td><td><b>tu as</b></td><td>ni har</td><td><b>vous avez</b></td></tr>
+  <tr><td>han har</td><td><b>il a</b></td><td>de har</td><td><b>ils ont</b></td></tr>
+  <tr><td>hon har</td><td><b>elle a</b></td><td>de har</td><td><b>elles ont</b></td></tr>
+  <tr><td>man/vi har</td><td><b>on a</b></td><td></td><td></td></tr></table>
+  <div class="hand">on a = nous avons (samma sak!)</div>`,
+ aller:`<b>Aller – att gå, åka (må)</b> · på provet: bara singular<table>
+  <tr><td>jag går</td><td><b>je vais</b></td></tr><tr><td>du går</td><td><b>tu vas</b></td></tr>
+  <tr><td>han går</td><td><b>il va</b></td></tr><tr><td>hon går</td><td><b>elle va</b></td></tr>
+  <tr><td>man/vi går</td><td><b>on va</b></td></tr></table>
+  <div style="font-size:13px;color:var(--ink-soft);margin-top:6px">Extra (från anteckningarna): nous allons, vous allez, ils/elles vont.</div>
+  <div class="hand">Tu vas bien ? = Mår du bra?</div>`,
+ uttryck:`<b>På franska HAR man hunger, törst och ålder</b><table>
+  <tr><td>vara hungrig</td><td><b>avoir faim</b></td></tr><tr><td>vara törstig</td><td><b>avoir soif</b></td></tr>
+  <tr><td>vara … år</td><td><b>avoir … ans</b></td></tr><tr><td>vara rädd</td><td><b>avoir peur</b></td></tr></table>
+  <div class="hand">J'ai 13 ans = ”jag har 13 år”</div>
+  <div style="font-size:13px;color:var(--ink-soft)">Nej-form: Nous n'avons pas soif. = Vi är inte törstiga.</div>`,
+ klocka:`<b>Klockan – l'heure</b><table>
+  <tr><td>Hur mycket är klockan?</td><td><b>Quelle heure est-il ? / Il est quelle heure ?</b></td></tr>
+  <tr><td>Svar</td><td><b>Il est</b> huit heures.</td></tr>
+  <tr><td>Hur dags? Vilken tid?</td><td><b>À quelle heure ?</b></td></tr>
+  <tr><td>Svar</td><td><b>À</b> huit heures.</td></tr></table>
+  <table style="margin-top:8px"><tr><td>:05</td><td>cinq</td><td>:35</td><td>moins vingt-cinq</td></tr>
+  <tr><td>:10</td><td>dix</td><td>:40</td><td>moins vingt</td></tr>
+  <tr><td>:15</td><td>et quart</td><td>:45</td><td>moins le quart</td></tr>
+  <tr><td>:20</td><td>vingt</td><td>:50</td><td>moins dix</td></tr>
+  <tr><td>:25</td><td>vingt-cinq</td><td>:55</td><td>moins cinq</td></tr>
+  <tr><td>:30</td><td>et demie</td><td></td><td></td></tr></table>
+  <div class="hand">une heure – men deux heures, trois heures …<br>12 = midi (dag) / minuit (natt)</div>`
+};
+
+/* clock language */
+const HW=["","une","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","midi"];
+function hourWord(h){h=((h-1)%12+12)%12+1; if(h===12) return "midi"; return HW[h]+(h===1?" heure":" heures");}
+function frTime(h,m){
+  const MW={0:"",5:" cinq",10:" dix",15:" et quart",20:" vingt",25:" vingt-cinq",30:" et demie"};
+  const MM={35:" moins vingt-cinq",40:" moins vingt",45:" moins le quart",50:" moins dix",55:" moins cinq"};
+  if(m<=30){ const hw=hourWord(h); return "Il est "+hw+(m===30&&hw==="midi"?" et demi":MW[m])+"."; }
+  return "Il est "+hourWord(h+1)+MM[m]+".";
+}
+function svTime(h,m){return (h)+":"+String(m).padStart(2,"0");}
+function clockSVG(h,m){
+  const ha=((h%12)+m/60)*30, ma=m*6; let t="";
+  for(let i=0;i<60;i++){const a=i*6*Math.PI/180, r1=i%5?82:76, r2=86;
+    t+=`<line x1="${100+r1*Math.sin(a)}" y1="${100-r1*Math.cos(a)}" x2="${100+r2*Math.sin(a)}" y2="${100-r2*Math.cos(a)}" stroke="var(--ink)" stroke-width="${i%5?1:3}" stroke-linecap="round"/>`;}
+  let n="";for(let i=1;i<=12;i++){const a=i*30*Math.PI/180;n+=`<text x="${100+64*Math.sin(a)}" y="${100-64*Math.cos(a)+6}" text-anchor="middle" font-size="16" font-weight="700" fill="var(--ink)" font-family="var(--f-body)">${i}</text>`;}
+  return `<svg viewBox="0 0 200 200" role="img" aria-label="En klocka"><circle cx="100" cy="100" r="96" fill="var(--card)" stroke="var(--rouge)" stroke-width="8"/>${t}${n}
+  <line x1="100" y1="100" x2="${100+42*Math.sin(ha*Math.PI/180)}" y2="${100-42*Math.cos(ha*Math.PI/180)}" stroke="var(--ink)" stroke-width="7" stroke-linecap="round"/>
+  <line x1="100" y1="100" x2="${100+70*Math.sin(ma*Math.PI/180)}" y2="${100-70*Math.cos(ma*Math.PI/180)}" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="100" cy="100" r="6" fill="var(--rouge)"/></svg>`;
+}
+
+/* build item lists */
+S.forEach(sec=>{
+  if(sec.type==="clock"){ sec.items = sec.clocks.map(([h,m])=>({q:svTime(h,m), a:frTime(h,m), clock:[h,m]})); }
+  else if(sec.type==="text"){ sec.items = []; TX.forEach(t=>{for(let r=1;r<=READS;r++) sec.items.push({text:t.id, n:r});}); }
+  else sec.items = sec.items.map(x=>({q:x[0], a:x[1], alt:x[2]||[], show:x[3]||x[1]}));
+  sec.items.forEach((it,i)=>it.id=sec.id+"-"+i);
+});
+
+/* ============ STATE ============ */
+const KEY="franska-v42-plugg";
+let st={done:{},reads:{},eggs:{},best:0,last:null};
+try{const raw=localStorage.getItem(KEY); if(raw) st=Object.assign(st,JSON.parse(raw));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+function isDone(it){ if(it.text) return (st.reads[it.text]||0)>=it.n; return !!st.done[it.id]; }
+function secCount(sec){let d=0;sec.items.forEach(it=>{if(isDone(it))d++;});return [d,sec.items.length];}
+function totals(){let d=0,n=0;S.forEach(s=>{const[a,b]=secCount(s);d+=a;n+=b;});return [d,n];}
+
+/* ============ MATCHING ============ */
+const NUM={1:"un",2:"deux",3:"trois",4:"quatre",5:"cinq",6:"six",7:"sept",8:"huit",9:"neuf",10:"dix",11:"onze",12:"douze",13:"treize",14:"quatorze",15:"quinze",16:"seize",17:"dix-sept",18:"dix-huit",19:"dix-neuf"};
+function norm(s){
+  s=(s||"").normalize("NFC").toLowerCase().replace(/[’`´ʼ]/g,"'").replace(/[«»"“”]/g,"")
+   .replace(/\s*'\s*/g,"'").replace(/[.,!?…;:]/g," ").replace(/\s+/g," ").trim();
+  s=s.replace(/\b1 heure\b/g,"une heure").replace(/\b(\d{1,2})\b/g,(m,d)=>NUM[+d]||d);
+  return s;
+}
+const noAcc=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"");
+const noArt=s=>s.replace(/^(le |la |les |l'|un |une )/,"");
+function check(it,input,sec){
+  const u=norm(input); if(!u) return "empty";
+  const answers=[it.a,...(it.alt||[])].map(norm);
+  for(const a of answers){
+    if(u===a) return "ok";
+    if(!sec.art && noArt(u)===noArt(a)) return "ok";
+  }
+  for(const a of answers){
+    if(sec.art && noArt(u)===noArt(a)) return "art";
+    if(noAcc(u)===noAcc(a) || (!sec.art && noAcc(noArt(u))===noAcc(noArt(a)))) return "acc";
+  }
+  return "bad";
+}
+function hintOf(a){return a.replace(/[A-Za-zÀ-ÿœŒ]+/g,w=>w[0]+w.slice(1).replace(/./g,"_"));}
+
+/* ============ SPEECH ============ */
+const canSpeak = "speechSynthesis" in window;
+let frVoice=null;
+function pickVoice(){try{const v=speechSynthesis.getVoices();frVoice=v.find(x=>/^fr(-|_)FR/i.test(x.lang))||v.find(x=>/^fr/i.test(x.lang))||null;}catch(e){}}
+if(canSpeak){pickVoice(); try{speechSynthesis.onvoiceschanged=pickVoice;}catch(e){}}
+function say(t){ if(!canSpeak) return; try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/\(.*?\)/g,""));u.lang="fr-FR";if(frVoice)u.voice=frVoice;u.rate=.85;speechSynthesis.speak(u);}catch(e){} }
+
+/* ============ FX ============ */
+const toastEl=document.getElementById("toast"); let tt;
+function toast(msg,ms=2600){toastEl.innerHTML=msg;toastEl.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>toastEl.classList.remove("show"),ms);}
+const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+const fx=document.getElementById("fx"), ctx=fx.getContext("2d"); let parts=[], raf=null;
+function burst(kind="confetti",n=120){
+  if(reduce) return;
+  const W=fx.width=innerWidth*devicePixelRatio, H=fx.height=innerHeight*devicePixelRatio;
+  const cols=["#2f54d6","#ffffff","#d13a3a","#2e8b4e","#f2b705"];
+  const emo={hearts:["❤️","💘","💕"],bread:["🥖","🥐","🧀"],clock:["⏰","🕗","🚌"],boom:["💥","🧪","🔥"]}[kind];
+  for(let i=0;i<n;i++) parts.push({x:emo?Math.random()*W:W/2+(Math.random()-.5)*W*.3, y:emo?-40*devicePixelRatio-Math.random()*H*.6:H*.35,
+    vx:emo?(Math.random()-.5)*2:(Math.random()-.5)*18, vy:emo?2+Math.random()*4:-Math.random()*16-4, r:Math.random()*6.28, vr:(Math.random()-.5)*.3,
+    c:cols[i%cols.length], e:emo?emo[i%emo.length]:null, s:(emo?28:8)*devicePixelRatio, life:0});
+  if(!raf) loop();
+}
+function loop(){
+  ctx.clearRect(0,0,fx.width,fx.height);
+  parts.forEach(p=>{p.vy+=p.e?.05:.45;p.x+=p.vx*devicePixelRatio*.6;p.y+=p.vy*devicePixelRatio*.6;p.r+=p.vr;p.life++;
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);
+    if(p.e){ctx.font=p.s+"px serif";ctx.fillText(p.e,0,0);} else {ctx.fillStyle=p.c;ctx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);}
+    ctx.restore();});
+  parts=parts.filter(p=>p.y<fx.height+60&&p.life<600);
+  if(parts.length) raf=requestAnimationFrame(loop); else {raf=null;ctx.clearRect(0,0,fx.width,fx.height);}
+}
+const EGGS=7;
+function egg(id,msg){
+  const isNew=!st.eggs[id];
+  if(isNew){st.eggs[id]=1;save();renderHeader();}
+  const n=Object.keys(st.eggs).length;
+  toast(msg+(isNew?`<br><small>🥚 Påskägg hittat! ${n}/${EGGS}</small>`:""),4200);
+}
+
+/* ============ VIEWS ============ */
+const app=document.getElementById("app");
+let view={name:"home"};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function renderHeader(){
+  const [d,n]=totals(), p=Math.round(d/n*100);
+  document.getElementById("totFill").style.width=p+"%";
+  document.getElementById("totNum").innerHTML=`${p} % <small>· ${n-d} kvar</small>`;
+  const bar=document.getElementById("totBar"); bar.setAttribute("aria-valuenow",p); bar.setAttribute("aria-valuemin",0); bar.setAttribute("aria-valuemax",100);
+  const inSec=view.name!=="home";
+  document.getElementById("backBtn").hidden=!inSec;
+  const sec=view.name==="sec"?S.find(s=>s.id===view.sec):null;
+  if(view.name==="mix"){document.getElementById("hTitle").textContent="Blandat förhör";document.getElementById("hSub").textContent="15 frågor från hela provet";return;}
+  document.getElementById("hTitle").textContent=sec?sec.t:"Franska v 42";
+  document.getElementById("hSub").textContent=sec?(()=>{const[a,b]=secCount(sec);return `${a} av ${b} klara`;})():"Kapitel 1A–1C · Prov i åk 7";
+}
+
+function renderHome(){
+  const [d,n]=totals(), p=Math.round(d/n*100), C=2*Math.PI*46;
+  const doneSecs=S.filter(s=>{const[a,b]=secCount(s);return a===b;}).length;
+  const eggs=Object.keys(st.eggs).length;
+  const mood = p===0?"Allez, on commence !":p<30?"Bon début ! Bra start!":p<60?"Tu es super ! Fortsätt!":p<100?"Presque ! Nästan klar!":"Parfait ! Du är redo!";
+  const next=nextSection();
+  let h=`<section class="hero">
+    <div class="ring" aria-hidden="true"><svg viewBox="0 0 108 108"><circle cx="54" cy="54" r="46" fill="none" stroke="var(--bleu-soft)" stroke-width="12"/>
+      <circle cx="54" cy="54" r="46" fill="none" stroke="var(--perroquet)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-d/n)}"/></svg>
+      <div class="pct">${p}%<small>klart</small></div></div>
+    <div><h2>${mood}</h2><p>Allt som ingår i provet, del för del. Det du gör sparas på den här telefonen.</p>
+      <div class="stats"><span class="chip ok">✓ ${d} klara</span><span class="chip left">${n-d} kvar</span><span class="chip">${doneSecs}/${S.length} delar</span><span class="chip egg">🥚 ${eggs}/${EGGS}</span></div></div>
+  </section>
+  <div class="actions">
+    <button class="btn primary" id="goNext">${next?(secCount(next)[0]?"Fortsätt: ":"Börja: ")+esc(next.t):"Allt klart! 🎉"}</button>
+    <button class="btn" id="goMix">🎲 Blandat förhör</button>
+  </div>`;
+  let g="";
+  S.forEach(s=>{
+    if(s.g!==g){ if(g) h+=`</div>`; g=s.g; h+=`<div class="group-h">${esc(g)}</div><div class="list">`; }
+    const [a,b]=secCount(s), done=a===b;
+    h+=`<button class="sec${done?" done":""}" data-sec="${s.id}">
+      <span class="t">${esc(s.t)}</span><span class="n">${done?"✓ Klar":a+" / "+b}<small>${done?"":(b-a)+" kvar"}</small></span>
+      <span class="s">${esc(s.s)}</span><span class="mini"><i style="width:${a/b*100}%"></i></span></button>`;
+  });
+  h+=`</div>
+  <footer class="f">
+    <div>Läs texterna många gånger, läs anteckningarna och träna på att skriva och stava. Lyssna gärna på ovningsmastaren.se också.</div>
+    <div class="sign" id="sign">Bonne chance !</div>
+    <button class="danger" id="reset">Börja om från noll</button>
+  </footer>`;
+  app.innerHTML=h;
+  app.querySelectorAll(".sec").forEach(b=>b.onclick=()=>openSec(b.dataset.sec));
+  document.getElementById("goNext").onclick=()=>{ if(next) openSec(next.id, true); else burst(); };
+  document.getElementById("goMix").onclick=startMix;
+  const r=document.getElementById("reset"); let armed=false;
+  r.onclick=()=>{ if(!armed){armed=true;r.classList.add("arm");r.textContent="Säker? Tryck igen för att radera allt";setTimeout(()=>{armed=false;r.classList.remove("arm");r.textContent="Börja om från noll";},4000);return;}
+    st={done:{},reads:{},eggs:st.eggs,best:0,last:null};save();toast("Allt nollställt. Påskäggen får du behålla 🥚");renderHeader();renderHome(); };
+  let signTaps=0; document.getElementById("sign").onclick=()=>{ if(++signTaps===3){ egg("nadja","« Merci, madame ! » 💐<br>Nadja skulle vara stolt."); burst("confetti",80); signTaps=0;} };
+}
+
+function nextSection(){
+  if(st.last){const s=S.find(x=>x.id===st.last); if(s){const[a,b]=secCount(s); if(a<b) return s;}}
+  return S.find(s=>{const[a,b]=secCount(s);return a<b;});
+}
+
+function openSec(id, practice){
+  const sec=S.find(s=>s.id===id); st.last=id; save();
+  view={name:"sec",sec:id,tab: sec.type==="text"?"read":(practice&&secCount(sec)[0]>0?"practice":(view.sec===id&&view.tab)||"read")};
+  if(sec.type==="text"){ const firstUnread=TX.find(t=>(st.reads[t.id]||0)<READS); view.text=(firstUnread||TX[0]).id; }
+  renderHeader(); renderSec(); scrollTo(0,0);
+}
+
+function renderSec(){
+  const sec=S.find(s=>s.id===view.sec);
+  if(sec.type==="text") return renderTexts(sec);
+  let h=`<div class="sechead"><h2>${esc(sec.t)}</h2><p>${esc(sec.s)}</p></div>
+   <div class="tabs" role="tablist"><button role="tab" aria-selected="${view.tab==="read"}" data-tab="read">📖 Läs & lyssna</button><button role="tab" aria-selected="${view.tab==="practice"}" data-tab="practice">✏️ Öva</button></div>
+   <div id="pane"></div>`;
+  app.innerHTML=h;
+  app.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{view.tab=b.dataset.tab;renderSec();});
+  if(view.tab==="read") renderRead(sec); else startPractice(sec);
+}
+
+function renderRead(sec){
+  const pane=document.getElementById("pane");
+  let h="";
+  if(sec.tip) h+=`<div class="tip">${TIPS[sec.tip]}</div>`;
+  if(sec.id==="kf"||sec.id==="ka") h+=`<button class="link" id="cuckoo">🏠🐦 Fråga gökuret vad klockan är</button>`;
+  if(sec.type==="clock"){
+    h+=`<div class="rows">`+sec.items.map(it=>`<div class="row${isDone(it)?" ok":""}"><span class="sv">${it.q}</span><button class="fr hid" data-a="${esc(it.a)}">${esc(it.a)}</button>${canSpeak?`<button class="say" data-say="${esc(it.a)}" aria-label="Lyssna">🔊</button>`:"<span></span>"}</div>`).join("")+`</div>`;
+  } else {
+    h+=`<div class="toolrow"><span style="font-size:14px;color:var(--ink-soft)">Tryck på det blå för att se franskan.</span><button class="link" id="showAll">Visa alla</button></div>`;
+    h+=`<div class="rows">`+sec.items.map(it=>`<div class="row${isDone(it)?" ok":""}"><span class="sv">${esc(it.q)}</span><button class="fr hid">${esc(it.show)}</button>${canSpeak?`<button class="say" data-say="${esc(it.a)}" aria-label="Lyssna">🔊</button>`:"<span></span>"}</div>`).join("")+`</div>`;
+  }
+  h+=`<div class="actions" style="grid-template-columns:1fr"><button class="btn primary" id="toPr">✏️ Öva nu (${secCount(sec)[1]-secCount(sec)[0]} kvar)</button></div>`;
+  pane.innerHTML=h;
+  pane.querySelectorAll(".fr").forEach(b=>b.onclick=()=>{b.classList.toggle("hid"); if(!b.classList.contains("hid")) say(b.textContent);});
+  pane.querySelectorAll(".say").forEach(b=>b.onclick=()=>say(b.dataset.say));
+  const sa=document.getElementById("showAll"); if(sa) sa.onclick=()=>{const any=pane.querySelector(".fr.hid");pane.querySelectorAll(".fr").forEach(b=>b.classList.toggle("hid",!any));sa.textContent=any?"Dölj alla":"Visa alla";};
+  const ck=document.getElementById("cuckoo"); if(ck) ck.onclick=()=>{say("Il est minuit, ou peut-être midi. Je ne sais pas.");egg("coucou","Coucou ! « Il est minuit … ou peut-être midi. Je ne sais pas. » 🕰️");};
+  document.getElementById("toPr").onclick=()=>{view.tab="practice";renderSec();};
+}
+
+/* ---- practice engine ---- */
+let P=null;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function startPractice(sec){
+  let todo=sec.items.filter(it=>!isDone(it));
+  const again = todo.length===0;
+  if(again) todo=sec.items.slice();
+  P={mode:"sec",sec,queue:shuffle(todo.slice()),total:todo.length,right:0,streak:0,again,wrongs:0};
+  nextQ();
+}
+function startMix(){
+  const pool=[]; S.forEach(s=>{ if(s.type!=="text") s.items.forEach(it=>pool.push({it,sec:s})); });
+  const pick=shuffle(pool).slice(0,15);
+  view={name:"mix"}; renderHeader();
+  document.getElementById("hTitle").textContent="Blandat förhör"; document.getElementById("hSub").textContent="15 frågor från hela provet"; document.getElementById("backBtn").hidden=false;
+  app.innerHTML=`<div class="sechead"><h2>🎲 Blandat förhör</h2><p>15 slumpade frågor från alla delar – som ett litet prov. Rätt svar räknas som klara.</p></div><div id="pane" style="margin-top:14px"></div>`;
+  P={mode:"mix",queue:pick,total:15,right:0,streak:0,wrongs:0,asked:0};
+  nextQ();
+}
+function curSec(){return P.mode==="mix"?P.cur.sec:P.sec;}
+function curIt(){return P.mode==="mix"?P.cur.it:P.cur;}
+
+function nextQ(){
+  const pane=document.getElementById("pane");
+  if(!P.queue.length) return finish(pane);
+  P.cur=P.queue.shift(); P.tries=0; P.hint=false; P.revealed=false;
+  const it=curIt(), sec=curSec();
+  const meta = P.mode==="mix" ? `${esc(sec.t)} · fråga ${Math.min(P.asked+1,P.total)} av ${P.total}` : `${P.queue.length+1} kvar i omgången`;
+  if(P.mode==="mix" && !P.cur.seen){P.cur.seen=1;P.asked++;}
+  let h=`<div class="card" id="qcard"><div class="pmeta"><span>${meta}</span><span class="streak" id="streak">${P.streak>=3?"🔥 "+P.streak+" i rad":""}</span></div>`;
+  if(it.clock){
+    const opts=clockOpts(it);
+    h+=`<div class="prompt-l">Quelle heure est-il ?</div><div class="clockwrap">${clockSVG(it.clock[0],it.clock[1])}</div>
+      <div class="opts">${opts.map(o=>`<button data-o="${esc(o)}">${esc(o)}</button>`).join("")}</div><div id="fb"></div><div id="nextw"></div></div>`;
+    pane.innerHTML=h;
+    pane.querySelectorAll(".opts button").forEach(b=>b.onclick=()=>answerMC(b));
+    return;
+  }
+  h+=`<div class="prompt-l">Skriv på franska</div><div class="prompt">${esc(it.q)}${sec.art?"<small>Glöm inte le / la / l'</small>":""}</div>
+    <form id="af" autocomplete="off"><input class="ans" id="ansIn" lang="fr" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Ton réponse …" aria-label="Ditt svar"></form>
+    <div class="accents" aria-label="Franska tecken">${["é","è","ê","à","â","ç","ô","î","û","ù","'"].map(c=>`<button type="button" data-c="${c}">${c}</button>`).join("")}</div>
+    <div id="hintw"></div>
+    <div class="pbtns"><button class="btn" id="hintB" type="button">💡 Ledtråd</button><button class="btn" id="showB" type="button">Visa</button><button class="btn primary" id="chkB" type="button">Kolla</button></div>
+    <div id="fb"></div></div>`;
+  pane.innerHTML=h;
+  const inp=document.getElementById("ansIn");
+  setTimeout(()=>{try{inp.focus({preventScroll:true});}catch(e){inp.focus();}},60);
+  pane.querySelectorAll(".accents button").forEach(b=>{
+    b.addEventListener("pointerdown",e=>e.preventDefault());
+    b.onclick=()=>{const s=inp.selectionStart??inp.value.length,e=inp.selectionEnd??inp.value.length;inp.value=inp.value.slice(0,s)+b.dataset.c+inp.value.slice(e);inp.focus();inp.setSelectionRange(s+1,s+1);};
+  });
+  document.getElementById("af").onsubmit=e=>{e.preventDefault();doCheck();};
+  document.getElementById("chkB").onclick=doCheck;
+  document.getElementById("hintB").onclick=()=>{P.hint=true;document.getElementById("hintw").innerHTML=`<div class="hint">${esc(hintOf(it.a))}</div>`;inp.focus();};
+  document.getElementById("showB").onclick=()=>{reveal("show");};
+}
+
+function clockOpts(it){
+  const [h,m]=it.clock, set=new Set([it.a]);
+  const cands=[[h,(m+15)%60],[h,(m+45)%60],[h===12?1:h+1,m],[h===1?12:h-1,m],[h,60-m===60?30:60-m],[h,(m+5)%60],[h,(m+30)%60]];
+  shuffle(cands).forEach(([a,b])=>{ if(set.size<4){ const t=frTime(a,b); set.add(t);} });
+  return shuffle([...set]);
+}
+function answerMC(b){
+  const it=curIt(); const ok=b.dataset.o===it.a;
+  const all=document.querySelectorAll(".opts button");
+  if(ok){
+    all.forEach(x=>x.disabled=true); b.classList.add("right");
+    if(P.tries===0) good();
+    feedback(ok?"good":"bad", P.tries===0?cheer():"Voilà !", "", it.a);
+    say(it.a);
+    nextBtn();
+  } else {
+    P.tries++; P.streak=0; b.classList.add("wrong"); b.disabled=true;
+    document.getElementById("fb").innerHTML=`<div class="fb bad"><span class="big">${pickOne(["Mince !","Oups !","Presque …"])}</span>Försök igen!</div>`;
+    if(P.tries===1) requeue();
+  }
+}
+function requeue(){ const pos=Math.min(3,P.queue.length); P.queue.splice(pos,0,P.cur); }
+const cheers=["Super !","Très bien !","Génial !","Bravo !","Parfait !","Magnifique !","Excellent !","Oh là là, quel talent !","C'est ça !"];
+function pickOne(a){return a[Math.floor(Math.random()*a.length)];}
+function cheer(){return pickOne(cheers);}
+function markDone(it){ if(!st.done[it.id]){st.done[it.id]=1;save();renderHeader();} }
+function good(){
+  const it=curIt(); P.right++; P.streak++; markDone(it);
+  if(P.streak>st.best){st.best=P.streak;save();}
+  if(P.streak===5) toast("🔥 5 rätt i rad !");
+  if(P.streak===10){toast("🔥🔥 10 i rad ! Tu es un champion !");burst("confetti",90);}
+  if(P.streak===20){toast("🚀 20 i rad ! Même le perroquet est impressionné 🦜");burst("confetti",160);}
+}
+function feedback(cls,big,body,corr){
+  document.getElementById("fb").innerHTML=`<div class="fb ${cls}"><span class="big">${big}</span>${body}${corr&&cls!=="good"?`<div class="corr">${esc(corr)}</div>`:""}</div>`;
+}
+function nextBtn(){
+  const w=document.getElementById("nextw")||document.getElementById("fb");
+  const b=document.createElement("button"); b.className="btn primary"; b.style.width="100%"; b.style.marginTop="10px"; b.textContent="Nästa →";
+  b.onclick=nextQ; w.appendChild(b); setTimeout(()=>{try{b.focus({preventScroll:true});}catch(e){}},30);
+}
+
+const EGG_WORDS={
+  mathilde:()=>{burst("hearts",60);egg("mathilde","❤️ François est amoureux de Mathilde !<br>… men hon är ju med Olivier nu. Pauvre François !");},
+  baguette:()=>{burst("bread",60);egg("baguette","🥖 Mmm … le petit déjeuner est prêt !");},
+  croissant:()=>{burst("bread",60);egg("baguette","🥐 Mmm … le petit déjeuner est prêt !");},
+  alexandre:()=>{burst("clock",50);egg("alexandre","⏰ Alexandre est toujours en retard ! Dépêche-toi !!");},
+};
+function doCheck(){
+  const inp=document.getElementById("ansIn"); if(!inp||inp.disabled) return;
+  const it=curIt(), sec=curSec(), v=inp.value;
+  const key=noAcc(norm(v));
+  if(EGG_WORDS[key] && noAcc(norm(it.a))!==key){ EGG_WORDS[key](); inp.value=""; return; }
+  const r=check(it,v,sec);
+  if(r==="empty"){ inp.focus(); document.getElementById("qcard").classList.add("shake"); setTimeout(()=>document.getElementById("qcard")?.classList.remove("shake"),500); return; }
+  if(r==="ok"){
+    inp.disabled=true; lockBtns();
+    if(P.revealed){ feedback("good","Bien copié !","Nu har du skrivit det en gång. Den kommer tillbaka strax – då ska du kunna den själv."); document.getElementById("fb").querySelectorAll("button").forEach(b=>b.remove()); nextBtn(); return; }
+    if(P.tries===0 && !P.hint) good(); else { P.streak=0; markDone(it); }
+    document.getElementById("streak").textContent=P.streak>=3?"🔥 "+P.streak+" i rad":"";
+    const showForm = norm(v)!==norm(it.a) ? `<div style="margin-top:4px">Facit: <b>${esc(it.show)}</b></div>` : (it.show!==it.a?`<div style="margin-top:4px">${esc(it.show)}</div>`:"");
+    feedback("good",(P.tries===0&&!P.hint)?cheer():"Voilà ! Nu sitter den.",showForm);
+    document.getElementById("qcard").classList.add("pop");
+    say(it.a); nextBtn(); return;
+  }
+  P.tries++; P.streak=0; document.getElementById("streak").textContent="";
+  if(P.tries===1) requeue();
+  if(r==="acc") feedback("near","Presque !",`Nästan rätt – kolla accenterna. Tips: håll inne en bokstav på iPhone, eller använd knapparna. Prova igen!`);
+  else if(r==="art") feedback("near","Presque !",`Rätt ord – men skriv med <b>le / la / l'</b> framför. Prova igen!`);
+  else if(P.tries>=2) { reveal("wrong", v); return; }
+  else feedback("bad",pickOne(["Mince !","Oups !","Pas grave !"]),`<span class="yours">${esc(v)}</span> – inte riktigt. Testa en gång till (eller tryck 💡).`);
+  inp.select();
+}
+function lockBtns(){["hintB","showB","chkB"].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=true;}); const a=document.querySelector(".accents"); if(a) a.hidden=true;}
+function reveal(kind,v){
+  const it=curIt(), inp=document.getElementById("ansIn");
+  if(P.tries===0) requeue();
+  P.streak=0; P.tries=Math.max(P.tries,1); P.revealed=true;
+  feedback("bad", kind==="show"?"Voilà le facit":"Pas grave !", (v?`<span class="yours">${esc(v)}</span><br>`:"")+`Rätt svar:`, it.show);
+  say(it.a);
+  // force copy once: the item comes back later in the round
+  inp.value=""; inp.placeholder="Skriv av svaret för att nöta in det"; inp.focus();
+  const fb=document.getElementById("fb");
+  const b=document.createElement("button"); b.className="btn"; b.style.width="100%"; b.style.marginTop="10px"; b.textContent="Hoppa vidare – den kommer tillbaka snart"; b.onclick=nextQ; fb.appendChild(b);
+  document.getElementById("showB").disabled=true; document.getElementById("hintB").disabled=true;
+}
+
+function finish(pane){
+  if(P.mode==="mix"){
+    const p=Math.round(P.right/P.total*100);
+    pane.innerHTML=`<div class="card finish"><div style="font-size:54px">${p>=80?"🏆":p>=50?"👍":"💪"}</div><div class="big">${P.right} av ${P.total}</div><p>${p>=80?"Magnifique ! Du är redo för provet.":p>=50?"Bien ! Öva lite mer på det som var svårt.":"Courage ! Gå igenom delarna en gång till."}</p>
+      <div class="actions"><button class="btn primary" id="again">Ett förhör till</button><button class="btn" id="home">Till översikten</button></div></div>`;
+    if(p>=80) burst();
+    document.getElementById("again").onclick=startMix; document.getElementById("home").onclick=goHome; return;
+  }
+  const sec=P.sec, [a,b]=secCount(sec), all=totals();
+  const allDone=all[0]===all[1];
+  pane.innerHTML=`<div class="card finish"><div style="font-size:54px">${allDone?"🏆":"🎉"}</div><div class="big">${allDone?"TOUT EST FINI !":"Bravo !"}</div>
+    <p>${allDone?"Du har klarat ALLT inför provet. Bonne chance ! 🇫🇷":`${esc(sec.t)} är klar (${a}/${b}). ${pickOne(["Le perroquet est fier de toi 🦜","Même Alexandre n'est pas en retard aujourd'hui !","Tu n'es pas fatigué(e) ?","Ça suffit … nej, kör en till!"])}`}</p>
+    <div class="actions"><button class="btn primary" id="nx">${allDone?"Blandat förhör":"Nästa del →"}</button><button class="btn" id="home">Till översikten</button></div></div>`;
+  burst("confetti",allDone?260:140);
+  if(allDone) setTimeout(()=>burst("confetti",200),700);
+  document.getElementById("home").onclick=goHome;
+  document.getElementById("nx").onclick=()=>{ if(allDone) startMix(); else { const n=nextSection(); n?openSec(n.id):goHome(); } };
+}
+
+/* ---- texts ---- */
+function renderTexts(sec){
+  const t=TX.find(x=>x.id===view.text);
+  const r=st.reads[t.id]||0;
+  let h=`<div class="sechead"><h2>Läs texterna</h2><p>Läs högt, tryck på en mening för att se svenskan. Markera när du har läst hela texten.</p></div>
+   <div class="textpick">${TX.map(x=>`<button aria-pressed="${x.id===t.id}" data-t="${x.id}">${x.name} ${(st.reads[x.id]||0)>=READS?"✓":""}</button>`).join("")}</div>
+   <div class="readbox"><div><b style="font-family:var(--f-display);font-size:20px">${esc(t.title)}</b><div class="dots" aria-label="${r} av ${READS} läsningar">${[1,2,3].map(i=>`<i class="${i<=r?"on":""}"></i>`).join("")}</div></div>
+   ${canSpeak?`<button class="btn" id="playAll" style="padding:8px 12px">🔊 Lyssna</button>`:""}</div>
+   <div class="toolrow"><span></span><button class="link" id="svAll">Visa all svenska</button></div>
+   <div class="dlg">${t.lines.map((l,i)=>`<button class="ln${l[0]?"":" narr"}" data-i="${i}"><span class="who">${esc(l[0])}</span><span class="f">${esc(l[1])}</span><span class="sv2" hidden>${esc(l[2])}</span></button>`).join("")}</div>
+   <div class="actions" style="grid-template-columns:1fr"><button class="btn ${r>=READS?"":"green"}" id="readB">${r>=READS?"✓ Läst 3 gånger – läs gärna igen":"✓ Jag har läst texten ("+(r+1)+"/"+READS+")"}</button></div>`;
+  app.innerHTML=h;
+  app.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{view.text=b.dataset.t;renderTexts(sec);});
+  app.querySelectorAll(".ln").forEach(b=>b.onclick=()=>{
+    const l=t.lines[+b.dataset.i]; const s=b.querySelector(".sv2"); s.hidden=!s.hidden;
+    if(!s.hidden) say(l[1]);
+    if(l[3]==="boom"){ document.body.classList.remove("shake"); void document.body.offsetWidth; document.body.classList.add("shake"); burst("boom",40); egg("chimie","💥 BOUM ! Ils ont chimie aujourd'hui …<br>Papegojorna borde nog inte blanda fler vätskor."); }
+  });
+  const sa=document.getElementById("svAll"); sa.onclick=()=>{const anyHidden=app.querySelector(".sv2[hidden]");app.querySelectorAll(".sv2").forEach(s=>s.hidden=!anyHidden);sa.textContent=anyHidden?"Dölj svenskan":"Visa all svenska";};
+  const pa=document.getElementById("playAll"); if(pa) pa.onclick=()=>{ try{speechSynthesis.cancel(); t.lines.forEach(l=>{const u=new SpeechSynthesisUtterance(l[1]);u.lang="fr-FR";if(frVoice)u.voice=frVoice;u.rate=.85;speechSynthesis.speak(u);});}catch(e){} };
+  document.getElementById("readB").onclick=()=>{
+    const cur=st.reads[t.id]||0;
+    if(cur>=READS){ toast("Encore ! Ju fler gånger desto bättre 📖"); return; }
+    st.reads[t.id]=cur+1; save(); renderHeader();
+    if(cur+1===READS){ burst(); toast(`Texten ${t.name} är klar ! 📖✓`); const nx=TX.find(x=>(st.reads[x.id]||0)<READS); if(nx) view.text=nx.id; }
+    else toast(`Bien ! ${cur+1} av ${READS} gånger`);
+    renderTexts(sec); scrollTo(0,0);
+  };
+}
+
+function goHome(){ view={name:"home"}; renderHeader(); renderHome(); scrollTo(0,0); }
+document.getElementById("backBtn").onclick=goHome;
+
+/* parrot logo egg */
+let taps=0,tapT;
+document.getElementById("logo").onclick=()=>{
+  taps++; clearTimeout(tapT); tapT=setTimeout(()=>taps=0,1500);
+  say(taps<5?"Bonjour !":"");
+  if(taps>=5){ taps=0;
+    if(!reduce){const f=document.createElement("div");f.className="flyer";f.innerHTML=`🦜<div class="bub">Quelle heure est-il ? … Je ne sais pas, je n'ai pas mes lunettes !</div>`;document.body.appendChild(f);setTimeout(()=>f.remove(),3700);}
+    say("Quelle heure est-il ? Je ne sais pas. Je n'ai pas mes lunettes !");
+    egg("perroquet","🦜 Le perroquet s'envole ! Han letar efter sina lunettes …");
+  }
+};
+
+/* late-night egg */
+(function(){const h=new Date().getHours(); if(h>=22||h<5) setTimeout(()=>egg("tard","😴 Il est tard ! Tu es fatigué(e) ?<br>Alexandre också … men han är ju alltid sen."),1200);})();
+
+renderHeader(); renderHome();
+</script>
+
+</body>
+</html>
