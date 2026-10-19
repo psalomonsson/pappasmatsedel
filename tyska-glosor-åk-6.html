@@ -85,6 +85,10 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
 .flag{display:inline-block;width:18px;height:12px;border-radius:2px;box-shadow:0 0 0 1px var(--line)}
 .flag.se{background:linear-gradient(90deg,transparent 31%,#FECC02 31%,#FECC02 44%,transparent 44%),linear-gradient(transparent 40%,#FECC02 40%,#FECC02 60%,transparent 60%),#006AA7}
 .flag.de{background:linear-gradient(#000 0 33.3%,#DD0000 33.3% 66.6%,#FFCE00 66.6%)}
+.flag.at{background:linear-gradient(#C8102E 0 33.3%,#fff 33.3% 66.6%,#C8102E 66.6%)}
+.flag.ch{width:12px;background:linear-gradient(#fff,#fff) center/58% 20% no-repeat,linear-gradient(#fff,#fff) center/20% 58% no-repeat,#DA291C}
+.chip .new{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:var(--ink);color:var(--paper);border-radius:99px;padding:1px 6px;align-self:center}
+.ex{display:block;font-size:13px;color:var(--muted)}
 .prompt{font-family:var(--display);font-weight:700;font-size:clamp(30px,7vw,46px);line-height:1.1;margin:0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;text-wrap:balance;overflow-wrap:anywhere}
 .hint{font-size:14px;color:var(--muted);margin:0}
 
@@ -161,7 +165,7 @@ footer{font-size:13px;color:var(--muted);text-align:center}
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">Läxa v. 36–40 · Deutsch</div>
+    <div class="eyebrow">Läxa v. 36–40 · Prov v. 42 · Deutsch</div>
     <h1>Tyska glosor <mark>åk 6</mark></h1>
     <p class="sub">Välj veckor, hur du vill öva, och kör. Ord du missar kommer tillbaka senare i rundan.</p>
   </header>
@@ -210,7 +214,11 @@ window.addEventListener('error',function(e){ showErr((e.message||'okänt')+' (ra
 <script>
 (function(){ try {
 const NUM_SV = {0:'noll',1:'ett',2:'två',3:'tre',4:'fyra',5:'fem',6:'sex',7:'sju',8:'åtta',9:'nio',10:'tio',13:'tretton',14:'fjorton',15:'femton',16:'sexton',17:'sjutton',18:'arton',19:'nitton',20:'tjugo',21:'tjugoett'};
-const WEEKS = {36:'Hallo!',37:'Woher kommst du?',38:'Zahlen 0–10',39:'Wie alt bist du?',40:'Zahlen 13–21, Länder'};
+const WEEKS = {36:'Hallo!',37:'Woher kommst du?',38:'Zahlen 0–10',39:'Wie alt bist du?',40:'Zahlen 13–21, Länder',42:'Prov v. 42: ord, frågeord och huvudstäder',43:'Prov v. 42: hur bokstäverna låter'};
+const CHIP = {42:'Prov v. 42',43:'Uttal'};
+const NEWG = [42,43];
+const ALLG = Object.keys(WEEKS).map(Number);
+const chipName = w => CHIP[w] || ('v. '+w);
 const RAW = [
  [36,'Hej!','Hallo!'],[36,'Hej!','Hi!'],[36,'God dag!','Guten Tag!'],[36,'Hej!','Tag!'],
  [36,'Hej! (norra Tyskland)','Moin!'],[36,'Hur mår du?','Wie geht’s?'],[36,'På återseende!','Auf Wiedersehen!'],
@@ -228,10 +236,41 @@ const RAW = [
  [40,'13','dreizehn'],[40,'14','vierzehn'],[40,'15','fünfzehn'],[40,'16','sechzehn'],[40,'17','siebzehn'],[40,'18','achtzehn'],
  [40,'19','neunzehn'],[40,'20','zwanzig'],[40,'21','einundzwanzig'],[40,'Österrike','Österreich'],[40,'Schweiz','die Schweiz'],
  [40,'Huvudstaden heter …','Die Hauptstadt heißt …'],[40,'Tyskland är …','Deutschland ist …'],
- [40,'han är','er ist'],[40,'hon är','sie ist'],[40,'den/det är','es ist']
+ [40,'han är','er ist'],[40,'hon är','sie ist'],[40,'den/det är','es ist'],
+ // Prov v. 42 – mål 28: ord man ska kunna och förstå (also, Moment!, Nicht so schnell! och neu finns redan i v. 39/37)
+ [42,'precis','genau',{sv:['exakt','just det']}],[42,'trevlig','nett',{sv:['snäll','gullig']}],[42,'tack','danke'],
+ [42,'säker','sicher',{sv:['säkert','visst']}],[42,'jag vet inte','ich weiß nicht'],[42,'nej','nein'],
+ [42,'redan','schon'],[42,'stor','groß',{sv:['lång']}],[42,'liten','klein',{sv:['små','kort']}],
+ [42,'huvudstad','Hauptstadt',{de:['die Hauptstadt']}],[42,'också','auch',{sv:['även']}],[42,'egentligen','eigentlich'],
+ [42,'då (i frågor)','denn',{sv:['för','då']}],
+ // mål 15: frågeord
+ [42,'hur','wie'],[42,'vem','wer'],[42,'var','wo'],[42,'varifrån','woher'],[42,'vad','was'],
+ // mål 4 och 13
+ [42,'Bra, tack!','Gut, danke!'],[42,'Jag tycker att det är coolt.','Ich finde es cool.',{sv:['jag tycker det är coolt']}],
+ // mål 16: länder och huvudstäder
+ [42,'Tysklands huvudstad','Berlin',{sv:['Tyskland','huvudstaden i Tyskland'],flag:'de',hint:{sv:'Skriv vilket land det är huvudstad i.'}}],
+ [42,'Österrikes huvudstad','Wien',{sv:['Österrike','huvudstaden i Österrike'],flag:'at',hint:{sv:'Skriv vilket land det är huvudstad i.'}}],
+ [42,'Schweiz huvudstad','Bern',{sv:['Schweiz','huvudstaden i Schweiz'],flag:'ch',hint:{sv:'Skriv vilket land det är huvudstad i.'}}],
+ // mål 30–33: substantiv
+ [42,'äpple','Apfel',{de:['der Apfel']}],[42,'bil','Auto',{de:['das Auto']}],[42,'boll','Ball',{de:['der Ball']}],
+ [42,'ballong','Ballon',{de:['der Ballon']}],[42,'fönster','Fenster',{de:['das Fenster']}],[42,'garage','Garage',{de:['die Garage']}],
+ [42,'hus','Haus',{de:['das Haus']}],[42,'himmel','Himmel',{de:['der Himmel']}],[42,'hund','Hund',{de:['der Hund']}],
+ [42,'jacka','Jacke',{de:['die Jacke']}],[42,'kanin','Kaninchen',{de:['das Kaninchen']}],[42,'katt','Katze',{de:['die Katze']}],
+ [42,'lampa','Lampe',{de:['die Lampe']}],[42,'ryggsäck','Rucksack',{de:['der Rucksack']}],[42,'soffa','Sofa',{de:['das Sofa']}],
+ [42,'stol','Stuhl',{de:['der Stuhl']}],[42,'t-shirt','T-Shirt',{de:['das T-Shirt','tshirt']}],[42,'fågel','Vogel',{de:['der Vogel']}],
+ // mål 17–27: uttal (svenska sidan = hur det låter)
+ [43,'aj','ei',{sound:1,sv:['ai'],ex:'drei, heißt, nein'}],[43,'i','ie',{sound:1,ex:'sieben, wie, Sie'}],
+ [43,'oj','eu',{sound:1,ex:'neu, neun, Deutschland'}],[43,'f','v',{sound:1,ex:'vier, Vogel'}],
+ [43,'s','ß',{sound:1,sv:['ss'],ex:'heißt, groß, fleißig'}],[43,'y','ü',{sound:1,ex:'fünf, Tschüs, zwölf'}],
+ [43,'au','au',{sound:1,ex:'auch, Haus, Auto'}],[43,'å','o',{sound:1,ex:'Sofa, wo, Vogel'}],
+ [43,'o','u',{sound:1,ex:'du, Hund, gut'}],[43,'ts','z',{sound:1,ex:'zwei, zehn, Katze'}],[43,'v','w',{sound:1,ex:'wie, wo, Willkommen'}]
 ];
 const DATA = RAW.map((r,i)=>{
-  const it={id:i,w:r[0],sv:r[1],de:r[2],svAlt:[],deAlt:[],num:/^\d+$/.test(r[1])};
+  const o=r[3]||{};
+  const it={id:i,w:r[0],sv:r[1],de:r[2],svAlt:(o.sv||[]).slice(),deAlt:(o.de||[]).slice(),num:/^\d+$/.test(r[1]),
+    sound:!!o.sound,ex:o.ex||'',flag:o.flag||'',hintTo:o.hint||{}};
+  it.kind = it.num?'num':it.sound?'sound':'word';
+  it.sayText = it.sound ? it.ex : it.de;
   if(it.num){ it.svAlt.push(NUM_SV[+r[1]]); if(r[1]==='1') it.svAlt.push('en'); if(r[1]==='21') it.svAlt.push('tjugoen'); }
   if(r[1]==='den/det är'){ it.svAlt.push('det är','den är'); }
   if(r[2]==='die Schweiz') it.deAlt.push('Schweiz');
@@ -250,11 +289,11 @@ const esc = s => s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':
 // For a card in a direction: what is shown, and which answers count
 function q(it, dir){
   if(dir==='sv-de'){
-    const same = DATA.filter(d=>groupKey(d.sv)===groupKey(it.sv));
+    const same = DATA.filter(d=>d.sound===it.sound && groupKey(d.sv)===groupKey(it.sv));
     const acc = [...new Set(same.flatMap(d=>[d.de,...d.deAlt]))];
     return {prompt:it.sv, from:'sv', to:'de', answer:it.de, accepted:acc, others:same.length>1?same.map(d=>d.de):null};
   } else {
-    const same = DATA.filter(d=>groupKey(d.de)===groupKey(it.de));
+    const same = DATA.filter(d=>d.sound===it.sound && groupKey(d.de)===groupKey(it.de));
     const acc = [...new Set(same.flatMap(d=>[d.sv,...d.svAlt]))];
     return {prompt:it.de, from:'de', to:'sv', answer:it.sv, accepted:acc, others:null};
   }
@@ -283,15 +322,18 @@ const spk = (text,lang,label) => `<button class="speak" type="button" data-say="
 // ---------- settings ----------
 const store = {get(k,d){try{const v=localStorage.getItem('tyska6:'+k);return v===null?d:JSON.parse(v);}catch(e){return d;}},
                set(k,v){try{localStorage.setItem('tyska6:'+k,JSON.stringify(v));}catch(e){}}};
-const S = { weeks:new Set(store.get('weeks',[36,37,38,39,40])), dir:store.get('dir','sv-de'), mode:store.get('mode','write') };
-if(!S.weeks.size) [36,37,38,39,40].forEach(w=>S.weeks.add(w));
+const S = { weeks:new Set(store.get('weeks',ALLG)), dir:store.get('dir','sv-de'), mode:store.get('mode','write') };
+[...S.weeks].forEach(w=>{ if(!WEEKS[w]) S.weeks.delete(w); });
+if(!S.weeks.size) ALLG.forEach(w=>S.weeks.add(w));
+const seenNew = store.get('seenNew42', false);
 
 const weeksEl=document.getElementById('weeks');
-weeksEl.innerHTML = Object.keys(WEEKS).map(w=>`<button class="chip" data-w="${w}" aria-pressed="${S.weeks.has(+w)}" title="${esc(WEEKS[w])}">v. ${w} <small>${DATA.filter(d=>d.w==w).length}</small></button>`).join('')
+weeksEl.innerHTML = ALLG.map(w=>`<button class="chip" data-w="${w}" aria-pressed="${S.weeks.has(w)}" title="${esc(WEEKS[w])}">${chipName(w)} <small>${DATA.filter(d=>d.w==w).length}</small>${NEWG.includes(w)&&!seenNew?'<span class="new">Ny</span>':''}</button>`).join('')
   + `<button class="chip" data-w="all" aria-pressed="false">Alla</button>`;
 weeksEl.addEventListener('click',e=>{
   const b=e.target.closest('.chip'); if(!b) return;
-  if(b.dataset.w==='all'){ [36,37,38,39,40].forEach(w=>S.weeks.add(w)); }
+  if(NEWG.includes(+b.dataset.w)){ store.set('seenNew42',true); weeksEl.querySelectorAll('.new').forEach(n=>n.remove()); }
+  if(b.dataset.w==='all'){ ALLG.forEach(w=>S.weeks.add(w)); }
   else { const w=+b.dataset.w; if(S.weeks.has(w)){ if(S.weeks.size>1) S.weeks.delete(w); } else S.weeks.add(w); }
   weeksEl.querySelectorAll('.chip[data-w]').forEach(c=>{ if(c.dataset.w!=='all') c.setAttribute('aria-pressed', S.weeks.has(+c.dataset.w)); });
   store.set('weeks',[...S.weeks]); newRound();
@@ -342,10 +384,19 @@ function promptBlock(){
   const qq=R.q, flagFrom=qq.from==='sv'?'se':'de', flagTo=qq.to==='sv'?'se':'de';
   const lang = qq.from==='sv'?'Svenska':'Tyska', tlang = qq.to==='sv'?'svenska':'tyska';
   let hint='';
+  const it=R.cur.it;
+  if(it.sound){
+    hint = qq.to==='sv' ? `<p class="hint">Hur uttalas det? Skriv hur det låter på svenska. Som i: ${esc(it.ex)}</p>`
+                        : `<p class="hint">Vilka tyska bokstäver låter så?</p>`;
+    return `<div class="prompt-wrap"><div class="dirtag">Uttal</div>
+      <p class="prompt"><span>${qq.to==='de'?'låter som ”'+esc(qq.prompt)+'”':esc(qq.prompt)}</span>${qq.from==='de'?spk(it.sayText,'de','Lyssna på exempelorden'):''}</p>${hint}</div>`;
+  }
   if(qq.others) hint=`<p class="hint">Det finns ${qq.others.length} tyska ord för det här. Alla räknas som rätt.</p>`;
-  else if(R.cur.it.num && qq.to==='sv') hint=`<p class="hint">Skriv siffran eller ordet.</p>`;
+  else if(it.num && qq.to==='sv') hint=`<p class="hint">Skriv siffran eller ordet.</p>`;
+  else if(it.hintTo[qq.to]) hint=`<p class="hint">${esc(it.hintTo[qq.to])}</p>`;
+  const fl = it.flag ? ` <span class="flag ${it.flag}" style="width:${it.flag==='ch'?'26px':'36px'};height:24px"></span>` : '';
   return `<div class="prompt-wrap"><div class="dirtag"><span class="flag ${flagFrom}"></span>${lang} <span aria-hidden="true">→</span> <span class="flag ${flagTo}"></span>${tlang}</div>
-    <p class="prompt"><span>${esc(qq.prompt)}</span>${qq.from==='de'?spk(qq.prompt,'de'):''}</p>${hint}</div>`;
+    <p class="prompt"><span>${esc(qq.prompt)}</span>${fl}${qq.from==='de'?spk(qq.prompt,'de'):''}</p>${hint}</div>`;
 }
 
 function render(){
@@ -376,7 +427,7 @@ function grade(){
   if(!res){ inp.focus(); return; }
   markResult(res.ok);
   inp.readOnly=true;
-  const deWord = qq.to==='de' ? (res.ok?res.matched:qq.answer) : qq.prompt;
+  const deWord = R.cur.it.sound ? R.cur.it.sayText : (qq.to==='de' ? (res.ok?res.matched:qq.answer) : qq.prompt);
   const fb=document.getElementById('fb');
   if(res.ok){
     const alts = qq.accepted.filter(a=>a!==res.matched && !R.cur.it.svAlt.includes(a) && !R.cur.it.deAlt.includes(a));
@@ -406,7 +457,7 @@ function renderChoice(){
   const qq=R.q, it=R.cur.it;
   const field = qq.to==='de'?'de':'sv';
   const accL = new Set(qq.accepted.map(lower));
-  let pool = DATA.filter(d=>d.num===it.num && !accL.has(lower(d[field])));
+  let pool = DATA.filter(d=>d.kind===it.kind && !accL.has(lower(d[field])));
   if(pool.length<3) pool = DATA.filter(d=>!accL.has(lower(d[field])));
   const near = pool.filter(d=>S.weeks.has(d.w));
   const src = near.length>=3?near:pool;
@@ -423,7 +474,7 @@ function pick(b){
   markResult(ok);
   stage.querySelectorAll('.opt').forEach(o=>{ o.disabled=true; if(qq.accepted.some(a=>lower(a)===lower(o.dataset.o))) o.classList.add('right'); });
   if(!ok) b.classList.add('wrong');
-  const deWord = qq.to==='de'?qq.answer:qq.prompt;
+  const deWord = R.cur.it.sound ? R.cur.it.sayText : (qq.to==='de'?qq.answer:qq.prompt);
   document.getElementById('fb').innerHTML = `<div class="actions"><button class="btn" id="nx">Nästa</button>${spk(deWord,'de','Lyssna på tyska ordet')}
     <span style="font-weight:700;color:${ok?'var(--good)':'var(--bad)'}">${ok?PRAISE[Math.floor(Math.random()*PRAISE.length)]:'Ordet kommer tillbaka snart.'}</span></div>`;
   stage.querySelector('.progress').outerHTML=header();
@@ -434,17 +485,18 @@ function pick(b){
 function renderCards(){
   const qq=R.q;
   const back = qq.others ? qq.others.join(' · ') : qq.answer;
+  const frontTxt = R.cur.it.sound && qq.to==='de' ? 'låter som ”'+qq.prompt+'”' : qq.prompt;
   stage.innerHTML = header()+`<div class="dirtag"><span class="flag ${qq.from==='sv'?'se':'de'}"></span>${qq.from==='sv'?'Svenska':'Tyska'} <span aria-hidden="true">→</span> <span class="flag ${qq.to==='sv'?'se':'de'}"></span>${qq.to==='sv'?'svenska':'tyska'}</div>
     <div class="card3d"><div class="flip" id="flip" role="button" tabindex="0" aria-label="Vänd kortet">
-      <div class="face front"><div class="big">${esc(qq.prompt)}</div><div class="small">Säg svaret högt, tryck sedan för att vända</div></div>
-      <div class="face back"><div class="big">${esc(back)}</div><div class="small">${esc(qq.prompt)}</div></div>
+      <div class="face front"><div class="big">${esc(frontTxt)}</div><div class="small">Säg svaret högt, tryck sedan för att vända</div></div>
+      <div class="face back"><div class="big">${esc(back)}</div><div class="small">${esc(frontTxt)}${R.cur.it.ex?' · som i '+esc(R.cur.it.ex):''}</div></div>
     </div></div>
     <div class="actions" id="cardact"><button class="btn alt" id="turn">Vänd kortet</button></div>`;
   const flip=document.getElementById('flip');
   const turn=()=>{
     if(flip.classList.contains('turned')) return;
     flip.classList.add('turned');
-    const deWord = qq.to==='de'?qq.answer:qq.prompt;
+    const deWord = R.cur.it.sound ? R.cur.it.sayText : (qq.to==='de'?qq.answer:qq.prompt);
     document.getElementById('cardact').innerHTML=`<button class="btn good" id="knew">Kunde den</button><button class="btn bad" id="didnt">Inte än</button>${spk(deWord,'de','Lyssna på tyska ordet')}`;
     document.getElementById('knew').addEventListener('click',()=>{markResult(true);next();});
     document.getElementById('didnt').addEventListener('click',()=>{markResult(false);next();});
@@ -489,10 +541,12 @@ document.addEventListener('keydown',e=>{
 document.addEventListener('click',e=>{ const b=e.target.closest('[data-say]'); if(b){ e.preventDefault(); e.stopPropagation(); say(b.dataset.say,b.dataset.lang); } }, true);
 
 // ---------- word list ----------
-document.getElementById('tables').innerHTML = Object.keys(WEEKS).map(w=>`<div class="week"><h3>Vecka ${w} <span>${esc(WEEKS[w])}</span></h3>
-  <div class="tablebox"><table><thead><tr><th>Svenska</th><th>Tyska</th><th aria-label="Lyssna"></th></tr></thead><tbody>
-  ${DATA.filter(d=>d.w==w).map(d=>`<tr><td>${esc(d.sv)}</td><td>${esc(d.de)}</td><td>${spk(d.de,'de','Lyssna: '+d.de)}</td></tr>`).join('')}
-  </tbody></table></div></div>`).join('') + `<div class="week"><h3>Verbet sein <span>vara i presens</span></h3>
+document.getElementById('tables').innerHTML = ALLG.map(w=>{
+  const snd = w===43;
+  return `<div class="week"><h3>${CHIP[w]?esc(CHIP[w]):'Vecka '+w} <span>${esc(WEEKS[w])}</span></h3>
+  <div class="tablebox"><table><thead><tr><th>${snd?'Låter som':'Svenska'}</th><th>${snd?'Tyska bokstäver':'Tyska'}</th><th aria-label="Lyssna"></th></tr></thead><tbody>
+  ${DATA.filter(d=>d.w==w).map(d=>`<tr><td>${esc(d.sv)}${d.flag?` <span class="flag ${d.flag}"></span>`:''}</td><td>${esc(d.de)}${d.ex?`<span class="ex">som i ${esc(d.ex)}</span>`:''}</td><td>${spk(d.sayText,'de','Lyssna: '+d.sayText)}</td></tr>`).join('')}
+  </tbody></table></div></div>`;}).join('') + `<div class="week"><h3>Verbet sein <span>vara i presens</span></h3>
   <div class="tablebox"><table><thead><tr><th>Svenska</th><th>Tyska</th><th></th></tr></thead><tbody>
   <tr><td>jag är</td><td>ich bin</td><td>${spk('ich bin','de')}</td></tr><tr><td>du är</td><td>du bist</td><td>${spk('du bist','de')}</td></tr>
   <tr><td>hon, han, den/det är</td><td>sie, er, es ist</td><td>${spk('sie, er, es ist','de')}</td></tr></tbody></table></div></div>`;
