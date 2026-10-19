@@ -815,7 +815,7 @@ function renderHome(){
   h+='<div class="tiles">';AREAS.forEach(function(a){if(!a.ej)h+=tile(a);});h+='</div>';
   h+='<div class="sec-h"><h2>Lägre prio</h2><span class="hint">ingår inte i provet</span></div>';
   h+='<div class="tiles low">';AREAS.forEach(function(a){if(a.ej)h+=tile(a);});h+='</div>';
-  h+='<a class="ptlink" href="Periodiska.html"><span class="ptsym">118</span><span><b>Periodiska systemet på djupet</b><small>Utforska alla grundämnen, lektioner, atombyggare och spel</small></span><span class="arrow" aria-hidden="true">→</span></a>';
+  h+='<a class="ptlink" href="periodiska.html"><span class="ptsym">118</span><span><b>Periodiska systemet på djupet</b><small>Utforska alla grundämnen, lektioner, atombyggare och spel</small></span><span class="arrow" aria-hidden="true">→</span></a>';
   // Samling
   h+='<div class="sec-h"><h2>Din samling</h2><span class="hint">'+S.unlocked.length+' av '+AREAS.length+'</span></div>';
   h+='<p class="hint" style="margin:-8px 0 0">Varje område du gör klart låser upp ett grundämne. Provområdena ger också en bokstav, och bokstäverna bildar en hemlig kod.</p>';
