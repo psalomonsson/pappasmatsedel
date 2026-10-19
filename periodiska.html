@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Periodiska systemet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: samma labbjournal som Kemiplugget. Tabellen är scenen, allt annat är verktyg runt den. */
+:root{
+  --bg:#edf1f4; --surface:#ffffff; --surface-2:#f6f8fa; --ink:#13202c; --muted:#56636f; --line:#d3dbe2;
+  --accent:#2346d6; --accent-ink:#ffffff; --accent-soft:#dfe5fb;
+  --tag:#f5d63d; --tag-ink:#2a2400; --ok:#17845a; --ok-soft:#dcf2e7; --bad:#c8432c; --bad-soft:#fbe3dd;
+  --c-metal:#f1dca3; --c-non:#c9cdf0; --c-half:#bfe0c4; --c-unk:#dcdcdc;
+  --f-alk:#f6b8a8; --f-jord:#f8d49a; --f-over:#f3e6b5; --f-ovr:#d9d4c7; --f-halv:#bfe0c4; --f-ick:#c9e3f5; --f-hal:#d8c8f2; --f-adel:#f2c4e0; --f-lan:#c7ead9; --f-akt:#e4ddb9;
+  --p-gas:#c9e3f5; --p-liq:#9fc6f5; --p-solid:#e6e1d6; --p-unk:#e9e9e9;
+  --hi:#2346d6; --tile-ink:#16202a;
+  --shadow:0 1px 2px rgba(19,32,44,.06),0 6px 20px rgba(19,32,44,.07);
+  --f-display:"Familjen Grotesk","Avenir Next","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Atkinson Hyperlegible",-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --r:16px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e151c; --surface:#17212b; --surface-2:#1c2833; --ink:#e5ecf2; --muted:#94a3b1; --line:#2b3844;
+  --accent:#7f97ff; --accent-ink:#0a1020; --accent-soft:#1f2a4c; --tag:#e9cb33; --tag-ink:#231e00;
+  --ok:#47c18b; --ok-soft:#163327; --bad:#ff7b64; --bad-soft:#3a1d18; --hi:#9fb2ff;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0e151c; --surface:#17212b; --surface-2:#1c2833; --ink:#e5ecf2; --muted:#94a3b1; --line:#2b3844;
+  --accent:#7f97ff; --accent-ink:#0a1020; --accent-soft:#1f2a4c; --tag:#e9cb33; --tag-ink:#231e00;
+  --ok:#47c18b; --ok-soft:#163327; --bad:#ff7b64; --bad-soft:#3a1d18; --hi:#9fb2ff;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.5;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+.mono{font-family:var(--f-mono)}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.narrow{max-width:760px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;padding-block:8px;flex-wrap:wrap}
+.top a.back{color:var(--accent);font-weight:700;text-decoration:none;min-height:40px;display:inline-flex;align-items:center}
+.top b{font-family:var(--f-display);font-size:1.1rem}
+.tabs{display:flex;gap:4px;margin-left:auto;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:3px;overflow-x:auto;max-width:100%}
+.tabs button{border:0;background:transparent;border-radius:9px;min-height:38px;padding:0 12px;font-weight:700;cursor:pointer;color:var(--muted);white-space:nowrap}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+@media (max-width:620px){.tabs{margin-left:0;width:100%}.tabs button{flex:1;padding:0 6px;font-size:.88rem}}
+main{padding-block:18px 60px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lead{color:var(--muted);margin:6px 0 0;max-width:62ch}
+.hint{font-size:.85rem;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:46px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:700;font-size:.95rem;touch-action:manipulation;text-decoration:none;color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.small{min-height:38px;padding:0 12px;font-size:.85rem;font-weight:600}
+.btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* Tabellen */
+.hero h1{font-size:clamp(1.7rem,5.5vw,2.4rem);letter-spacing:-.02em}
+.controls{display:flex;flex-direction:column;gap:10px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+.chips button{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 12px;min-height:36px;font-size:.85rem;font-weight:600;cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.search{display:flex;gap:8px}
+.search input{flex:1;min-width:0;font:inherit;font-size:16px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+.pt{display:grid;grid-template-columns:repeat(18,minmax(0,1fr));gap:2px;min-width:0}
+.pt.zoom{grid-template-columns:repeat(18,46px);gap:3px}
+.el{position:relative;aspect-ratio:1/1;border:0;border-radius:4px;padding:0;cursor:pointer;color:var(--tile-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;min-width:0;transition:transform .12s,opacity .2s,box-shadow .2s;background:var(--c-unk)}
+.el .n{position:absolute;top:2px;left:3px;font-family:var(--f-mono);font-size:.55rem;opacity:.75}
+.el .s{font-family:var(--f-display);font-weight:700;font-size:clamp(.62rem,2.1vw,1.15rem)}
+.pt.zoom .el .s{font-size:1.05rem}
+.el:active{transform:scale(.92)}
+.el.dim{opacity:.18}
+.el.hit{box-shadow:0 0 0 3px var(--hi);z-index:2}
+.el.ok{box-shadow:0 0 0 3px var(--ok);z-index:2}
+.el.no{box-shadow:0 0 0 3px var(--bad);z-index:2}
+.el.seen::after{content:"";position:absolute;right:3px;top:3px;width:5px;height:5px;border-radius:50%;background:var(--tile-ink);opacity:.45}
+.el.slot{background:transparent;border:1px dashed var(--line);color:var(--muted);cursor:default;font-size:.5rem;font-family:var(--f-mono)}
+.el.ghost{background:transparent;border:1.5px dashed var(--muted);color:var(--muted)}
+@media (max-width:620px){.pt:not(.zoom) .el .n{display:none}.pt:not(.zoom){gap:1.5px}.pt:not(.zoom) .el{border-radius:3px}}
+.gap{grid-column:1/-1;height:8px}
+.axis{font-family:var(--f-mono);font-size:.6rem;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:.82rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border-radius:3px;display:inline-block}
+
+/* Detaljpanel */
+#sheet{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -10px 30px rgba(0,0,0,.15);border-radius:20px 20px 0 0;max-height:72vh;overflow-y:auto;padding:16px max(16px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(30px);opacity:0}}
+#sheet .inner{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.sh-head{display:flex;gap:14px;align-items:center}
+.big{flex:none;width:96px;height:96px;border-radius:12px;color:var(--tile-ink);display:flex;flex-direction:column;justify-content:space-between;padding:7px 9px;border:2px solid rgba(0,0,0,.25)}
+.big small{font-family:var(--f-mono);font-size:.75rem}
+.big b{font-family:var(--f-display);font-size:2.6rem;line-height:1}
+.big span{font-size:.72rem;font-weight:700}
+.sh-head h2{font-size:1.6rem}
+.close{margin-left:auto;align-self:flex-start;border:0;background:var(--surface-2);border-radius:99px;width:40px;height:40px;cursor:pointer;font-size:1.2rem;flex:none}
+.facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.fact{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.fact .k{font-size:.72rem;color:var(--muted);font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.05em}
+.fact .v{font-weight:700}
+.fun{background:var(--tag);color:var(--tag-ink);border-radius:12px;padding:12px 14px;font-weight:600}
+.swe{border-left:4px solid #2a6fd6;padding:6px 12px;background:var(--surface-2);border-radius:0 10px 10px 0}
+.bohr{display:block;width:100%;max-width:260px;height:auto;margin:0 auto;color:var(--ink)}
+.bohr .spin{transform-origin:130px 130px;animation:rot 14s linear infinite}
+.bohr .spin.s2{animation-duration:20s;animation-direction:reverse}
+.bohr .spin.s3{animation-duration:26s}
+.bohr .spin.s4{animation-duration:32s;animation-direction:reverse}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* Lär dig */
+.lessons{display:flex;flex-direction:column;gap:12px}
+.lesson summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;min-height:56px}
+.lesson summary::-webkit-details-marker{display:none}
+.lesson .num{flex:none;width:36px;height:36px;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-weight:700}
+.lesson.done .num{background:var(--ok);color:var(--surface)}
+.lesson summary h3{font-size:1.1rem;flex:1}
+.lesson .body{padding-top:10px;display:flex;flex-direction:column;gap:10px}
+.lesson .body p{margin:0}
+.lesson ul{margin:0;padding-left:1.2em}
+.anat{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.anat .big{width:120px;height:120px;background:var(--f-over)}
+.anat .big b{font-size:3.2rem}
+.anat ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;font-size:.95rem}
+.anat li b{font-family:var(--f-mono);color:var(--accent)}
+.check{border-top:1px dashed var(--line);padding-top:10px;display:flex;flex-direction:column;gap:8px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:center;min-height:46px;padding:8px 14px;text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;font-weight:600}
+.opt.right{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.fb{font-weight:700}.fb.ok{color:var(--ok)}.fb.bad{color:var(--bad)}
+
+/* Spela */
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.game{display:flex;flex-direction:column;gap:8px;text-align:left;cursor:pointer}
+.game h3{font-size:1.2rem}
+.game .ico{font-family:var(--f-display);font-weight:700;font-size:2rem;width:56px;height:56px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--tag);color:var(--tag-ink)}
+.hud{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 14px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 58px);z-index:15}
+@media (max-width:620px){.hud{top:calc(env(safe-area-inset-top,0px) + 100px)}}
+.hud .target{font-family:var(--f-display);font-size:1.4rem;font-weight:700}
+.hud .stat{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-weight:700}
+.builder{display:grid;grid-template-columns:1fr;gap:12px}
+@media (min-width:720px){.builder{grid-template-columns:280px 1fr;align-items:start}}
+.ctrl{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center}
+.ctrl .lbl{font-weight:700}
+.ctrl .val{font-family:var(--f-mono);font-weight:700;min-width:2ch;text-align:center;font-size:1.2rem}
+.ctrl .pm{width:46px;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-size:1.4rem;font-weight:700;cursor:pointer}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:middle;border:1px solid rgba(0,0,0,.3)}
+.result{font-family:var(--f-display);font-size:1.5rem;font-weight:700}
+.chal{display:flex;flex-wrap:wrap;gap:6px}
+.chal button{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 10px;min-height:38px;cursor:pointer;font-weight:600;font-size:.85rem}
+.chal button.done{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.chal button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.riddle{font-family:var(--f-display);font-size:1.35rem;font-weight:600;line-height:1.3}
+
+/* Märken */
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.badge{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.badge .medal{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-weight:700;font-size:1.3rem;background:var(--surface-2);border:2px dashed var(--line);color:var(--muted)}
+.badge.on .medal{background:var(--tag);border:2px solid var(--tag-ink);color:var(--tag-ink)}
+.badge b{font-family:var(--f-display)}
+.meter{width:100%;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent)}
+
+#toasts{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));pointer-events:none}
+.toast{background:var(--ink);color:var(--bg);border-radius:14px;padding:12px 16px;max-width:520px;font-size:.95rem;box-shadow:var(--shadow);animation:pop .3s ease-out}
+@keyframes pop{from{transform:translateY(12px);opacity:0}}
+#modal{position:fixed;inset:0;z-index:70;background:rgba(10,16,24,.55);display:flex;align-items:center;justify-content:center;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.dialog{background:var(--surface);color:var(--ink);border-radius:20px;padding:22px;max-width:440px;width:100%;max-height:100%;overflow-y:auto;display:flex;flex-direction:column;gap:12px;text-align:center}
+.code{font-family:var(--f-mono);font-weight:700;font-size:1.6rem;letter-spacing:.15em;background:var(--tag);color:var(--tag-ink);border-radius:10px;padding:8px}
+.balloon{position:fixed;z-index:80;pointer-events:none;font-family:var(--f-display);font-weight:700;font-size:1.4rem;background:#f2c4e0;color:#3b0a2a;border-radius:50% 50% 48% 52%;width:70px;height:84px;display:flex;align-items:center;justify-content:center;animation:float 3.2s ease-in forwards}
+@keyframes float{to{transform:translateY(-110vh) rotate(-12deg);opacity:.2}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="back" href="Kemiplugget.html">← Kemiplugget</a>
+    <b>Periodiska systemet</b>
+    <nav class="tabs" role="tablist" aria-label="Avsnitt">
+      <button role="tab" data-tab="utforska" aria-selected="true">Utforska</button>
+      <button role="tab" data-tab="lar">Lär dig</button>
+      <button role="tab" data-tab="spela">Spela</button>
+      <button role="tab" data-tab="marken">Märken</button>
+    </nav>
+  </div>
+</header>
+<main class="wrap" id="app"></main>
+<div id="sheetHost"></div>
+<div id="toasts" aria-live="polite"></div>
+<div id="modal" hidden></div>
+
+<script>
+(function(){
+"use strict";
+/* ================= DATA ================= */
+var SYM="H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og".split(" ");
+var NAMN="väte helium litium beryllium bor kol kväve syre fluor neon natrium magnesium aluminium kisel fosfor svavel klor argon kalium kalcium skandium titan vanadin krom mangan järn kobolt nickel koppar zink gallium germanium arsenik selen brom krypton rubidium strontium yttrium zirkonium niob molybden teknetium rutenium rodium palladium silver kadmium indium tenn antimon tellur jod xenon cesium barium lantan cerium praseodym neodym prometium samarium europium gadolinium terbium dysprosium holmium erbium tulium ytterbium lutetium hafnium tantal volfram renium osmium iridium platina guld kvicksilver tallium bly vismut polonium astat radon francium radium aktinium torium protaktinium uran neptunium plutonium americium curium berkelium californium einsteinium fermium mendelevium nobelium lawrencium rutherfordium dubnium seaborgium bohrium hassium meitnerium darmstadtium röntgenium copernicium nihonium flerovium moskovium livermorium tenness oganesson".split(" ");
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function setOf(a){var o={};a.forEach(function(z){o[z]=1;});return o;}
+var HALV=setOf([5,14,32,33,51,52,85]);
+var ICKE=setOf([1,2,6,7,8,9,10,15,16,17,18,34,35,36,53,54,86]);
+var GAS=setOf([1,2,7,8,9,10,17,18,36,54,86]), LIQ=setOf([35,80]);
+var ALK=setOf([3,11,19,37,55,87]), JORD=setOf([4,12,20,38,56,88]), HAL=setOf([9,17,35,53,85]), ADEL=setOf([2,10,18,36,54,86,118]);
+var OVRMET=setOf([13,31,49,50,81,82,83,84,113,114,115,116]);
+function pos(z){
+  var p,g;
+  if(z<=2){p=1;g=z===1?1:18;}
+  else if(z<=10){p=2;g=z<=4?z-2:z+8;}
+  else if(z<=18){p=3;g=z<=12?z-10:z;}
+  else if(z<=36){p=4;g=z-18;}
+  else if(z<=54){p=5;g=z-36;}
+  else if(z<=86){p=6;g=z<=56?z-54:(z<=71?0:z-68);}
+  else{p=7;g=z<=88?z-86:(z<=103?0:z-100);}
+  return {p:p,g:g};
+}
+var E=[];
+for(var z=1;z<=118;z++){
+  var ps=pos(z),cat=z>=109?"unk":HALV[z]?"halv":ICKE[z]?"icke":"metall";
+  var fam=ALK[z]?"alk":JORD[z]?"jord":HAL[z]?"hal":ADEL[z]?"adel":(z>=57&&z<=71)?"lan":(z>=89&&z<=103)?"akt":HALV[z]?"halv":ICKE[z]?"ick":OVRMET[z]?"ovr":"over";
+  var fas=z>=104?"okänd":GAS[z]?"gas":LIQ[z]?"flytande":"fast";
+  E.push({z:z,s:SYM[z-1],n:NAMN[z-1],p:ps.p,g:ps.g,cat:cat,fam:fam,fas:fas});
+}
+var CATN={metall:"Metall",icke:"Icke-metall",halv:"Halvmetall",unk:"Okända egenskaper"};
+var FAMN={alk:"Alkalimetall",jord:"Alkalisk jordartsmetall",over:"Övergångsmetall",ovr:"Övrig metall",halv:"Halvmetall",ick:"Icke-metall",hal:"Halogen",adel:"Ädelgas",lan:"Lantanoid",akt:"Aktinoid"};
+var LATIN={11:"natrium",19:"kalium",26:"ferrum",29:"cuprum",47:"argentum",50:"stannum",51:"stibium",79:"aurum",80:"hydrargyrum (flytande silver)",82:"plumbum",74:"wolfram",1:"hydrogenium (vattenbildare)",6:"carboneum",7:"nitrogenium",8:"oxygenium",14:"silicium",16:"sulphur"};
+var FUN={
+1:"Universums vanligaste grundämne. Solen består mest av väte. Blandat med luft blir det knallgas som smäller.",
+2:"Lättare än luft, därför svävar ballonger. Helium är en ädelgas och reagerar nästan aldrig. Det upptäcktes i solens ljus innan man hittade det på jorden!",
+3:"Den lättaste metallen. Finns i batterierna i mobiler och elbilar.",
+6:"Finns i allt levande. Diamant och grafit (i blyertspennor) är båda rent kol, men atomerna sitter ihop på olika sätt.",
+7:"Ungefär 78 % av luften du andas är kväve.",
+8:"Ungefär 21 % av luften. Behövs för att du ska kunna andas och för att något ska kunna brinna.",
+9:"Det mest reaktiva grundämnet av alla. Fluorid finns i tandkräm och skyddar tänderna.",
+10:"Lyser rött i neonskyltar när det går ström genom gasen.",
+11:"En metall så mjuk att den kan skäras med kniv. Reagerar häftigt med vatten. Natrium + klor = koksalt.",
+12:"Brinner med ett bländande vitt sken. Används i fyrverkerier och tomtebloss.",
+13:"Den vanligaste metallen i jordskorpan. Lätt och rostar inte, perfekt till burkar och folie.",
+14:"Finns i sand och glas, och i nästan alla datorchip. Silicon Valley är uppkallat efter kisel.",
+15:"Finns i tändsticksplån, i dina ben och i ditt DNA.",
+16:"Gult och luktar inte själv, men vissa svavelföreningar luktar ruttna ägg.",
+17:"Används för att döda bakterier i dricksvatten och simhallar. En giftig, gulgrön gas.",
+18:"Ungefär 1 % av luften är argon. Det är en ädelgas.",
+19:"Finns i bananer. Reagerar så häftigt med vatten att det brinner med lila låga.",
+20:"Bygger upp ben och tänder. Kalk och kalkvatten innehåller kalcium.",
+22:"Lätt och mycket starkt. Används i flygplan, cyklar och konstgjorda höfter.",
+24:"Gör rostfritt stål rostfritt och får kranar att blänka.",
+26:"Magnetiskt. Jordens kärna består mest av järn, och järn i blodet gör det rött.",
+27:"Magnetiskt. Ger glas och porslin en djupblå färg, koboltblått.",
+28:"Magnetiskt. Finns i många mynt och smycken och kan ge nickelallergi.",
+29:"Leder ström mycket bra, därför är elkablar av koppar. Tiokronan är till 89 % koppar.",
+30:"Skyddar järn mot rost. Koppar + zink = mässing.",
+35:"Ett av bara två grundämnen som är flytande vid rumstemperatur. Brunrött och luktar starkt. Namnet betyder stank på grekiska.",
+36:"Stålmannens kryptonit är påhittad, men krypton finns på riktigt: en ädelgas.",
+39:"Uppkallat efter Ytterby, en by i Stockholms skärgård. Därifrån kommer också namnen på terbium, erbium och ytterbium!",
+47:"Leder ström och värme bäst av alla grundämnen.",
+50:"Tenn + koppar = brons. Bronsåldern fick sitt namn av den legeringen.",
+53:"Tillsätts i bordssalt för att sköldkörteln ska må bra. Fast jod blir till lila ånga när det värms.",
+54:"En ädelgas som används i extra starka billampor.",
+68:"Uppkallat efter Ytterby. Används i fiberkablar för internet.",
+65:"Uppkallat efter Ytterby. Finns i gröna lysämnen i skärmar.",
+67:"Uppkallat efter Holmia, det latinska namnet för Stockholm.",
+69:"Uppkallat efter Thule, ett gammalt namn för Skandinavien.",
+70:"Uppkallat efter Ytterby. Används i några av världens mest exakta atomur.",
+21:"Uppkallat efter Skandinavien. Mendelejev förutsade det innan det upptäcktes.",
+32:"Mendelejev lämnade en lucka för det och kallade det eka-kisel. När det hittades 1886 stämde hans förutsägelser!",
+74:"Högst smältpunkt av alla metaller, 3 422 °C. På engelska heter det tungsten, från svenskans tung sten.",
+78:"En dyr metall som finns i bilars katalysatorer.",
+79:"Rostar aldrig. En liter guld väger 19,3 kg. Tecknet Au kommer från latinets aurum.",
+80:"Den enda metallen som är flytande vid rumstemperatur. Giftig. Fanns förr i termometrar.",
+82:"Tungt och giftigt. Fanns förr i bensin och färg.",
+83:"1980 omvandlade en kemist lite vismut till guld. Alkemisternas dröm, men alldeles för dyrt.",
+86:"En radioaktiv gas som kan sippra upp från marken in i hus.",
+92:"Används som bränsle i kärnkraftverk. Radioaktivt.",
+101:"Uppkallat efter Dmitrij Mendelejev, som skapade periodiska systemet.",
+102:"Uppkallat efter Alfred Nobel, svensken bakom Nobelpriset.",
+96:"Uppkallat efter Marie och Pierre Curie, som forskade om radioaktivitet.",
+99:"Uppkallat efter Albert Einstein.",
+118:"Det tyngsta grundämnet som någonsin tillverkats. Bara ett fåtal atomer har gjorts, och de försvann på en bråkdel av en sekund.",
+58:"Uppkallat efter dvärgplaneten Ceres.",
+90:"Uppkallat efter åskguden Tor.",
+23:"Uppkallat efter Vanadis, ett annat namn för gudinnan Freja.",
+};
+var SWE={27:"Georg Brandt, 1735",28:"Axel Fredrik Cronstedt, 1751",8:"Carl Wilhelm Scheele, 1772",17:"Carl Wilhelm Scheele, 1774",25:"Johan Gottlieb Gahn, 1774",42:"Peter Jacob Hjelm, 1781",3:"Johan August Arfwedson, 1817",34:"Jöns Jacob Berzelius, 1817",58:"Berzelius och Hisinger, 1803",90:"Jöns Jacob Berzelius, 1829",14:"Jöns Jacob Berzelius, 1824",23:"Nils Gabriel Sefström, 1830",57:"Carl Gustaf Mosander, 1839",68:"Carl Gustaf Mosander, 1843",65:"Carl Gustaf Mosander, 1843",21:"Lars Fredrik Nilson, 1879",67:"Per Teodor Cleve, 1879",69:"Per Teodor Cleve, 1879"};
+var YTTERBY=setOf([39,65,68,70]);
+var NEUT=[0,2,4,5,6,6,7,8,10,10,12,12,14,14,16,16,18,22,20,20];
+function shells(z){var s=[],r=z;[2,8,8,2].forEach(function(c){if(r>0){var t=Math.min(r,c);s.push(t);r-=t;}});return s;}
+
+/* ================= LAGRING ================= */
+var KEY="kemiplugget-ps-v1";
+function fresh(){return {lessons:{},builder:{},riddles:{},best1:0,best2:0,opened:{},eggs:{},color:"cat",zoom:false,rewarded:false};}
+var S=(function(){try{var r=localStorage.getItem(KEY);if(r){var o=JSON.parse(r),f=fresh();for(var k in o)f[k]=o[k];return f;}}catch(e){}return fresh();})();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function $(s,r){return (r||document).querySelector(s);}
+function toast(h){var t=document.createElement("div");t.className="toast";t.innerHTML=h;$("#toasts").appendChild(t);setTimeout(function(){t.remove();},3600);}
+function modal(h){var m=$("#modal");m.innerHTML='<div class="dialog" role="dialog" aria-modal="true">'+h+'</div>';m.hidden=false;}
+function closeModal(){var m=$("#modal");m.hidden=true;m.innerHTML="";}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function count(o){return Object.keys(o||{}).length;}
+
+/* ================= FÄRGER ================= */
+var MODES=[
+ {id:"cat",name:"Metaller och icke-metaller",legend:[["--c-metal","Metaller"],["--c-non","Icke-metaller"],["--c-half","Halvmetaller"],["--c-unk","Okända egenskaper"]]},
+ {id:"fam",name:"Familjer",legend:[["--f-alk","Alkalimetaller"],["--f-jord","Alkaliska jordartsmetaller"],["--f-over","Övergångsmetaller"],["--f-ovr","Övriga metaller"],["--f-halv","Halvmetaller"],["--f-ick","Icke-metaller"],["--f-hal","Halogener"],["--f-adel","Ädelgaser"],["--f-lan","Lantanoider"],["--f-akt","Aktinoider"]]},
+ {id:"fas",name:"Fas vid 20 °C",legend:[["--p-solid","Fast"],["--p-liq","Flytande"],["--p-gas","Gas"],["--p-unk","Okänd"]]},
+ {id:"swe",name:"Svenska upptäckter",legend:[["--c-metal","Upptäckt av svensk kemist"],["--f-lan","Uppkallad efter Ytterby"]]}
+];
+function colorOf(e,mode){
+  if(mode==="cat")return {metall:"--c-metal",icke:"--c-non",halv:"--c-half",unk:"--c-unk"}[e.cat];
+  if(mode==="fam")return "--f-"+e.fam;
+  if(mode==="fas")return {fast:"--p-solid",flytande:"--p-liq",gas:"--p-gas","okänd":"--p-unk"}[e.fas];
+  if(mode==="swe")return YTTERBY[e.z]?"--f-lan":SWE[e.z]?"--c-metal":"--p-unk";
+}
+
+/* ================= TABELL ================= */
+function tableHTML(opt){
+  opt=opt||{};var mode=opt.mode||S.color;var h='<div class="tablewrap"><div class="pt'+(S.zoom?' zoom':'')+'" id="pt">';
+  var cell={};E.forEach(function(e){if(e.g)cell[e.p+":"+e.g]=e;});
+  for(var p=1;p<=7;p++)for(var g=1;g<=18;g++){
+    var e=cell[p+":"+g];
+    if(e)h+=elHTML(e,mode,opt);
+    else if(g===3&&p===6)h+='<div class="el slot" aria-hidden="true">57–71</div>';
+    else if(g===3&&p===7)h+='<div class="el slot" aria-hidden="true">89–103</div>';
+    else h+='<div'+(p===1&&g>=2&&g<=17?' class="'+(g===9?'egg-gap':'')+'"':'')+'></div>';
+  }
+  h+='<div class="gap"></div>';
+  [[57,71],[89,103]].forEach(function(r){h+='<div></div><div></div>';for(var z=r[0];z<=r[1];z++)h+=elHTML(E[z-1],mode,opt);h+='<div></div>';});
+  h+='</div></div>';
+  return h;
+}
+function elHTML(e,mode,opt){
+  var cls="el"+(S.opened[e.z]?" seen":"");
+  if(opt.dim&&!opt.dim(e))cls+=" dim";
+  return '<button class="'+cls+'" data-z="'+e.z+'" style="background:var('+colorOf(e,mode)+')" aria-label="'+cap(e.n)+', nummer '+e.z+'"><span class="n">'+e.z+'</span><span class="s">'+e.s+'</span></button>';
+}
+function legendHTML(mode){var m=MODES.filter(function(x){return x.id===mode;})[0];return '<div class="legend">'+m.legend.map(function(l){return '<span><i style="background:var('+l[0]+')"></i>'+l[1]+'</span>';}).join("")+'</div>';}
+
+/* ================= DETALJ ================= */
+function bohrSVG(p,n,e,spin){
+  var h='<svg class="bohr" viewBox="0 0 260 260" role="img" aria-label="Atommodell"><g fill="none" stroke="currentColor" stroke-opacity=".3" stroke-width="1.5">';
+  var R=[48,74,98,120],sh=shells(e);
+  for(var i=0;i<Math.max(sh.length,1);i++)h+='<circle cx="130" cy="130" r="'+R[i]+'"/>';
+  h+='</g>';
+  var tot=p+n,parts=[];for(var a=0;a<p;a++)parts.push("p");for(var b=0;b<n;b++)parts.push("n");
+  // blanda protoner och neutroner jämnt
+  parts.sort(function(x,y){return 0;});var mixed=[],pi=0,ni=0;for(var k=0;k<tot;k++){if((k%2===0&&pi<p)||ni>=n){mixed.push("p");pi++;}else{mixed.push("n");ni++;}}
+  var rr=Math.min(6,4+10/Math.sqrt(Math.max(tot,1)));
+  mixed.forEach(function(t,k){var ang=k*2.39996,rad=rr*0.95*Math.sqrt(k);var x=130+rad*Math.cos(ang),y=130+rad*Math.sin(ang);
+    h+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+rr+'" fill="'+(t==="p"?"#3b6fd4":"#9aa3ad")+'" stroke="#1d2630" stroke-width=".8"/>';
+    if(t==="p"&&rr>=5)h+='<text x="'+x.toFixed(1)+'" y="'+(y+3).toFixed(1)+'" font-size="8" font-weight="700" fill="#fff" text-anchor="middle">+</text>';});
+  sh.forEach(function(c,i){h+='<g class="'+(spin?'spin s'+(i+1):'')+'">';for(var j=0;j<c;j++){var a=j/c*Math.PI*2-Math.PI/2+i*.4;h+='<circle cx="'+(130+R[i]*Math.cos(a)).toFixed(1)+'" cy="'+(130+R[i]*Math.sin(a)).toFixed(1)+'" r="5" fill="#e0a100" stroke="#1d2630" stroke-width=".8"/>';}h+='</g>';});
+  return h+'</svg>';
+}
+function openEl(z){
+  var e=E[z-1];
+  if(!S.opened[z]){S.opened[z]=1;save();checkBadges();}
+  var t=document.querySelector('.el[data-z="'+z+'"]');if(t)t.classList.add("seen");
+  var col=colorOf(e,"fam");
+  var h='<div id="sheet" role="dialog" aria-label="'+cap(e.n)+'"><div class="inner">';
+  h+='<div class="sh-head"><div class="big" style="background:var('+col+')"><small>'+e.z+'</small><b>'+e.s+'</b><span>'+cap(e.n)+'</span></div><div><div class="eyebrow">'+(e.g?'Period '+e.p+' · Grupp '+e.g:'Period '+e.p+' · '+FAMN[e.fam])+'</div><h2>'+cap(e.n)+'</h2></div><button class="close" data-act="close-sheet" aria-label="Stäng">✕</button></div>';
+  h+='<div class="facts">';
+  h+='<div class="fact"><div class="k">Atomnummer</div><div class="v">'+e.z+'</div></div>';
+  h+='<div class="fact"><div class="k">Protoner</div><div class="v">'+e.z+'</div></div>';
+  h+='<div class="fact"><div class="k">Elektroner</div><div class="v">'+e.z+' (oladdad atom)</div></div>';
+  h+='<div class="fact"><div class="k">Typ</div><div class="v">'+CATN[e.cat]+'</div></div>';
+  h+='<div class="fact"><div class="k">Familj</div><div class="v">'+FAMN[e.fam]+'</div></div>';
+  h+='<div class="fact"><div class="k">Vid 20 °C</div><div class="v">'+cap(e.fas)+'</div></div>';
+  h+='<div class="fact"><div class="k">Elektronskal</div><div class="v">'+e.p+' st (= perioden)</div></div>';
+  if(LATIN[z])h+='<div class="fact"><div class="k">Tecknet kommer från</div><div class="v">'+LATIN[z]+'</div></div>';
+  h+='</div>';
+  if(FUN[z])h+='<div class="fun">'+FUN[z]+'</div>';
+  if(SWE[z])h+='<div class="swe"><b>Svensk upptäckt!</b> '+SWE[z]+'.</div>';
+  if(z<=20)h+='<div>'+bohrSVG(z,NEUT[z-1],z,true)+'<p class="hint" style="text-align:center;margin:4px 0 0">Blå = protoner, grå = neutroner, gula = elektroner i skal: '+shells(z).join(", ")+'</p></div>';
+  else h+='<p class="hint" style="margin:0">Elektronerna i '+e.n+' är fördelade på '+e.p+' skal, lika många som perioden. Kärnan har '+e.z+' protoner.</p>';
+  if(z===2)eggHelium();
+  h+='</div></div>';
+  $("#sheetHost").innerHTML=h;
+}
+function closeSheet(){$("#sheetHost").innerHTML="";}
+var heTaps=0,heT=null;
+function eggHelium(){heTaps++;clearTimeout(heT);heT=setTimeout(function(){heTaps=0;},2500);
+  if(heTaps>=3){heTaps=0;S.eggs.he=1;save();for(var i=0;i<5;i++)(function(i){setTimeout(function(){var b=document.createElement("div");b.className="balloon";b.textContent="He";b.style.left=(10+Math.random()*75)+"vw";b.style.bottom="-90px";document.body.appendChild(b);setTimeout(function(){b.remove();},3300);},i*220);})(i);toast("<b>Pip pip!</b> Andas man in helium blir rösten ljus, eftersom ljudet går snabbare i helium. (Gör det inte, det är farligt!)");checkBadges();}}
+
+/* ================= UTFORSKA ================= */
+var V={tab:"utforska",hl:null,game:null};
+function renderExplore(){
+  var h='<div class="stack">';
+  h+='<section class="hero"><div class="eyebrow">Fördjupning · Kemi åk 7</div><h1>Utforska alla 118 grundämnen</h1><p class="lead">Tryck på en ruta för att se vad grundämnet är för något. Byt färgläge för att se mönstren som Mendelejev upptäckte.</p></section>';
+  h+='<div class="controls"><div class="chips" role="group" aria-label="Färgläge">'+MODES.map(function(m){return '<button data-act="mode" data-m="'+m.id+'" aria-pressed="'+(S.color===m.id)+'">'+m.name+'</button>';}).join("")+'</div>';
+  h+='<form class="search" id="searchForm" autocomplete="off"><input id="q" type="search" placeholder="Sök namn, tecken eller nummer" aria-label="Sök grundämne"><button class="btn small" type="submit">Sök</button><button class="btn small" type="button" data-act="zoom" aria-pressed="'+S.zoom+'">'+(S.zoom?'Hela':'Zooma')+'</button></form>';
+  if(V.hl)h+='<div class="row"><span class="hint">'+V.hl.label+'</span><button class="btn small" data-act="clear-hl">Visa alla</button></div>';
+  h+='</div>';
+  h+=tableHTML({dim:V.hl?V.hl.fn:null});
+  h+=legendHTML(S.color);
+  h+='<p class="hint" style="margin:0">'+count(S.opened)+' av 118 grundämnen utforskade. En liten prick i hörnet betyder att du har tittat på det.'+(S.zoom?' Svep i sidled för att se hela tabellen.':'')+'</p>';
+  h+='</div>';
+  $("#app").innerHTML=h;
+}
+function highlight(fn,label){V.hl={fn:fn,label:label};setTab("utforska");window.scrollTo(0,0);}
+function doSearch(q){
+  q=q.trim().toLowerCase();if(!q)return;
+  if(q==="ytterby"){S.eggs.ytterby=1;save();highlight(function(e){return YTTERBY[e.z];},"Fyra grundämnen uppkallade efter Ytterby gruva i Stockholms skärgård!");S.color="swe";save();renderExplore();checkBadges();return;}
+  if(q==="119"){toast("<b>Nummer 119 är inte upptäckt än!</b> Forskare försöker tillverka det just nu. Kanske blir det du?");S.eggs.e119=1;save();checkBadges();return;}
+  if(q==="mendelejev"){highlight(function(e){return e.z===21||e.z===31||e.z===32||e.z===101;},"Grundämnen Mendelejev förutsade (skandium, gallium, germanium) och det som fått hans namn.");return;}
+  var hit=E.filter(function(e){return e.s.toLowerCase()===q||e.n===q||String(e.z)===q;})[0]||E.filter(function(e){return e.n.indexOf(q)===0;})[0];
+  if(hit){openEl(hit.z);var t=document.querySelector('.el[data-z="'+hit.z+'"]');if(t){t.classList.add("hit");t.scrollIntoView({block:"nearest",inline:"center",behavior:"smooth"});setTimeout(function(){t.classList.remove("hit");},2500);}}
+  else toast("Hittade inget grundämne som heter så.");
+}
+
+/* ================= LÄR DIG ================= */
+var LESSONS=[
+ {t:"Så läser du en ruta",h:'<div class="anat"><div class="big"><small>26</small><b>Fe</b><span>Järn</span></div><ul><li><b>26</b> Atomnummer = antal protoner</li><li><b>Fe</b> Kemiskt tecken (latin ferrum)</li><li><b>Järn</b> Grundämnets namn</li></ul></div><p>Varje ruta är ett grundämne. Atomnumret talar om hur många protoner atomen har i kärnan. En oladdad atom har lika många elektroner som protoner, så järn har 26 protoner och 26 elektroner.</p>',
+  c:{q:"Hur många protoner har en atom av syre (atomnummer 8)?",o:["16","8","4","Det beror på"],a:1,w:"Atomnumret är antalet protoner: 8."}},
+ {t:"Ordning efter atomnummer",h:'<p>Grundämnena står i ordning efter atomnummer, från väte (1) uppe till vänster till oganesson (118) nere till höger. Läs som i en bok: från vänster till höger, rad för rad.</p><p>Ju fler protoner, desto tyngre atom. Det är alltså <b>antalet protoner</b> som bestämmer var ett grundämne står.</p>',
+  c:{q:"Vad avgör var i periodiska systemet ett grundämne står?",o:["Färgen","Hur vanligt det är","Antalet protoner","När det upptäcktes"],a:2,w:"Atomnumret, alltså antalet protoner."}},
+ {t:"Perioder är rader",h:'<p>De vågräta raderna kallas <b>perioder</b>. Det finns 7 perioder.</p><p>Periodens nummer visar hur många <b>elektronskal</b> atomen har. Natrium står i period 3 och har tre skal med 2, 8 och 1 elektroner.</p><div class="row"><button class="btn small" data-act="hl-period" data-n="3">Visa period 3 i tabellen</button></div>'+'<div>'+'BOHR11'+'</div>',
+  c:{q:"Kalium står i period 4. Hur många elektronskal har en kaliumatom?",o:["1","4","19","8"],a:1,w:"Period 4 = fyra skal (2, 8, 8, 1)."}},
+ {t:"Grupper är kolumner",h:'<p>De lodräta kolumnerna kallas <b>grupper</b>. Det finns 18 grupper.</p><p>Grundämnen i samma grupp har <b>liknande egenskaper</b>. Det beror på att de har lika många elektroner i sitt yttersta skal. Litium, natrium och kalium i grupp 1 har alla en enda ytterelektron, och alla reagerar häftigt med vatten.</p><div class="row"><button class="btn small" data-act="hl-group" data-n="1">Visa grupp 1</button><button class="btn small" data-act="hl-group" data-n="18">Visa grupp 18</button></div>',
+  c:{q:"Varför liknar natrium och kalium varandra?",o:["De står i samma period","De har lika många neutroner","De står i samma grupp","De upptäcktes samma år"],a:2,w:"Samma grupp ger liknande egenskaper."}},
+ {t:"Metaller, icke-metaller och halvmetaller",h:'<ul><li><b>Metaller</b> (de flesta grundämnena, till vänster och i mitten): blanka, leder ström och värme, går att böja och forma.</li><li><b>Icke-metaller</b> (uppe till höger): ofta gaser eller spröda ämnen som leder ström dåligt, t.ex. syre, kväve, svavel.</li><li><b>Halvmetaller</b> (på trappan mellan dem): har egenskaper från båda, t.ex. kisel som används i datorchip.</li></ul><div class="row"><button class="btn small" data-act="hl-cat" data-n="halv">Visa halvmetallerna</button></div>',
+  c:{q:"Vilken egenskap är typisk för en metall?",o:["Leder ström bra","Är oftast en gas","Är spröd och smular sönder","Saknar elektroner"],a:0,w:"Metaller leder ström och värme bra."}},
+ {t:"Kända familjer",h:'<ul><li><b>Alkalimetaller</b> (grupp 1, utom väte): mjuka metaller som reagerar våldsamt med vatten. Ju längre ner, desto häftigare.</li><li><b>Alkaliska jordartsmetaller</b> (grupp 2): t.ex. magnesium och kalcium.</li><li><b>Övergångsmetaller</b> (grupp 3–12): järn, koppar, silver, guld. Här finns de magnetiska metallerna järn, kobolt och nickel.</li><li><b>Halogener</b> (grupp 17): betyder saltbildare. Klor + natrium blir koksalt.</li><li><b>Ädelgaser</b> (grupp 18): yttersta skalet är fullt, så de reagerar nästan aldrig med något.</li></ul><div class="row"><button class="btn small" data-act="mode-go" data-n="fam">Färga tabellen efter familjer</button></div>',
+  c:{q:"Vilken familj reagerar nästan aldrig med andra ämnen?",o:["Alkalimetaller","Halogener","Ädelgaser","Övergångsmetaller"],a:2,w:"Ädelgaserna har fullt yttersta skal."}},
+ {t:"Mendelejevs luckor",h:'<p>År 1869 ordnade Dmitrij Mendelejev de 63 grundämnen som var kända då. Han märkte att egenskaperna återkom regelbundet, periodiskt.</p><p>Det geniala: han lämnade <b>tomma luckor</b> där han trodde att okända grundämnen borde finnas, och förutsade hur de skulle vara. När germanium hittades 1886 stämde hans förutsägelser nästan exakt.</p><p>I dag känner vi till 118 grundämnen, och forskare försöker tillverka nummer 119.</p><div class="row"><button class="btn small" data-act="hl-mend">Visa Mendelejevs förutsägelser</button></div>',
+  c:{q:"Vad gjorde Mendelejev med grundämnen som ännu inte var upptäckta?",o:["Hoppade över dem","Lämnade tomma luckor för dem","Hittade på namn och egenskaper som inte stämde","Ingenting"],a:1,w:"Han lämnade luckor och förutsade egenskaperna."}},
+ {t:"Sverige i periodiska systemet",h:'<p>Svenska kemister har upptäckt fler grundämnen än forskare från nästan något annat land: bland annat syre och klor (Scheele), kobolt (Brandt), nickel (Cronstedt), litium (Arfwedson) och selen (Berzelius). Berzelius hittade också på de kemiska tecknen.</p><p>I Ytterby gruva i Stockholms skärgård hittades mineral som gav namn åt <b>fyra</b> grundämnen: yttrium, ytterbium, terbium och erbium. Holmium är uppkallat efter Stockholm!</p><div class="row"><button class="btn small" data-act="mode-go" data-n="swe">Visa svenska upptäckter</button></div>',
+  c:{q:"Vilket grundämne är uppkallat efter Stockholm?",o:["Ytterbium","Holmium","Tulium","Skandium"],a:1,w:"Holmia är det latinska namnet för Stockholm."}}
+];
+var UIL={};
+function renderLearn(){
+  var h='<div class="stack narrow" style="margin:0 auto"><section class="hero"><div class="eyebrow">Lär dig</div><h1>Åtta korta lektioner</h1><p class="lead">Öppna en lektion, läs, testa dig själv. Klarar du frågan blir lektionen grön.</p></section><div class="lessons">';
+  LESSONS.forEach(function(l,i){var d=S.lessons[i],u=UIL[i];
+    var body=l.h.replace("BOHR11",bohrSVG(11,12,11,true));
+    h+='<details class="card lesson'+(d?' done':'')+'"'+(u&&u.open?' open':'')+' data-i="'+i+'"><summary><span class="num">'+(d?'✓':i+1)+'</span><h3>'+l.t+'</h3></summary><div class="body">'+body;
+    h+='<div class="check"><b>Testa dig: '+l.c.q+'</b><div class="opts">';
+    l.c.o.forEach(function(o,j){var cls="";if(u&&u.pick!=null){if(j===l.c.a)cls=" right";else if(j===u.pick)cls=" wrong";}h+='<button class="opt'+cls+'" data-act="lpick" data-i="'+i+'" data-j="'+j+'">'+o+'</button>';});
+    h+='</div>';if(u&&u.pick!=null){var ok=u.pick===l.c.a;h+='<p class="fb '+(ok?'ok':'bad')+'" style="margin:0">'+(ok?'Rätt! ':'Inte riktigt. ')+l.c.w+'</p>';}
+    h+='</div></div></details>';});
+  h+='</div></div>';
+  $("#app").innerHTML=h;
+}
+
+/* ================= SPELA ================= */
+function renderPlay(){
+  if(V.game==="jakt")return renderJakt();
+  if(V.game==="bygg")return renderBygg();
+  if(V.game==="mys")return renderMys();
+  var h='<div class="stack"><section class="hero"><div class="eyebrow">Spela</div><h1>Tre utmaningar</h1><p class="lead">Lär dig tabellen genom att leka med den.</p></section><div class="games">';
+  h+='<button class="card game" data-act="game" data-g="jakt"><span class="ico">⏱</span><h3>Jakten</h3><span class="hint">Hitta så många grundämnen du kan på 60 sekunder. Rekord: nivå 1 '+S.best1+', nivå 2 '+S.best2+'.</span></button>';
+  h+='<button class="card game" data-act="game" data-g="bygg"><span class="ico">p⁺</span><h3>Atombyggaren</h3><span class="hint">Bygg atomer av protoner, neutroner och elektroner. '+count(S.builder)+' av '+CHAL.length+' uppdrag klara.</span></button>';
+  h+='<button class="card game" data-act="game" data-g="mys"><span class="ico">?</span><h3>Mysterieelementet</h3><span class="hint">Lös gåtan med ledtrådar från tabellen. '+count(S.riddles)+' av '+RID.length+' lösta.</span></button>';
+  h+='</div></div>';$("#app").innerHTML=h;
+}
+/* --- Jakten --- */
+var POOL2=[1,2,3,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,22,24,26,27,28,29,30,35,36,47,50,53,54,74,78,79,80,82,86,92,39,101];
+var J=null;
+function renderJakt(){
+  var h='<div class="stack"><div class="row"><button class="btn small" data-act="game" data-g="">← Alla spel</button></div>';
+  if(!J||J.over){
+    h+='<section class="card stack"><h2>Jakten</h2><p style="margin:0">Ett grundämnes namn visas. Tryck på rätt ruta i tabellen så snabbt du kan. Du har 60 sekunder.</p>'+(J&&J.over?'<p class="result">Du fick '+J.score+' poäng!</p>':'')+'<div class="row"><button class="btn primary" data-act="jstart" data-l="1">Nivå 1: nr 1–20</button><button class="btn primary" data-act="jstart" data-l="2">Nivå 2: 40 kända</button></div><p class="hint" style="margin:0">Rekord: nivå 1 '+S.best1+' · nivå 2 '+S.best2+'</p></section>';
+  }else{
+    h+='<div class="hud"><span>Hitta: <span class="target">'+cap(E[J.target-1].n)+'</span></span><span class="stat">'+J.score+' p · <span id="jtime">'+J.left+'</span> s</span></div>';
+    h+=tableHTML({mode:"cat",dim:function(e){return J.level===2||e.z<=20;}});
+  }
+  h+='</div>';$("#app").innerHTML=h;
+}
+function jNext(){var pool=J.level===1?Array.from({length:20},function(_,i){return i+1;}):POOL2;var t;do{t=pool[Math.floor(Math.random()*pool.length)];}while(t===J.target);J.target=t;}
+function jStart(l){J={level:l,score:0,left:60,over:false,target:0};jNext();renderJakt();
+  J.timer=setInterval(function(){J.left--;var el=$("#jtime");if(el)el.textContent=J.left;if(J.left<=0){clearInterval(J.timer);J.over=true;var k="best"+l;var rec=J.score>S[k];if(rec){S[k]=J.score;save();}renderJakt();if(rec&&J.score>0)toast("<b>Nytt rekord!</b> "+J.score+" poäng.");checkBadges();}},1000);}
+function jTap(z){
+  var t=document.querySelector('.el[data-z="'+z+'"]');
+  if(z===J.target){J.score++;if(t)t.classList.add("ok");jNext();setTimeout(renderJakt,180);}
+  else{if(t){t.classList.add("no");setTimeout(function(){t.classList.remove("no");},400);}var c=document.querySelector('.el[data-z="'+J.target+'"]');if(c){c.classList.add("hit");setTimeout(function(){c.classList.remove("hit");},600);}}
+}
+/* --- Atombyggaren --- */
+var CHAL=[[1,"Väte"],[2,"Helium"],[6,"Kol"],[7,"Kväve"],[8,"Syre"],[10,"Neon"],[11,"Natrium"],[13,"Aluminium"],[17,"Klor"],[20,"Kalcium"]];
+var B={p:1,n:0,e:1,goal:null};
+function renderBygg(){
+  var el=B.p>0?E[B.p-1]:null,charge=B.p-B.e;
+  var h='<div class="stack"><div class="row"><button class="btn small" data-act="game" data-g="">← Alla spel</button></div><section class="card"><h2>Atombyggaren</h2><p class="hint" style="margin:4px 0 0">Antalet protoner bestämmer vilket grundämne det blir. Lika många elektroner som protoner gör atomen oladdad.</p></section>';
+  h+='<div class="builder"><div class="card stack">';
+  [["p","Protoner","#3b6fd4"],["n","Neutroner","#9aa3ad"],["e","Elektroner","#e0a100"]].forEach(function(r){h+='<div class="ctrl"><span class="lbl"><span class="dot" style="background:'+r[2]+'"></span>'+r[1]+'</span><button class="pm" data-act="b" data-k="'+r[0]+'" data-d="-1" aria-label="Ta bort '+r[1]+'">−</button><span class="val">'+B[r[0]]+'</span><button class="pm" data-act="b" data-k="'+r[0]+'" data-d="1" aria-label="Lägg till '+r[1]+'">+</button></div>';});
+  h+='<div><div class="eyebrow">Du har byggt</div><div class="result">'+(el?cap(el.n)+' ('+el.s+')':'Inget grundämne')+'</div><p style="margin:4px 0 0">'+(el?'Atomnummer '+el.z+'. ':'')+(charge===0?'Oladdad atom.':charge>0?'Laddning +'+charge+': det fattas elektroner.':'Laddning '+charge+': det är för många elektroner.')+(el&&B.p<=20&&B.n===NEUT[B.p-1]?' Neutronerna stämmer med den vanligaste sorten!':'')+'</p></div>';
+  h+='<div><div class="eyebrow">Uppdrag</div><div class="chal">'+CHAL.map(function(c){return '<button data-act="goal" data-z="'+c[0]+'" class="'+(S.builder[c[0]]?'done':'')+'" aria-pressed="'+(B.goal===c[0])+'">'+(S.builder[c[0]]?'✓ ':'')+c[1]+'</button>';}).join("")+'</div>'+(B.goal?'<p class="hint" style="margin:6px 0 0">Bygg en oladdad <b>'+E[B.goal-1].n+'</b>-atom.</p>':'')+'</div>';
+  h+='</div><div class="card">'+bohrSVG(B.p,B.n,B.e,true)+'</div></div></div>';
+  $("#app").innerHTML=h;
+}
+function bChange(k,d){var max={p:20,n:22,e:20}[k];B[k]=Math.max(0,Math.min(max,B[k]+d));
+  if(B.goal&&B.p===B.goal&&B.e===B.p&&!S.builder[B.goal]){S.builder[B.goal]=1;save();toast("<b>Uppdrag klart!</b> Du byggde "+E[B.goal-1].n+"."+(B.n===NEUT[B.goal-1]?" Till och med rätt antal neutroner!":""));B.goal=null;checkBadges();}
+  renderBygg();}
+/* --- Mysteriet --- */
+var RID=[
+ ["Jag har nummer 1 och är universums vanligaste grundämne.",1,[2,3,8]],
+ ["Jag är en ädelgas i period 2 och lyser rött i skyltar.",10,[2,18,9]],
+ ["Jag står i grupp 1, period 3, och tillsammans med klor blir jag koksalt.",11,[19,3,12]],
+ ["Jag är en metall men flytande vid rumstemperatur.",80,[35,79,82]],
+ ["Jag är magnetisk, står i grupp 8 och mitt tecken kommer från latinets ferrum.",26,[27,28,29]],
+ ["Jag är en halvmetall i period 3 och finns i sand och datorchip.",14,[6,32,13]],
+ ["Jag har 8 protoner och du andas in mig hela tiden.",8,[7,6,16]],
+ ["Jag är en halogen i period 3 och dödar bakterier i dricksvatten.",17,[9,35,18]],
+ ["Jag är uppkallad efter en by i Stockholms skärgård och har nummer 39.",39,[70,67,21]],
+ ["Jag har nummer 102 och är uppkallad efter mannen bakom ett berömt pris.",102,[101,99,96]],
+ ["Jag står i grupp 14, period 2, och finns i allt levande.",6,[14,7,5]],
+ ["Jag är en icke-metall som är flytande vid rumstemperatur och luktar starkt.",35,[53,80,17]],
+ ["Jag är den lättaste ädelgasen och får ballonger att sväva.",2,[1,10,18]],
+ ["Jag har högst smältpunkt av alla metaller. Mitt engelska namn betyder tung sten.",74,[26,78,82]],
+ ["Jag leder ström bäst av alla grundämnen och står ovanför guld.",47,[29,79,13]]
+];
+var M={i:null,pick:null,order:null};
+function renderMys(){
+  if(M.i===null){var left=RID.map(function(_,i){return i;}).filter(function(i){return !S.riddles[i];});M.i=left.length?left[Math.floor(Math.random()*left.length)]:Math.floor(Math.random()*RID.length);M.pick=null;var r=RID[M.i];M.order=shuffle([r[1]].concat(r[2]));}
+  var r=RID[M.i];
+  var h='<div class="stack narrow" style="margin:0 auto"><div class="row"><button class="btn small" data-act="game" data-g="">← Alla spel</button><span class="hint">'+count(S.riddles)+' av '+RID.length+' lösta</span></div>';
+  h+='<section class="card stack"><div class="eyebrow">Vem är jag?</div><p class="riddle" style="margin:0">'+r[0]+'</p><div class="opts">';
+  M.order.forEach(function(z){var cls="";if(M.pick!=null){if(z===r[1])cls=" right";else if(z===M.pick)cls=" wrong";}h+='<button class="opt'+cls+'" data-act="mpick" data-z="'+z+'">'+E[z-1].s+' · '+cap(E[z-1].n)+'</button>';});
+  h+='</div>';
+  if(M.pick!=null){var ok=M.pick===r[1];h+='<p class="fb '+(ok?'ok':'bad')+'" style="margin:0">'+(ok?'Rätt, det är '+E[r[1]-1].n+'!':'Nej, det var '+E[r[1]-1].n+'.')+'</p><div class="row"><button class="btn" data-act="mshow" data-z="'+r[1]+'">Läs om '+E[r[1]-1].n+'</button><button class="btn primary" data-act="mnext">Nästa gåta</button></div>';}
+  h+='</section></div>';$("#app").innerHTML=h;
+}
+
+/* ================= MÄRKEN ================= */
+function badgeList(){
+  var sweZ=Object.keys(SWE).map(Number);
+  return [
+   {id:"rut",n:"Rutläsare",s:"Rl",d:"Klara alla åtta lektionerna.",v:count(S.lessons),m:LESSONS.length},
+   {id:"upp",n:"Upptäcktsresande",s:"Up",d:"Utforska 40 grundämnen.",v:Math.min(40,count(S.opened)),m:40},
+   {id:"sve",n:"Svensk kemist",s:"Sv",d:"Titta på alla grundämnen som svenskar har upptäckt.",v:sweZ.filter(function(z){return S.opened[z];}).length,m:sweZ.length},
+   {id:"bygg",n:"Atombyggare",s:"Ab",d:"Klara alla uppdrag i Atombyggaren.",v:count(S.builder),m:CHAL.length},
+   {id:"det",n:"Detektiv",s:"Dt",d:"Lös alla gåtor i Mysterieelementet.",v:count(S.riddles),m:RID.length},
+   {id:"snabb",n:"Snabbfingrad",s:"Sf",d:"Få minst 15 poäng i Jakten (valfri nivå).",v:Math.min(15,Math.max(S.best1,S.best2)),m:15}
+  ];
+}
+function renderBadges(){
+  var bl=badgeList(),done=bl.filter(function(b){return b.v>=b.m;}).length;
+  var h='<div class="stack"><section class="hero"><div class="eyebrow">Märken</div><h1>'+done+' av '+bl.length+' märken</h1><p class="lead">Samla alla sex märken för att få en hemlig kod till Kemiplugget.</p></section><div class="badges">';
+  bl.forEach(function(b){var on=b.v>=b.m;h+='<div class="card badge'+(on?' on':'')+'"><div class="medal">'+b.s+'</div><b>'+b.n+'</b><span class="hint">'+b.d+'</span><div class="meter"><i style="width:'+(100*b.v/b.m)+'%"></i></div><span class="hint">'+b.v+' / '+b.m+'</span></div>';});
+  h+='</div>';
+  if(done===bl.length)h+='<div class="card stack" style="text-align:center"><b>Alla märken klara!</b><p style="margin:0">Skriv den här koden i Hemliga labbet i Kemiplugget:</p><div class="code">YTTERBY</div></div>';
+  var eggs=count(S.eggs);h+='<p class="hint">Hemliga upptäckter: '+eggs+' av 3. Tips: sök på ett bynamn, sök på ett nummer som inte finns, och tryck flera gånger på en lätt gas.</p>';
+  h+='<p><button class="btn small" data-act="ask-reset">Nollställ framsteg på den här sidan</button></p></div>';
+  $("#app").innerHTML=h;
+}
+var lastDone=null;
+function checkBadges(){var d=badgeList().filter(function(b){return b.v>=b.m;}).map(function(b){return b.id;});
+  if(lastDone!==null)d.forEach(function(id){if(lastDone.indexOf(id)<0){var b=badgeList().filter(function(x){return x.id===id;})[0];toast("<b>Nytt märke: "+b.n+"!</b>");}});
+  lastDone=d;
+  if(d.length===6&&!S.rewarded){S.rewarded=true;save();setTimeout(function(){modal('<h2>Alla märken!</h2><p style="margin:0">Du kan periodiska systemet på riktigt. Skriv koden i Hemliga labbet i Kemiplugget:</p><div class="code">YTTERBY</div><button class="btn primary" data-act="close">Toppen!</button>');},600);}
+}
+
+/* ================= NAVIGERING ================= */
+function setTab(t){V.tab=t;document.querySelectorAll(".tabs button").forEach(function(b){b.setAttribute("aria-selected",String(b.getAttribute("data-tab")===t));});
+  if(J&&J.timer&&t!=="spela"){clearInterval(J.timer);J=null;}
+  closeSheet();
+  ({utforska:renderExplore,lar:renderLearn,spela:renderPlay,marken:renderBadges})[t]();}
+document.addEventListener("click",function(ev){
+  var b=ev.target.closest("[data-act],[data-tab],.el[data-z]");
+  if(!b){if(ev.target===$("#modal"))closeModal();return;}
+  if(b.hasAttribute("data-tab")&&!b.hasAttribute("data-act")){setTab(b.getAttribute("data-tab"));window.scrollTo(0,0);return;}
+  if(b.classList.contains("el")&&b.hasAttribute("data-z")){var z=+b.getAttribute("data-z");if(V.tab==="spela"&&V.game==="jakt"&&J&&!J.over)jTap(z);else openEl(z);return;}
+  var a=b.getAttribute("data-act"),n=b.getAttribute("data-n");
+  switch(a){
+   case "mode":S.color=b.getAttribute("data-m");save();V.hl=null;renderExplore();break;
+   case "mode-go":S.color=n;save();V.hl=null;setTab("utforska");window.scrollTo(0,0);break;
+   case "zoom":S.zoom=!S.zoom;save();renderExplore();break;
+   case "clear-hl":V.hl=null;renderExplore();break;
+   case "close-sheet":closeSheet();break;
+   case "hl-period":highlight(function(e){return e.p===+n&&!!e.g;},"Period "+n+": en vågrät rad. Alla har "+n+" elektronskal.");break;
+   case "hl-group":highlight(function(e){return e.g===+n;},"Grupp "+n+": en lodrät kolumn med liknande egenskaper.");break;
+   case "hl-cat":highlight(function(e){return e.cat===n;},"Halvmetallerna bildar en trappa mellan metaller och icke-metaller.");break;
+   case "hl-mend":highlight(function(e){return e.z===21||e.z===31||e.z===32;},"Skandium, gallium och germanium: Mendelejev förutsade dem innan de hittades.");break;
+   case "lpick":var i=+b.getAttribute("data-i"),j=+b.getAttribute("data-j");UIL[i]={open:true,pick:j};if(j===LESSONS[i].c.a&&!S.lessons[i]){S.lessons[i]=1;save();checkBadges();}renderLearn();break;
+   case "game":V.game=b.getAttribute("data-g")||null;if(J&&J.timer){clearInterval(J.timer);J=null;}renderPlay();window.scrollTo(0,0);break;
+   case "jstart":jStart(+b.getAttribute("data-l"));break;
+   case "b":bChange(b.getAttribute("data-k"),+b.getAttribute("data-d"));break;
+   case "goal":B.goal=+b.getAttribute("data-z");B.p=0;B.n=0;B.e=0;renderBygg();break;
+   case "mpick":if(M.pick==null){M.pick=+b.getAttribute("data-z");if(M.pick===RID[M.i][1]&&!S.riddles[M.i]){S.riddles[M.i]=1;save();checkBadges();}renderMys();}break;
+   case "mnext":M.i=null;renderMys();break;
+   case "mshow":openEl(+b.getAttribute("data-z"));break;
+   case "close":closeModal();break;
+   case "ask-reset":modal('<h2>Nollställa?</h2><p style="margin:0">Lektioner, spel, märken och utforskade grundämnen på den här sidan försvinner. Kemiplugget påverkas inte.</p><div class="row" style="justify-content:center"><button class="btn" data-act="close">Avbryt</button><button class="btn primary" data-act="do-reset">Nollställ</button></div>');break;
+   case "do-reset":S=fresh();save();lastDone=[];UIL={};closeModal();renderBadges();break;
+  }
+});
+document.addEventListener("toggle",function(ev){var d=ev.target;if(d.classList&&d.classList.contains("lesson")){var i=+d.getAttribute("data-i");UIL[i]=UIL[i]||{};UIL[i].open=d.open;}},true);
+document.addEventListener("submit",function(ev){if(ev.target.id==="searchForm"){ev.preventDefault();var q=$("#q");doSearch(q.value);q.blur();}});
+document.addEventListener("keydown",function(ev){if(ev.key==="Escape"){if(!$("#modal").hidden)closeModal();else closeSheet();}});
+
+checkBadges();
+renderExplore();
+})();
+</script>
+
+</body>
+</html>
