@@ -1,6 +1,15 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#EEF2F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111622" media="(prefers-color-scheme: dark)">
 <title>Tyska glosor åk 6</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<style>:root{color-scheme:light dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
 <style>
 /* Layout: a squared German school notebook ("Rechenheft"), one practice card in the middle, settings above, word list below */
 :root{
@@ -79,6 +88,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
 .score{display:flex;gap:10px}
 .score b{font-weight:700}
 .score .g{color:var(--good)} .score .r{color:var(--bad)}
+.restart{font:inherit;font-size:13px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:4px 0 4px 4px}
 
 .prompt-wrap{display:grid;gap:6px;padding-block:8px}
 .dirtag{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;gap:8px;align-items:center}
@@ -236,6 +246,7 @@ const RAW = [
  [40,'13','dreizehn'],[40,'14','vierzehn'],[40,'15','fünfzehn'],[40,'16','sechzehn'],[40,'17','siebzehn'],[40,'18','achtzehn'],
  [40,'19','neunzehn'],[40,'20','zwanzig'],[40,'21','einundzwanzig'],[40,'Österrike','Österreich'],[40,'Schweiz','die Schweiz'],
  [40,'Huvudstaden heter …','Die Hauptstadt heißt …'],[40,'Tyskland är …','Deutschland ist …'],
+ // OBS: lägg nya glosor sist i listan – varje glosas plats är dess id i sparade framsteg.
  [40,'han är','er ist'],[40,'hon är','sie ist'],[40,'den/det är','es ist'],
  // Prov v. 42 – mål 28: ord man ska kunna och förstå (also, Moment!, Nicht so schnell! och neu finns redan i v. 39/37)
  [42,'precis','genau',{sv:['exakt','just det']}],[42,'trevlig','nett',{sv:['snäll','gullig']}],[42,'tack','danke'],
@@ -359,9 +370,10 @@ function newRound(items){
 function next(){
   R.answered=false;
   R.cur = R.queue.shift();
-  if(!R.cur) return finish();
+  if(!R.cur){ finish(); persist(); return; }
   R.q = q(R.cur.it, R.cur.dir);
   render();
+  persist();
 }
 function markResult(ok){
   if(R.answered) return; R.answered=true;
@@ -371,6 +383,7 @@ function markResult(ok){
     if(!R.retried.has(R.cur.it.id+R.cur.dir)){ R.retried.add(R.cur.it.id+R.cur.dir); const pos=Math.min(R.queue.length, 2+Math.floor(Math.random()*3)); R.queue.splice(pos,0,R.cur); R.total++; }
     R.done++;
   }
+  persist();
 }
 
 const stage=document.getElementById('stage');
@@ -378,7 +391,8 @@ const kbd=document.getElementById('kbdhelp');
 function header(){
   const pct = R.total ? Math.round(R.done/R.total*100) : 0;
   return `<div class="progress"><span>${R.done} / ${R.total}</span><div class="bar"><i style="width:${pct}%"></i></div>
-    <div class="score"><span class="g">✓ <b>${R.good}</b></span><span class="r">✗ <b>${R.bad}</b></span></div></div>`;
+    <div class="score"><span class="g">✓ <b>${R.good}</b></span><span class="r">✗ <b>${R.bad}</b></span></div>
+    <button class="restart" type="button" data-restart>Börja om</button></div>`;
 }
 function promptBlock(){
   const qq=R.q, flagFrom=qq.from==='sv'?'se':'de', flagTo=qq.to==='sv'?'se':'de';
@@ -551,8 +565,81 @@ document.getElementById('tables').innerHTML = ALLG.map(w=>{
   <tr><td>jag är</td><td>ich bin</td><td>${spk('ich bin','de')}</td></tr><tr><td>du är</td><td>du bist</td><td>${spk('du bist','de')}</td></tr>
   <tr><td>hon, han, den/det är</td><td>sie, er, es ist</td><td>${spk('sie, er, es ist','de')}</td></tr></tbody></table></div></div>`;
 
-newRound();
+// ---------- sparade framsteg ----------
+// Sparas i webbläsaren direkt och i sidans privata lagring per person (fungerar även där webbläsarlagring är blockerad).
+let cloud=null, cloudBusy=false, cloudPending=null, cloudTimer=null, lastSavedAt=0;
+function snapshotState(){
+  if(!R) return null;
+  const pair = x=>[x.it.id,x.dir];
+  return {v:1, savedAt:Date.now(), weeks:[...S.weeks], dir:S.dir, mode:S.mode,
+    round:{queue:R.queue.map(pair), cur:R.cur?pair(R.cur):null, answered:!!R.answered, total:R.total, done:R.done,
+      good:R.good, bad:R.bad, missed:[...R.missed.values()].map(pair), retried:[...R.retried]}};
+}
+function persist(){
+  const st=snapshotState(); if(!st) return;
+  lastSavedAt=st.savedAt;
+  store.set('state',st);
+  if(cloud){ cloudPending=st; clearTimeout(cloudTimer); cloudTimer=setTimeout(flushCloud,700); }
+}
+async function flushCloud(){
+  clearTimeout(cloudTimer);
+  if(cloudBusy||!cloud||!cloudPending) return;
+  cloudBusy=true; const st=cloudPending; cloudPending=null;
+  try{ await cloud.set({state:JSON.stringify(st), savedAt:st.savedAt}); }
+  catch(e){ if(e && /not_granted|invalid_argument|capability/.test(String(e.code||''))) cloud=null; }
+  cloudBusy=false;
+  if(cloudPending) flushCloud();
+}
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') flushCloud(); });
+window.addEventListener('pagehide',()=>flushCloud());
+
+function syncUI(){
+  weeksEl.querySelectorAll('.chip[data-w]').forEach(c=>{ if(c.dataset.w!=='all') c.setAttribute('aria-pressed', S.weeks.has(+c.dataset.w)); });
+  document.querySelectorAll('#dir button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.v===S.dir));
+  document.querySelectorAll('#mode button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.v===S.mode));
+}
+function restoreState(st){
+  try{
+    if(!st || st.v!==1 || !st.round) return false;
+    const byId=new Map(DATA.map(d=>[d.id,d]));
+    const mk=a=>{ const it=Array.isArray(a)&&byId.get(a[0]); return it && (a[1]==='sv-de'||a[1]==='de-sv') ? {it,dir:a[1]} : null; };
+    const w=(st.weeks||[]).map(Number).filter(x=>WEEKS[x]);
+    if(w.length) S.weeks=new Set(w);
+    if(['sv-de','de-sv','mix'].includes(st.dir)) S.dir=st.dir;
+    if(['write','choice','cards'].includes(st.mode)) S.mode=st.mode;
+    store.set('weeks',[...S.weeks]); store.set('dir',S.dir); store.set('mode',S.mode);
+    const r=st.round, queue=(r.queue||[]).map(mk).filter(Boolean);
+    if(r.cur && !r.answered){ const c=mk(r.cur); if(c) queue.unshift(c); }
+    const missed=new Map(); (r.missed||[]).map(mk).filter(Boolean).forEach(x=>missed.set(x.it.id,x));
+    const n=v=>Number.isFinite(v)?v:0;
+    R={queue, total:n(r.total), done:n(r.done), good:n(r.good), bad:n(r.bad), missed, retried:new Set(r.retried||[]), cur:null, answered:false};
+    lastSavedAt=st.savedAt||0;
+    syncUI(); next();
+    return true;
+  }catch(e){ return false; }
+}
+stage.addEventListener('click',e=>{ if(e.target.closest('[data-restart]')) newRound(); });
+
+const localState = store.get('state',null);
+if(!restoreState(localState)) newRound();
+
+(async()=>{
+  try{
+    if(!window.claude || typeof claude.use!=='function') return;
+    const [db,user] = await Promise.all([claude.use('db'), claude.use('user')]);
+    if(!db || !user) return;
+    const uid = await user.id(); if(!uid) return;
+    const ref = db.doc('data/users/'+uid+'/progress');
+    const snap = await ref.get();
+    cloud = ref;
+    if(snap.exists){
+      const d=snap.data()||{}; let st=null; try{ st=JSON.parse(d.state); }catch(e){}
+      if(st && (st.savedAt||0) > lastSavedAt){ restoreState(st); store.set('state',st); return; }
+    }
+    persist();
+  }catch(e){ cloud=null; }
+})();
 } catch(err){ showErr((err&&err.name)+': '+(err&&err.message)+' | '+String(err&&err.stack||'').slice(0,300)); } })();
 </script>
-
-</body></html>
+</body>
+</html>
